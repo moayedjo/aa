@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String   @id @default(uuid())
+  email             String   @unique
+  name              String?
+  subscription_tier String   @default("free")
+  current_tokens    Int      @default(10000)
+  created_at        DateTime @default(now())
+
+  presentations Presentation[]
+  usage_logs    UsageLog[]
+}
+
+model Template {
+  id              String   @id @default(uuid())
+  title           String
+  category        String
+  thumbnail_url   String?
+  file_url        String?
+  is_pro          Boolean  @default(false)
+  colors          Json?
+  fonts           Json?
+  downloads_count Int      @default(0)
+  created_at      DateTime @default(now())
+
+  presentations Presentation[]
+}
+
+model Presentation {
+  id            String   @id @default(uuid())
+  user_id       String
+  template_id   String?
+  title         String
+  status        String   @default("draft")
+  content_json  Json?
+  speaker_notes Json?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  user     User      @relation(fields: [user_id], references: [id])
+  template Template? @relation(fields: [template_id], references: [id])
+}
+
+model UsageLog {
+  id          String   @id @default(uuid())
+  user_id     String
+  action      String
+  tokens_used Int
+  created_at  DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id])
+}
