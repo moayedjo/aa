@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JO PRINT - استكمال تسجيل المطبعة</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0078D4',secondary:'#f3f4f6'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.ltr {
+direction: ltr;
+text-align: left;
+}
+.rtl {
+direction: rtl;
+text-align: right;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-checkbox {
+display: flex;
+align-items: center;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+.custom-checkbox:hover .checkmark {
+background-color: rgba(0, 120, 212, 0.05);
+box-shadow: 0 0 0 4px rgba(0, 120, 212, 0.1);
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.checkmark {
+height: 20px;
+width: 20px;
+background-color: #fff;
+border: 2px solid #0078D4;
+border-radius: 4px;
+position: relative;
+transition: all 0.2s ease;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #0078D4;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+content: "";
+position: absolute;
+display: block;
+left: 6px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid #fff;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+animation: checkmark 0.2s ease-in-out;
+}
+@keyframes checkmark {
+0% {
+opacity: 0;
+transform: rotate(45deg) scale(0.8);
+}
+100% {
+opacity: 1;
+transform: rotate(45deg) scale(1);
+}
+}
+.custom-checkbox:active .checkmark {
+transform: scale(0.9);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 48px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+border-radius: 24px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+right: 4px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #0078D4;
+}
+input:checked + .switch-slider:before {
+transform: translateX(-24px);
+}
+.custom-radio {
+display: flex;
+align-items: center;
+cursor: pointer;
+}
+.custom-radio input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.radio-mark {
+height: 20px;
+width: 20px;
+background-color: #fff;
+border: 2px solid #0078D4;
+border-radius: 50%;
+position: relative;
+}
+.custom-radio input:checked ~ .radio-mark:after {
+content: "";
+position: absolute;
+display: block;
+top: 4px;
+left: 4px;
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: #0078D4;
+}
+.tab-active {
+background-color: #0078D4;
+color: white;
+}
+.time-picker {
+display: inline-flex;
+align-items: center;
+border: 1px solid #e2e8f0;
+border-radius: 8px;
+padding: 0.5rem;
+background-color: white;
+}
+.time-picker select {
+border: none;
+background: transparent;
+padding: 0 0.25rem;
+appearance: none;
+font-size: 0.875rem;
+}
+.time-picker select:focus {
+outline: none;
+}
+.time-picker span {
+color: #64748b;
+}
+.file-upload-container {
+position: relative;
+width: 100%;
+height: 160px;
+border: 2px dashed #cbd5e1;
+border-radius: 8px;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+background-color: #f8fafc;
+cursor: pointer;
+transition: all 0.3s;
+}
+.file-upload-container:hover {
+border-color: #0078D4;
+background-color: #f0f9ff;
+}
+.file-upload-container input[type="file"] {
+position: absolute;
+width: 100%;
+height: 100%;
+top: 0;
+left: 0;
+opacity: 0;
+cursor: pointer;
+}
+.file-preview {
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem;
+margin-top: 1rem;
+}
+.file-preview-item {
+position: relative;
+width: 80px;
+height: 80px;
+border-radius: 8px;
+overflow: hidden;
+}
+.file-preview-item img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+.file-preview-item .remove-btn {
+position: absolute;
+top: 0;
+right: 0;
+background-color: rgba(0, 0, 0, 0.5);
+color: white;
+width: 20px;
+height: 20px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 0 0 0 8px;
+cursor: pointer;
+}
+.progress-step {
+position: relative;
+display: flex;
+flex-direction: column;
+align-items: center;
+flex: 1;
+}
+.progress-step:not(:last-child)::after {
+content: '';
+position: absolute;
+top: 14px;
+width: 100%;
+right: 50%;
+height: 2px;
+background-color: #e2e8f0;
+z-index: 0;
+}
+.progress-step.active:not(:last-child)::after {
+background-color: #0078D4;
+}
+.step-circle {
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background-color: #fff;
+border: 2px solid #e2e8f0;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+z-index: 1;
+}
+.active .step-circle {
+border-color: #0078D4;
+background-color: #0078D4;
+color: white;
+}
+.completed .step-circle {
+background-color: #0078D4;
+border-color: #0078D4;
+color: white;
+}
+.step-text {
+margin-top: 0.5rem;
+font-size: 0.75rem;
+color: #64748b;
+}
+.active .step-text {
+color: #0078D4;
+font-weight: 500;
+}
+.completed .step-text {
+color: #0078D4;
+}
+.form-section {
+border: 1px solid #e2e8f0;
+border-radius: 8px;
+margin-bottom: 1.5rem;
+overflow: hidden;
+}
+.form-section-header {
+background-color: #f8fafc;
+padding: 1rem;
+border-bottom: 1px solid #e2e8f0;
+cursor: pointer;
+}
+.form-section-content {
+padding: 1.5rem;
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<div class="flex items-center">
+<a href="#" class="text-2xl font-['Pacifico'] text-primary mr-8">JO PRINT</a>
+<nav class="hidden md:flex space-x-1 space-x-reverse">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">الرئيسية</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">خدمات الطباعة</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">ملخصات الكتب</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">المدرسون</a>
+<a href="#" class="px-3 py-2 text-primary font-medium">المطابع</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4 space-x-reverse">
+<div class="relative">
+<button class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-8 h-8 flex items-center justify-center">
+<i class="ri-search-line text-lg"></i>
+</span>
+</button>
+</div>
+<div class="relative">
+<button class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-8 h-8 flex items-center justify-center">
+<i class="ri-shopping-cart-line text-lg"></i>
+</span>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+</button>
+</div>
+<div class="relative">
+<button class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-8 h-8 flex items-center justify-center">
+<i class="ri-user-line text-lg"></i>
+</span>
+</button>
+</div>
+<button class="bg-white border border-gray-300 rounded-button px-3 py-1.5 text-sm flex items-center hover:bg-gray-50 whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center mr-1.5">
+<i class="ri-global-line"></i>
+</span>
+<span>English</span>
+</button>
+<button class="md:hidden w-8 h-8 flex items-center justify-center">
+<i class="ri-menu-line text-xl"></i>
+</button>
+</div>
+</div>
+</header>
+<main class="pb-24">
+<!-- Page Header -->
+<section class="bg-primary/10 py-8">
+<div class="container mx-auto px-4">
+<div class="flex items-center mb-6">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="flex items-center text-primary hover:text-primary/80 transition-colors">
+<span class="w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-right-line"></i>
+</span>
+<span class="mr-1">العودة للصفحة السابقة</span>
+</a>
+</div>
+<h1 class="text-3xl font-bold mb-4">استكمال تسجيل المطبعة</h1>
+<p class="text-gray-600 max-w-3xl">أكمل البيانات التالية لإتمام عملية تسجيل مطبعتك في منصة جو برنت والاستفادة من خدماتنا المتكاملة للوصول إلى العملاء في جميع أنحاء الأردن</p>
+</div>
+</section>
+<!-- Progress Tracker -->
+<section class="py-6 bg-white border-b">
+<div class="container mx-auto px-4">
+<div class="flex justify-between">
+<div class="progress-step completed">
+<div class="step-circle">
+<i class="ri-check-line"></i>
+</div>
+<div class="step-text">المعلومات الأساسية</div>
+</div>
+<div class="progress-step active">
+<div class="step-circle">2</div>
+<div class="step-text">المعلومات التفصيلية</div>
+</div>
+<div class="progress-step">
+<div class="step-circle">3</div>
+<div class="step-text">المراجعة والتأكيد</div>
+</div>
+<div class="progress-step">
+<div class="step-circle">4</div>
+<div class="step-text">اكتمال التسجيل</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Registration Form -->
+<section class="py-8">
+<div class="container mx-auto px-4">
+<form id="detailedRegistrationForm">
+<!-- Services Information Section -->
+<div class="form-section">
+<div class="form-section-header flex justify-between items-center" data-section="services">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary ml-3">
+<i class="ri-printer-line"></i>
+</div>
+<h3 class="text-lg font-bold">معلومات الخدمات المقدمة</h3>
+</div>
+<span class="w-6 h-6 flex items-center justify-center text-primary">
+<i class="ri-arrow-down-s-line"></i>
+</span>
+</div>
+<div class="form-section-content">
+<div class="mb-6">
+<h4 class="text-md font-bold mb-3">خدمات الطباعة المتوفرة</h4>
+<p class="text-gray-600 text-sm mb-4">حدد جميع خدمات الطباعة التي تقدمها مطبعتك للعملاء</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="black_white_printing">
+<span class="checkmark ml-2"></span>
+<span>طباعة أبيض وأسود</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="color_printing">
+<span class="checkmark ml-2"></span>
+<span>طباعة ملونة</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="thermal_binding">
+<span class="checkmark ml-2"></span>
+<span>تجليد حراري</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="wire_binding">
+<span class="checkmark ml-2"></span>
+<span>تجليد سلك</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="leather_binding">
+<span class="checkmark ml-2"></span>
+<span>تجليد جلد</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="book_printing">
+<span class="checkmark ml-2"></span>
+<span>طباعة كتب</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="thesis_printing">
+<span class="checkmark ml-2"></span>
+<span>طباعة أطروحات</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="poster_printing">
+<span class="checkmark ml-2"></span>
+<span>طباعة بوسترات</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="document_scanning">
+<span class="checkmark ml-2"></span>
+<span>مسح ضوئي للمستندات</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="large_format">
+<span class="checkmark ml-2"></span>
+<span>طباعة بأحجام كبيرة</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="lamination">
+<span class="checkmark ml-2"></span>
+<span>تغليف المستندات</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="services[]" value="business_cards">
+<span class="checkmark ml-2"></span>
+<span>طباعة بطاقات العمل</span>
+</label>
+</div>
+</div>
+<div class="mb-6">
+<h4 class="text-md font-bold mb-3">ساعات العمل</h4>
+<p class="text-gray-600 text-sm mb-4">حدد ساعات عمل المطبعة لكل يوم من أيام الأسبوع</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">السبت</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[saturday]" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="time-picker">
+<select name="saturday_from_hour">
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="saturday_from_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="saturday_from_period">
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="saturday_to_hour">
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="saturday_to_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="saturday_to_period">
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">الأحد</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[sunday]" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="time-picker">
+<select name="sunday_from_hour">
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="sunday_from_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="sunday_from_period">
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="sunday_to_hour">
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="sunday_to_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="sunday_to_period">
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">الإثنين</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[monday]" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="time-picker">
+<select name="monday_from_hour">
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="monday_from_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="monday_from_period">
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="monday_to_hour">
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="monday_to_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="monday_to_period">
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">الثلاثاء</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[tuesday]" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="time-picker">
+<select name="tuesday_from_hour">
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="tuesday_from_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="tuesday_from_period">
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="tuesday_to_hour">
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="tuesday_to_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="tuesday_to_period">
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">الأربعاء</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[wednesday]" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="time-picker">
+<select name="wednesday_from_hour">
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="wednesday_from_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="wednesday_from_period">
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="wednesday_to_hour">
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="wednesday_to_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="wednesday_to_period">
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">الخميس</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[thursday]" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="time-picker">
+<select name="thursday_from_hour">
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="thursday_from_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="thursday_from_period">
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="thursday_to_hour">
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="thursday_to_minute">
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="thursday_to_period">
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+<div>
+<div class="flex justify-between items-center mb-3">
+<label class="font-medium">الجمعة</label>
+<label class="custom-switch">
+<input type="checkbox" name="workdays[friday]">
+<span class="switch-slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between opacity-50">
+<div class="time-picker">
+<select name="friday_from_hour" disabled>
+<option value="8">8</option>
+<option value="9" selected>9</option>
+<option value="10">10</option>
+<option value="11">11</option>
+<option value="12">12</option>
+</select>
+<span>:</span>
+<select name="friday_from_minute" disabled>
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="friday_from_period" disabled>
+<option value="am" selected>صباحاً</option>
+<option value="pm">مساءً</option>
+</select>
+</div>
+<span class="mx-2">إلى</span>
+<div class="time-picker">
+<select name="friday_to_hour" disabled>
+<option value="4">4</option>
+<option value="5" selected>5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+</select>
+<span>:</span>
+<select name="friday_to_minute" disabled>
+<option value="00" selected>00</option>
+<option value="15">15</option>
+<option value="30">30</option>
+<option value="45">45</option>
+</select>
+<select name="friday_to_period" disabled>
+<option value="am">صباحاً</option>
+<option value="pm" selected>مساءً</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h4 class="text-md font-bold mb-3">صور المطبعة</h4>
+<p class="text-gray-600 text-sm mb-4">قم بتحميل صور لمطبعتك (الحد الأقصى 5 صور)</p>
+<div class="file-upload-container" id="shopPhotosUpload">
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-2">
+<i class="ri-image-add-line text-xl"></i>
+</div>
+<p class="text-gray-500 text-sm mb-1">اسحب وأفلت الصور هنا أو انقر للاختيار</p>
+<p class="text-gray-400 text-xs">JPG، PNG أو WEBP - الحد الأقصى 5 ميجابايت لكل صورة</p>
+<input type="file" multiple accept="image/*" id="shopPhotos" name="shop_photos[]">
+</div>
+<div class="file-preview" id="shopPhotosPreview">
+<!-- Preview images will be added here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Bank Account Details Section -->
+<div class="form-section">
+<div class="form-section-header flex justify-between items-center" data-section="bank">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary ml-3">
+<i class="ri-bank-line"></i>
+</div>
+<h3 class="text-lg font-bold">معلومات الحساب البنكي</h3>
+</div>
+<span class="w-6 h-6 flex items-center justify-center text-primary">
+<i class="ri-arrow-down-s-line"></i>
+</span>
+</div>
+<div class="form-section-content">
+<p class="text-gray-600 text-sm mb-4">أدخل معلومات الحساب البنكي لاستلام المدفوعات من المنصة</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div>
+<label class="block text-gray-700 mb-2">اسم البنك</label>
+<div class="relative">
+<select class="w-full border border-gray-300 rounded-lg px-4 py-2 appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent pr-8">
+<option value="">اختر البنك</option>
+<option value="arab_bank">البنك العربي</option>
+<option value="housing_bank">بنك الإسكان</option>
+<option value="cairo_amman">بنك القاهرة عمان</option>
+<option value="jordan_islamic">البنك الإسلامي الأردني</option>
+<option value="jordan_commercial">البنك التجاري الأردني</option>
+<option value="jordan_kuwait">البنك الأردني الكويتي</option>
+<option value="ahli">البنك الأهلي الأردني</option>
+<option value="etihad">بنك الاتحاد</option>
+</select>
+<div class="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-400"></i>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-gray-700 mb-2">رقم الآيبان (IBAN)</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="JOxx xxxx xxxx xxxx xxxx xxxx xxxx" dir="ltr">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div>
+<label class="block text-gray-700 mb-2">اسم صاحب الحساب</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="أدخل اسم صاحب الحساب كما هو مسجل في البنك">
+</div>
+<div>
+<label class="block text-gray-700 mb-2">الفرع</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="أدخل اسم فرع البنك">
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-gray-700 mb-2">ملاحظات إضافية للحساب البنكي (اختياري)</label>
+<textarea class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent h-24" placeholder="أي معلومات إضافية تتعلق بالحساب البنكي"></textarea>
+</div>
+</div>
+</div>
+<!-- Business License Section -->
+<div class="form-section">
+<div class="form-section-header flex justify-between items-center" data-section="license">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary ml-3">
+<i class="ri-file-list-3-line"></i>
+</div>
+<h3 class="text-lg font-bold">وثائق الترخيص</h3>
+</div>
+<span class="w-6 h-6 flex items-center justify-center text-primary">
+<i class="ri-arrow-down-s-line"></i>
+</span>
+</div>
+<div class="form-section-content">
+<p class="text-gray-600 text-sm mb-4">أدخل معلومات ترخيص المطبعة وقم بتحميل الوثائق المطلوبة</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div>
+<label class="block text-gray-700 mb-2">رقم الرخصة التجارية</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="أدخل رقم الرخصة التجارية">
+</div>
+<div>
+<label class="block text-gray-700 mb-2">تاريخ تسجيل النشاط التجاري</label>
+<input type="date" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" dir="ltr">
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div>
+<label class="block text-gray-700 mb-2">الرقم الضريبي</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="أدخل الرقم الضريبي">
+</div>
+<div>
+<label class="block text-gray-700 mb-2">الجهة المانحة للترخيص</label>
+<input type="text" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="أدخل اسم الجهة المانحة للترخيص">
+</div>
+</div>
+<div class="mb-6">
+<h4 class="text-md font-bold mb-3">وثائق الترخيص</h4>
+<p class="text-gray-600 text-sm mb-4">قم بتحميل صور من وثائق الترخيص (الرخصة التجارية، شهادة التسجيل الضريبي، إلخ)</p>
+<div class="file-upload-container" id="licenseDocsUpload">
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center text-primary mb-2">
+<i class="ri-file-upload-line text-xl"></i>
+</div>
+<p class="text-gray-500 text-sm mb-1">اسحب وأفلت الملفات هنا أو انقر للاختيار</p>
+<p class="text-gray-400 text-xs">PDF، JPG، PNG - الحد الأقصى 10 ميجابايت لكل ملف</p>
+<input type="file" multiple accept=".pdf,image/*" id="licenseDocs" name="license_docs[]">
+</div>
+<div class="file-preview" id="licenseDocsPreview">
+<!-- Preview files will be added here -->
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Options Section -->
+<div class="form-section">
+<div class="form-section-header flex justify-between items-center" data-section="delivery">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary ml-3">
+<i class="ri-truck-line"></i>
+</div>
+<h3 class="text-lg font-bold">خيارات التوصيل</h3>
+</div>
+<span class="w-6 h-6 flex items-center justify-center text-primary">
+<i class="ri-arrow-down-s-line"></i>
+</span>
+</div>
+<div class="form-section-content">
+<div class="flex justify-between items-center mb-4">
+<div>
+<h4 class="text-md font-bold">توفير خدمة التوصيل</h4>
+<p class="text-gray-600 text-sm">هل ترغب بتقديم خدمة توصيل المطبوعات للعملاء؟</p>
+</div>
+<label class="custom-switch">
+<input type="checkbox" name="delivery_available" id="deliveryAvailable" checked>
+<span class="switch-slider"></span>
+</label>
+</div>
+<div id="deliveryOptionsContainer">
+<div class="mb-4">
+<label class="block text-gray-700 mb-2">مناطق التوصيل المتاحة</label>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="amman_west" checked>
+<span class="checkmark ml-2"></span>
+<span>غرب عمان</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="amman_east" checked>
+<span class="checkmark ml-2"></span>
+<span>شرق عمان</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="amman_north">
+<span class="checkmark ml-2"></span>
+<span>شمال عمان</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="amman_south">
+<span class="checkmark ml-2"></span>
+<span>جنوب عمان</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="zarqa">
+<span class="checkmark ml-2"></span>
+<span>الزرقاء</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="irbid">
+<span class="checkmark ml-2"></span>
+<span>إربد</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="salt">
+<span class="checkmark ml-2"></span>
+<span>السلط</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="madaba">
+<span class="checkmark ml-2"></span>
+<span>مادبا</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="delivery_areas[]" value="other">
+<span class="checkmark ml-2"></span>
+<span>مناطق أخرى</span>
+</label>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-gray-700 mb-2">رسوم التوصيل</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="text-sm text-gray-600 mb-1 block">المنطقة القريبة (حتى 5 كم)</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00" value="1.50">
+<span class="mr-2 text-gray-600">دينار</span>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-600 mb-1 block">المنطقة المتوسطة (5-10 كم)</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00" value="2.50">
+<span class="mr-2 text-gray-600">دينار</span>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-600 mb-1 block">المنطقة البعيدة (10-20 كم)</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00" value="3.50">
+<span class="mr-2 text-gray-600">دينار</span>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-600 mb-1 block">خارج المدينة</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0.00" value="5.00">
+<span class="mr-2 text-gray-600">دينار</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-gray-700 mb-2">أوقات التوصيل المتوقعة</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="text-sm text-gray-600 mb-1 block">المنطقة القريبة</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0" value="1">
+<span class="mr-2 text-gray-600">ساعة</span>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-600 mb-1 block">المنطقة المتوسطة</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0" value="2">
+<span class="mr-2 text-gray-600">ساعة</span>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-600 mb-1 block">المنطقة البعيدة</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0" value="3">
+<span class="mr-2 text-gray-600">ساعة</span>
+</div>
+</div>
+<div>
+<label class="text-sm text-gray-600 mb-1 block">خارج المدينة</label>
+<div class="flex items-center">
+<input type="number" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" placeholder="0" value="24">
+<span class="mr-2 text-gray-600">ساعة</span>
+</div>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-gray-700 mb-2">ملاحظات إضافية عن التوصيل (اختياري)</label>
+<textarea class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent h-24" placeholder="أي معلومات إضافية عن خدمة التوصيل مثل أيام التوصيل المحددة أو الحد الأدنى للطلب للتوصيل المجاني"></textarea>
+</div>
+</div>
+</div>
+</div>
+<!-- Terms and Conditions Section -->
+<div class="form-section">
+<div class="form-section-header flex justify-between items-center" data-section="terms">
+<div class="flex items-center">
+<div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center text-primary ml-3">
+<i class="ri-file-text-line"></i>
+</div>
+<h3 class="text-lg font-bold">الشروط والأحكام</h3>
+</div>
+<span class="w-6 h-6 flex items-center justify-center text-primary">
+<i class="ri-arrow-down-s-line"></i>
+</span>
+</div>
+<div class="form-section-content">
+<div class="mb-6">
+<div class="border border-gray-300 rounded-lg p-4 bg-gray-50 h-64 overflow-y-auto mb-4">
+<h4 class="font-bold mb-3">شروط وأحكام الانضمام لمنصة جو برنت</h4>
+<p class="text-gray-700 mb-3">مرحباً بك في منصة جو برنت للطباعة. يرجى قراءة الشروط والأحكام التالية بعناية قبل الموافقة عليها والانضمام إلى شبكة المطابع المعتمدة لدينا.</p>
+<h5 class="font-bold mt-4 mb-2">1. شروط الانضمام:</h5>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mr-4">
+<li>يجب أن تكون المطبعة مرخصة بشكل قانوني في المملكة الأردنية الهاشمية.</li>
+<li>يجب تقديم جميع الوثائق الرسمية المطلوبة للتحقق من هوية المطبعة.</li>
+<li>يجب الالتزام بمعايير الجودة المحددة من قبل منصة جو برنت.</li>
+<li>يجب توفير معلومات دقيقة وصحيحة عن المطبعة وخدماتها.</li>
+</ul>
+<h5 class="font-bold mt-4 mb-2">2. العمولات والرسوم:</h5>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mr-4">
+<li>تحصل المنصة على عمولة قدرها 10% من قيمة كل طلب يتم تنفيذه من خلال المنصة.</li>
+<li>يتم خصم العمولة تلقائياً عند تسوية المدفوعات الأسبوعية.</li>
+<li>لا توجد رسوم اشتراك شهرية أو سنوية للانضمام إلى المنصة.</li>
+<li>قد تتغير نسبة العمولة بناءً على إشعار مسبق من المنصة.</li>
+</ul>
+<h5 class="font-bold mt-4 mb-2">3. التزامات المطبعة:</h5>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mr-4">
+<li>الالتزام بتنفيذ الطلبات وفقاً للمواصفات المطلوبة من العملاء.</li>
+<li>الالتزام بمواعيد التسليم المحددة للطلبات.</li>
+<li>الحفاظ على جودة عالية في تنفيذ جميع الطلبات.</li>
+<li>الرد على استفسارات العملاء في أقرب وقت ممكن.</li>
+<li>إبلاغ المنصة في حال وجود أي مشاكل في تنفيذ الطلبات.</li>
+</ul>
+<h5 class="font-bold mt-4 mb-2">4. المدفوعات والتسويات:</h5>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mr-4">
+<li>تتم تسوية المدفوعات أسبوعياً عبر التحويل البنكي إلى الحساب المسجل.</li>
+<li>يتم إرسال تقرير مفصل بالطلبات والمدفوعات مع كل تسوية.</li>
+<li>في حالة وجود أي اعتراض على المدفوعات، يجب إبلاغ المنصة خلال 7 أيام من تاريخ التسوية.</li>
+</ul>
+<h5 class="font-bold mt-4 mb-2">5. إنهاء الاتفاقية:</h5>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mr-4">
+<li>يحق للمنصة إنهاء الاتفاقية في حال مخالفة المطبعة لأي من الشروط والأحكام.</li>
+<li>يحق للمطبعة إنهاء الاتفاقية بعد إشعار المنصة قبل 30 يوماً.</li>
+<li>في حال إنهاء الاتفاقية، يجب على المطبعة إكمال جميع الطلبات القائمة.</li>
+</ul>
+<h5 class="font-bold mt-4 mb-2">6. الخصوصية وسرية المعلومات:</h5>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mr-4">
+<li>تلتزم المطبعة بالحفاظ على سرية معلومات العملاء وعدم مشاركتها مع أي طرف ثالث.</li>
+<li>تلتزم المنصة بالحفاظ على سرية معلومات المطبعة وعدم مشاركتها مع أي طرف ثالث.</li>
+</ul>
+<p class="text-gray-700 mt-4">بالضغط على "أوافق على الشروط والأحكام"، فإنك تقر بأنك قد قرأت وفهمت جميع الشروط والأحكام المذكورة أعلاه وتوافق على الالتزام بها.</p>
+</div>
+<label class="custom-checkbox">
+<input type="checkbox" name="terms_accepted" id="termsAccepted">
+<span class="checkmark ml-2"></span>
+<span>أوافق على <a href="#" class="text-primary hover:underline">الشروط والأحكام</a> الخاصة بمنصة جو برنت</span>
+</label>
+</div>
+<div class="mb-6">
+<label class="custom-checkbox">
+<input type="checkbox" name="privacy_accepted" id="privacyAccepted">
+<span class="checkmark ml-2"></span>
+<span>أوافق على <a href="#" class="text-primary hover:underline">سياسة الخصوصية</a> وأقر بأن جميع المعلومات المقدمة صحيحة ودقيقة</span>
+</label>
+</div>
+<div>
+<label class="custom-checkbox">
+<input type="checkbox" name="marketing_accepted" id="marketingAccepted">
+<span class="checkmark ml-2"></span>
+<span>أوافق على استلام الإشعارات والعروض التسويقية من منصة جو برنت</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Form Actions -->
+<div class="flex flex-col md:flex-row justify-between items-center mt-8">
+<button type="button" class="bg-white border border-gray-300 text-gray-700 px-6 py-3 rounded-button font-medium hover:bg-gray-50 transition duration-300 w-full md:w-auto mb-4 md:mb-0 !rounded-button whitespace-nowrap">
+حفظ كمسودة
+</button>
+<div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+<button type="button" class="bg-white border border-primary text-primary px-6 py-3 rounded-button font-medium hover:bg-primary/5 transition duration-300 !rounded-button whitespace-nowrap">
+الرجوع للخطوة السابقة
+</button>
+<button type="submit" class="bg-primary text-white px-6 py-3 rounded-button font-medium hover:bg-primary/90 transition duration-300 !rounded-button whitespace-nowrap">
+متابعة
+</button>
+</div>
+</div>
+</form>
+</div>
+</section>
+</main>
+<footer class="bg-gray-800 text-white py-12">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<a href="#" class="text-2xl font-['Pacifico'] text-white mb-4 block">JO PRINT</a>
+<p class="text-gray-400 mb-4">منصة رقمية تربط بين المطابع والطلاب والعملاء في جميع أنحاء الأردن</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-twitter-x-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-instagram-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-linkedin-fill"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">المدرسون</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">المطابع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">تسجيل الدخول</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">خدماتنا</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">طباعة الملفات</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">طباعة الأبحاث والأطروحات</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">ملخصات الكتب الجامعية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">ملخصات المدارس</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">التدريس الخصوصي</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">خدمات التوصيل</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">تواصل معنا</h3>
+<ul class="space-y-3">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-gray-400 mt-0.5">
+<i class="ri-map-pin-line"></i>
+</span>
+<span class="mr-2 text-gray-400">عمان، الأردن<br>شارع الجامعة، مجمع الجامعة التجاري</span>
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-phone-line"></i>
+</span>
+<span class="mr-2 text-gray-400">+962 6 123 4567</span>
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-mail-line"></i>
+</span>
+<span class="mr-2 text-gray-400">info@joprint.jo</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 JO PRINT. جميع الحقوق محفوظة</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="text-gray-400 hover:text-white transition duration-300 text-sm">سياسة الخصوصية</a>
+<a href="#" class="text-gray-400 hover:text-white transition duration-300 text-sm">الشروط والأحكام</a>
+<a href="#" class="text-gray-400 hover:text-white transition duration-300 text-sm">الأسئلة الشائعة</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Custom checkbox functionality
+document.querySelectorAll('.custom-checkbox').forEach(checkbox => {
+checkbox.addEventListener('click', function(e) {
+// Prevent multiple triggers when clicking on input
+if (e.target.tagName === 'INPUT') return;
+const input = this.querySelector('input[type="checkbox"]');
+input.checked = !input.checked;
+// Trigger change event
+const event = new Event('change', {
+bubbles: true,
+cancelable: true,
+});
+input.dispatchEvent(event);
+});
+});
+// Form section toggle
+const sectionHeaders = document.querySelectorAll('.form-section-header');
+sectionHeaders.forEach(header => {
+header.addEventListener('click', function() {
+const content = this.nextElementSibling;
+const icon = this.querySelector('i.ri-arrow-down-s-line');
+if (content.style.display === 'none') {
+content.style.display = 'block';
+icon.classList.remove('ri-arrow-down-s-line');
+icon.classList.add('ri-arrow-up-s-line');
+} else {
+content.style.display = 'none';
+icon.classList.remove('ri-arrow-up-s-line');
+icon.classList.add('ri-arrow-down-s-line');
+}
+});
+});
+// Toggle delivery options based on checkbox
+const deliveryAvailable = document.getElementById('deliveryAvailable');
+const deliveryOptionsContainer = document.getElementById('deliveryOptionsContainer');
+deliveryAvailable.addEventListener('change', function() {
+if (this.checked) {
+deliveryOptionsContainer.style.display = 'block';
+} else {
+deliveryOptionsContainer.style.display = 'none';
+}
+});
+// Toggle working hours based on day checkbox
+const dayCheckboxes = document.querySelectorAll('input[name^="workdays"]');
+dayCheckboxes.forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+const timeSelectors = this.closest('div').nextElementSibling;
+if (this.checked) {
+timeSelectors.classList.remove('opacity-50');
+timeSelectors.querySelectorAll('select').forEach(select => {
+select.disabled = false;
+});
+} else {
+timeSelectors.classList.add('opacity-50');
+timeSelectors.querySelectorAll('select').forEach(select => {
+select.disabled = true;
+});
+}
+});
+});
+// File upload preview for shop photos
+const shopPhotosInput = document.getElementById('shopPhotos');
+const shopPhotosPreview = document.getElementById('shopPhotosPreview');
+shopPhotosInput.addEventListener('change', function() {
+shopPhotosPreview.innerHTML = '';
+if (this.files.length > 5) {
+alert('يمكنك تحميل 5 صور كحد أقصى');
+this.value = '';
+return;
+}
+for (let i = 0; i < this.files.length; i++) {
+const file = this.files[i];
+if (!file.type.match('image.*')) continue;
+const reader = new FileReader();
+reader.onload = function(e) {
+const previewItem = document.createElement('div');
+previewItem.className = 'file-preview-item';
+const img = document.createElement('img');
+img.src = e.target.result;
+const removeBtn = document.createElement('div');
+removeBtn.className = 'remove-btn';
+removeBtn.innerHTML = '<i class="ri-close-line"></i>';
+removeBtn.addEventListener('click', function() {
+previewItem.remove();
+});
+previewItem.appendChild(img);
+previewItem.appendChild(removeBtn);
+shopPhotosPreview.appendChild(previewItem);
+};
+reader.readAsDataURL(file);
+}
+});
+// File upload preview for license documents
+const licenseDocsInput = document.getElementById('licenseDocs');
+const licenseDocsPreview = document.getElementById('licenseDocsPreview');
+licenseDocsInput.addEventListener('change', function() {
+licenseDocsPreview.innerHTML = '';
+for (let i = 0; i < this.files.length; i++) {
+const file = this.files[i];
+const previewItem = document.createElement('div');
+previewItem.className = 'file-preview-item';
+if (file.type.match('image.*')) {
+const reader = new FileReader();
+reader.onload = function(e) {
+const img = document.createElement('img');
+img.src = e.target.result;
+previewItem.appendChild(img);
+};
+reader.readAsDataURL(file);
+} else {
+const fileIcon = document.createElement('div');
+fileIcon.className = 'w-full h-full bg-gray-200 flex items-center justify-center';
+fileIcon.innerHTML = '<i class="ri-file-pdf-line text-2xl text-gray-500"></i>';
+previewItem.appendChild(fileIcon);
+}
+const removeBtn = document.createElement('div');
+removeBtn.className = 'remove-btn';
+removeBtn.innerHTML = '<i class="ri-close-line"></i>';
+removeBtn.addEventListener('click', function() {
+previewItem.remove();
+});
+previewItem.appendChild(removeBtn);
+licenseDocsPreview.appendChild(previewItem);
+}
+});
+// Form submission
+const detailedRegistrationForm = document.getElementById('detailedRegistrationForm');
+detailedRegistrationForm.addEventListener('submit', function(e) {
+e.preventDefault();
+// Validate form
+const termsAccepted = document.getElementById('termsAccepted');
+const privacyAccepted = document.getElementById('privacyAccepted');
+if (!termsAccepted.checked || !privacyAccepted.checked) {
+alert('يجب الموافقة على الشروط والأحكام وسياسة الخصوصية للمتابعة');
+return;
+}
+// Submit form (in a real application this would send data to the server)
+alert('تم إرسال بيانات التسجيل بنجاح، سيتم الانتقال للخطوة التالية');
+// window.location.href = 'next-step-page.html';
+});
+});
+</script>
+</body>
+</html>

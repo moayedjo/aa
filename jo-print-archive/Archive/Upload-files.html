@@ -1,0 +1,1975 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JO PRINT - رفع الملفات للطباعة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0078D4',secondary:'#50C8FF'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.ltr {
+direction: ltr;
+}
+.rtl {
+direction: rtl;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-file-upload {
+border: 2px dashed #e2e8f0;
+transition: all 0.3s ease;
+}
+.custom-file-upload:hover {
+border-color: #0078D4;
+background-color: rgba(0, 120, 212, 0.05);
+}
+.custom-file-upload.drag-over {
+border-color: #0078D4;
+background-color: rgba(0, 120, 212, 0.1);
+}
+.file-progress {
+height: 4px;
+background-color: #e2e8f0;
+border-radius: 2px;
+overflow: hidden;
+}
+.file-progress-bar {
+height: 100%;
+background-color: #0078D4;
+border-radius: 2px;
+transition: width 0.3s ease;
+}
+.custom-radio {
+display: flex;
+align-items: center;
+position: relative;
+cursor: pointer;
+user-select: none;
+}
+.custom-radio input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.radio-mark {
+height: 20px;
+width: 20px;
+background-color: #fff;
+border: 2px solid #ddd;
+border-radius: 50%;
+margin-left: 8px;
+position: relative;
+}
+.custom-radio:hover input ~ .radio-mark {
+border-color: #ccc;
+}
+.custom-radio input:checked ~ .radio-mark {
+border-color: #0078D4;
+}
+.radio-mark:after {
+content: "";
+position: absolute;
+display: none;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background: #0078D4;
+}
+.custom-radio input:checked ~ .radio-mark:after {
+display: block;
+}
+.custom-checkbox {
+display: flex;
+align-items: center;
+position: relative;
+cursor: pointer;
+user-select: none;
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.checkmark {
+height: 20px;
+width: 20px;
+background-color: #fff;
+border: 2px solid #ddd;
+border-radius: 4px;
+margin-left: 8px;
+}
+.custom-checkbox:hover input ~ .checkmark {
+border-color: #ccc;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #0078D4;
+border-color: #0078D4;
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+left: 7px;
+top: 3px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.custom-select {
+position: relative;
+}
+.custom-select-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 0.5rem 1rem;
+border: 1px solid #e2e8f0;
+border-radius: 8px;
+cursor: pointer;
+background-color: white;
+}
+.custom-select-options {
+position: absolute;
+top: 100%;
+left: 0;
+right: 0;
+z-index: 10;
+background-color: white;
+border: 1px solid #e2e8f0;
+border-radius: 8px;
+margin-top: 0.25rem;
+max-height: 200px;
+overflow-y: auto;
+display: none;
+}
+.custom-select-options.show {
+display: block;
+}
+.custom-select-option {
+padding: 0.5rem 1rem;
+cursor: pointer;
+}
+.custom-select-option:hover {
+background-color: #f3f4f6;
+}
+.custom-select-option.selected {
+background-color: #e6f3fc;
+color: #0078D4;
+}
+.progress-steps {
+display: flex;
+justify-content: space-between;
+position: relative;
+}
+.progress-steps::before {
+content: "";
+position: absolute;
+top: 14px;
+left: 0;
+right: 0;
+height: 2px;
+background-color: #e2e8f0;
+z-index: 0;
+}
+.progress-step {
+position: relative;
+z-index: 1;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+.step-number {
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background-color: white;
+border: 2px solid #e2e8f0;
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: 600;
+margin-bottom: 0.5rem;
+}
+.step-number.active {
+background-color: #0078D4;
+border-color: #0078D4;
+color: white;
+}
+.step-number.completed {
+background-color: #0078D4;
+border-color: #0078D4;
+color: white;
+}
+.step-title {
+font-size: 0.875rem;
+color: #6b7280;
+}
+.step-title.active {
+color: #0078D4;
+font-weight: 600;
+}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<!-- Header -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-3">
+<div class="flex items-center justify-between">
+<!-- Logo -->
+<a href="#" class="font-['Pacifico'] text-2xl text-primary">JO PRINT</a>
+<!-- Progress Steps -->
+<div class="hidden md:block flex-1 max-w-xl mx-auto px-4">
+<div class="progress-steps">
+<div class="progress-step">
+<div class="step-number active">1</div>
+<div class="step-title active">رفع الملفات</div>
+</div>
+<div class="progress-step">
+<div class="step-number">2</div>
+<div class="step-title">خيارات الطباعة</div>
+</div>
+<div class="progress-step">
+<div class="step-number">3</div>
+<div class="step-title">التوصيل والدفع</div>
+</div>
+</div>
+</div>
+<!-- Right Side Actions -->
+<div class="flex items-center space-x-4 space-x-reverse">
+<!-- Cart -->
+<div class="relative">
+<div class="relative" id="cartDropdown">
+<button id="cartBtn" class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-shopping-cart-line"></i>
+</div>
+<span class="absolute -top-1 -left-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+</button>
+<!-- Cart Dropdown Menu -->
+<div id="cartMenu" class="absolute left-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-4 hidden transform opacity-0 scale-95 transition-all duration-200 ease-out z-50">
+<!-- Cart Items -->
+<div class="px-4 mb-4 max-h-64 overflow-y-auto">
+<div class="space-y-4">
+<!-- Cart Item 1 -->
+<div class="flex items-start gap-3">
+<img src="https://readdy.ai/api/search-image?query=professional%20academic%20document%20page%20with%20text%20and%20diagrams%2C%20clean%20layout%2C%20academic%20style%2C%20white%20background&width=60&height=80&seq=1&orientation=portrait" alt="Document preview" class="w-12 h-16 object-cover rounded">
+<div class="flex-1 min-w-0">
+<h4 class="font-medium text-sm truncate">مشروع التخرج النهائي.pdf</h4>
+<p class="text-xs text-gray-500 mt-1">A4 عادي، أبيض وأسود، وجه واحد</p>
+<p class="text-sm text-primary font-medium mt-1">2.40 دينار</p>
+</div>
+<button class="text-gray-400 hover:text-red-500 transition-colors">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-delete-bin-line"></i>
+</div>
+</button>
+</div>
+<!-- Cart Item 2 -->
+<div class="flex items-start gap-3">
+<img src="https://readdy.ai/api/search-image?query=professional%20excel%20spreadsheet%20with%20data%20and%20charts%2C%20clean%20layout%2C%20business%20style%2C%20white%20background&width=60&height=80&seq=2&orientation=portrait" alt="Document preview" class="w-12 h-16 object-cover rounded">
+<div class="flex-1 min-w-0">
+<h4 class="font-medium text-sm truncate">بيانات البحث.xlsx</h4>
+<p class="text-xs text-gray-500 mt-1">A4 عادي، ملون، وجهين</p>
+<p class="text-sm text-primary font-medium mt-1">2.40 دينار</p>
+</div>
+<button class="text-gray-400 hover:text-red-500 transition-colors">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-delete-bin-line"></i>
+</div>
+</button>
+</div>
+</div>
+</div>
+<!-- Cart Summary -->
+<div class="px-4 py-3 border-t border-gray-100">
+<div class="flex justify-between items-center mb-3">
+<span class="text-sm text-gray-600">المجموع:</span>
+<span class="text-sm font-medium">4.80 دينار</span>
+</div>
+<div class="flex flex-col gap-2">
+<a href="#" class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-button text-sm font-medium text-center transition-colors whitespace-nowrap !rounded-button">عرض السلة</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/57f7084a-236c-4aae-9eac-78159886d33c" data-readdy="true" class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-button text-sm font-medium text-center transition-colors whitespace-nowrap !rounded-button">متابعة للدفع</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- User Account -->
+<div class="relative" id="accountDropdown">
+<button class="flex items-center space-x-2 space-x-reverse" id="accountBtn">
+<div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+<div class="w-5 h-5 flex items-center justify-center text-gray-600">
+<i class="ri-user-line"></i>
+</div>
+</div>
+<span class="hidden md:inline text-sm font-medium">حسابي</span>
+</button>
+<!-- Dropdown Menu -->
+<div id="accountMenu" class="absolute left-0 mt-2 w-56 bg-white rounded-lg shadow-lg py-2 hidden transform opacity-0 scale-95 transition-all duration-200 ease-out z-50">
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-login-box-line"></i>
+</div>
+<span>تسجيل الدخول</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-user-add-line"></i>
+</div>
+<span>إنشاء حساب</span>
+</a>
+<div class="border-t border-gray-100 my-2"></div>
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-user-settings-line"></i>
+</div>
+<span>حسابي الشخصي</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-file-list-3-line"></i>
+</div>
+<span>طلباتي</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-map-pin-line"></i>
+</div>
+<span>عناوين التوصيل</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-settings-3-line"></i>
+</div>
+<span>تفضيلات الحساب</span>
+</a>
+<div class="border-t border-gray-100 my-2"></div>
+<a href="#" class="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-logout-box-line"></i>
+</div>
+<span>تسجيل الخروج</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="py-8 md:py-12">
+<div class="container mx-auto px-4">
+<!-- Back Button -->
+<div class="mb-6">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="inline-flex items-center text-gray-600 hover:text-primary transition-colors">
+<div class="w-5 h-5 flex items-center justify-center ml-1">
+<i class="ri-arrow-right-line"></i>
+</div>
+<span>العودة إلى الصفحة الرئيسية</span>
+</a>
+</div>
+<!-- Page Title -->
+<div class="mb-8 text-center">
+<h1 class="text-3xl font-bold mb-2">رفع الملفات للطباعة</h1>
+<p class="text-gray-600">قم برفع ملفاتك واختر خيارات الطباعة المناسبة لك</p>
+</div>
+<!-- Upload Section -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+<h2 class="text-xl font-bold mb-4">رفع الملفات</h2>
+<!-- File Upload Area -->
+<div class="custom-file-upload rounded-lg p-8 mb-6 flex flex-col items-center justify-center" id="dropArea">
+<div class="w-16 h-16 flex items-center justify-center text-primary mb-4 bg-primary/10 rounded-full">
+<i class="ri-upload-cloud-2-line ri-2x"></i>
+</div>
+<p class="text-lg font-medium mb-2">اسحب وأفلت الملفات هنا</p>
+<p class="text-gray-500 text-sm mb-4">أو</p>
+<label for="fileInput" class="bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-button font-medium transition-colors cursor-pointer whitespace-nowrap !rounded-button">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-file-upload-line"></i>
+</div>
+<span>اختر الملفات</span>
+</div>
+</label>
+<input type="file" id="fileInput" class="hidden" multiple>
+<p class="text-gray-500 text-sm mt-4">الصيغ المدعومة: PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, JPG, PNG</p>
+</div>
+<!-- Uploaded Files List -->
+<div id="uploadedFiles" class="space-y-4">
+<!-- File Item 1 -->
+<div class="bg-gray-50 rounded-lg p-4 flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-lg text-primary flex-shrink-0">
+<i class="ri-file-pdf-line ri-lg"></i>
+</div>
+<div class="mr-3 flex-1">
+<div class="flex justify-between items-start mb-1">
+<div>
+<h4 class="font-medium">مشروع التخرج النهائي.pdf</h4>
+<p class="text-sm text-gray-500">2.4 MB</p>
+</div>
+<button class="text-gray-400 hover:text-red-500 transition-colors">
+<div id="deleteFileBtn" class="w-5 h-5 flex items-center justify-center cursor-pointer">
+<i class="ri-delete-bin-line"></i>
+</div>
+<!-- Delete Confirmation Dialog -->
+<div id="deleteConfirmDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+<div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+<!-- Dialog Header -->
+<div class="px-6 py-4 border-b">
+<h3 class="text-xl font-bold">تأكيد الحذف</h3>
+</div>
+<!-- Dialog Content -->
+<div class="px-6 py-4">
+<p class="text-gray-600">هل أنت متأكد من حذف هذا الملف؟</p>
+</div>
+<!-- Dialog Footer -->
+<div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+<button id="cancelDelete" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-button font-medium transition-all duration-200 ease-in-out whitespace-nowrap !rounded-button relative overflow-hidden active:scale-95">إلغاء</button>
+<button id="confirmDelete" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">تأكيد الحذف</button>
+</div>
+</div>
+</div>
+<!-- Delete Confirmation Dialog -->
+<div id="deleteConfirmDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+<div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+<!-- Dialog Header -->
+<div class="px-6 py-4 border-b">
+<h3 class="text-xl font-bold">تأكيد الحذف</h3>
+</div>
+<!-- Dialog Content -->
+<div class="px-6 py-4">
+<p class="text-gray-600">هل أنت متأكد من حذف هذا الملف؟</p>
+</div>
+<!-- Dialog Footer -->
+<div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+<button id="cancelDelete" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-button font-medium transition-all duration-200 ease-in-out whitespace-nowrap !rounded-button relative overflow-hidden active:scale-95">إلغاء</button>
+<button id="confirmDelete" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">تأكيد الحذف</button>
+</div>
+</div>
+</div>
+</button>
+</div>
+<div class="file-progress mt-2">
+<div class="file-progress-bar" style="width: 100%;"></div>
+</div>
+</div>
+</div>
+<!-- File Item 2 -->
+<div class="bg-gray-50 rounded-lg p-4 flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-lg text-green-600 flex-shrink-0">
+<i class="ri-file-excel-line ri-lg"></i>
+</div>
+<div class="mr-3 flex-1">
+<div class="flex justify-between items-start mb-1">
+<div>
+<h4 class="font-medium">بيانات البحث.xlsx</h4>
+<p class="text-sm text-gray-500">1.8 MB</p>
+</div>
+<button class="text-gray-400 hover:text-red-500 transition-colors">
+<div id="deleteFileBtn" class="w-5 h-5 flex items-center justify-center cursor-pointer">
+<i class="ri-delete-bin-line"></i>
+</div>
+<!-- Delete Confirmation Dialog -->
+<div id="deleteConfirmDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+<div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+<!-- Dialog Header -->
+<div class="px-6 py-4 border-b">
+<h3 class="text-xl font-bold">تأكيد الحذف</h3>
+</div>
+<!-- Dialog Content -->
+<div class="px-6 py-4">
+<p class="text-gray-600">هل أنت متأكد من حذف هذا الملف؟</p>
+</div>
+<!-- Dialog Footer -->
+<div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+<button id="cancelDelete" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-button font-medium transition-all duration-200 ease-in-out whitespace-nowrap !rounded-button relative overflow-hidden active:scale-95">إلغاء</button>
+<button id="confirmDelete" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">تأكيد الحذف</button>
+</div>
+</div>
+</div>
+<!-- Delete Confirmation Dialog -->
+<div id="deleteConfirmDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+<div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden">
+<!-- Dialog Header -->
+<div class="px-6 py-4 border-b">
+<h3 class="text-xl font-bold">تأكيد الحذف</h3>
+</div>
+<!-- Dialog Content -->
+<div class="px-6 py-4">
+<p class="text-gray-600">هل أنت متأكد من حذف هذا الملف؟</p>
+</div>
+<!-- Dialog Footer -->
+<div class="px-6 py-4 bg-gray-50 flex justify-end gap-3">
+<button id="cancelDelete" class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-button font-medium transition-all duration-200 ease-in-out whitespace-nowrap !rounded-button relative overflow-hidden active:scale-95">إلغاء</button>
+<button id="confirmDelete" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">تأكيد الحذف</button>
+</div>
+</div>
+</div>
+</button>
+</div>
+<div class="file-progress mt-2">
+<div class="file-progress-bar" style="width: 100%;"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Print Options Section -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+<h2 class="text-xl font-bold mb-4">خيارات الطباعة</h2>
+<!-- Print Type Selection -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-3">نوع الطباعة</label>
+<div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+<!-- Documents -->
+<div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-colors print-type-option selected" data-type="documents">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary flex-shrink-0">
+<i class="ri-file-text-line ri-lg"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium mb-1">مستندات</h4>
+<p class="text-sm text-gray-600">ملفات PDF، Word، PowerPoint</p>
+</div>
+</div>
+</div>
+<!-- Poster -->
+<div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-colors print-type-option" data-type="poster">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary flex-shrink-0">
+<i class="ri-image-line ri-lg"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium mb-1">بوستر</h4>
+<p class="text-sm text-gray-600">طباعة بوسترات كبيرة الحجم</p>
+</div>
+</div>
+</div>
+<!-- Personal Photo -->
+<div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-colors print-type-option" data-type="photo">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary flex-shrink-0">
+<i class="ri-camera-line ri-lg"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium mb-1">صور شخصية</h4>
+<p class="text-sm text-gray-600">طباعة صور شخصية بمقاسات مختلفة</p>
+</div>
+</div>
+</div>
+<!-- Photo Album -->
+<div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-colors print-type-option" data-type="album">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary flex-shrink-0">
+<i class="ri-gallery-line ri-lg"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium mb-1">البوم صور</h4>
+<p class="text-sm text-gray-600">طباعة البومات صور بتصاميم مختلفة</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Document Options -->
+<div id="documentOptions" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<!-- Left Column -->
+<div>
+<!-- Number of Copies -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">عدد النسخ</label>
+<div class="flex items-center">
+<button id="decrementCopies" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-r-button text-gray-500 hover:bg-gray-50 transition-colors">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" id="copiesCount" value="1" min="1" class="w-16 h-10 border-y border-gray-300 text-center focus:outline-none" />
+<button id="incrementCopies" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-l-button text-gray-500 hover:bg-gray-50 transition-colors">
+<i class="ri-add-line"></i>
+</button>
+</div>
+</div>
+<!-- Paper Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع الورق</label>
+<div class="custom-select" id="paperTypeSelect">
+<div class="custom-select-header">
+<span id="paperTypeValue">A4 عادي (80 جرام)</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="A4 عادي (80 جرام)">A4 عادي (80 جرام)</div>
+<div class="custom-select-option" data-value="A4 فاخر (100 جرام)">A4 فاخر (100 جرام)</div>
+<div class="custom-select-option" data-value="A4 لامع (120 جرام)">A4 لامع (120 جرام)</div>
+<div class="custom-select-option" data-value="A3 عادي (80 جرام)">A3 عادي (80 جرام)</div>
+<div class="custom-select-option" data-value="A3 فاخر (100 جرام)">A3 فاخر (100 جرام)</div>
+</div>
+</div>
+</div>
+<!-- Binding Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع التجليد</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<label class="custom-radio">
+<input type="radio" name="bindingType" value="none" checked>
+<span class="radio-mark"></span>
+<span>بدون تجليد</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="bindingType" value="staple">
+<span class="radio-mark"></span>
+<span>دباسة</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="bindingType" value="spiral">
+<span class="radio-mark"></span>
+<span>سلك حلزوني</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="bindingType" value="hardcover">
+<span class="radio-mark"></span>
+<span>تجليد فاخر</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Right Column -->
+<div>
+<!-- Color Options -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">خيارات الألوان</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<label class="custom-radio">
+<input type="radio" name="colorOption" value="bw" checked>
+<span class="radio-mark"></span>
+<span>أبيض وأسود</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="colorOption" value="color">
+<span class="radio-mark"></span>
+<span>ملون</span>
+</label>
+</div>
+</div>
+<!-- Print Sides -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">طباعة الصفحات</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<label class="custom-radio">
+<input type="radio" name="printSides" value="one-sided" checked>
+<span class="radio-mark"></span>
+<span>وجه واحد</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="printSides" value="double-sided">
+<span class="radio-mark"></span>
+<span>وجهين</span>
+</label>
+</div>
+</div>
+<!-- Additional Options -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">خيارات إضافية</label>
+<div class="space-y-3">
+<label class="custom-checkbox">
+<input type="checkbox" name="additionalOptions" value="cover">
+<span class="checkmark"></span>
+<span>إضافة غلاف</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="additionalOptions" value="page-numbers">
+<span class="checkmark"></span>
+<span>إضافة أرقام الصفحات</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="additionalOptions" value="table-of-contents">
+<span class="checkmark"></span>
+<span>إضافة فهرس محتويات</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Additional Notes -->
+<div class="mt-4">
+<label class="block text-sm font-medium text-gray-700 mb-2">ملاحظات إضافية</label>
+<textarea rows="3" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" placeholder="أضف أي تعليمات أو متطلبات خاصة هنا..."></textarea>
+</div>
+</div>
+<!-- Poster Options -->
+<div id="posterOptions" class="hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<!-- Poster Size -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">حجم البوستر</label>
+<div class="custom-select" id="posterSizeSelect">
+<div class="custom-select-header">
+<span id="posterSizeValue">A2 (420×594 mm)</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="A2 (420×594 mm)">A2 (420×594 mm)</div>
+<div class="custom-select-option" data-value="A1 (594×841 mm)">A1 (594×841 mm)</div>
+<div class="custom-select-option" data-value="A0 (841×1189 mm)">A0 (841×1189 mm)</div>
+<div class="custom-select-option" data-value="مخصص">مخصص</div>
+</div>
+</div>
+</div>
+<!-- Paper Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع الورق</label>
+<div class="custom-select" id="posterPaperTypeSelect">
+<div class="custom-select-header">
+<span id="posterPaperTypeValue">ورق لامع (200 جرام)</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="ورق لامع (200 جرام)">ورق لامع (200 جرام)</div>
+<div class="custom-select-option" data-value="ورق مطفي (180 جرام)">ورق مطفي (180 جرام)</div>
+<div class="custom-select-option" data-value="كانفاس">كانفاس</div>
+<div class="custom-select-option" data-value="فينيل لاصق">فينيل لاصق</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<!-- Finishing Options -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">خيارات التشطيب</label>
+<div class="space-y-3">
+<label class="custom-checkbox">
+<input type="checkbox" name="posterFinishing" value="lamination">
+<span class="checkmark"></span>
+<span>تغليف حراري</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="posterFinishing" value="mounting">
+<span class="checkmark"></span>
+<span>تركيب على فوم بورد</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="posterFinishing" value="grommets">
+<span class="checkmark"></span>
+<span>تركيب عراوي للتعليق</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Photo Album Options -->
+<div id="albumOptions" class="hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<!-- Print Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع الطباعة</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<label class="custom-radio">
+<input type="radio" name="albumPrintType" value="catalog" checked>
+<span class="radio-mark"></span>
+<span>كتالوج متصل</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="albumPrintType" value="individual">
+<span class="radio-mark"></span>
+<span>صور منفصلة</span>
+</label>
+</div>
+</div>
+<!-- Album Size -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">حجم الألبوم</label>
+<div class="custom-select" id="albumSizeSelect">
+<div class="custom-select-header">
+<span id="albumSizeValue">20×20 سم مربع</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="20×20 سم مربع">20×20 سم مربع</div>
+<div class="custom-select-option" data-value="25×25 سم مربع">25×25 سم مربع</div>
+<div class="custom-select-option" data-value="30×30 سم مربع">30×30 سم مربع</div>
+<div class="custom-select-option" data-value="20×30 سم مستطيل">20×30 سم مستطيل</div>
+</div>
+</div>
+</div>
+<!-- Photo Size -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">حجم الصور</label>
+<div class="custom-select" id="albumPhotoSizeSelect">
+<div class="custom-select-header">
+<span id="albumPhotoSizeValue">10×15 سم</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="10×15 سم">10×15 سم</div>
+<div class="custom-select-option" data-value="13×18 سم">13×18 سم</div>
+<div class="custom-select-option" data-value="15×21 سم">15×21 سم</div>
+<div class="custom-select-option" data-value="20×30 سم">20×30 سم</div>
+</div>
+</div>
+<p class="text-sm text-gray-500 mt-1">حجم الصور داخل الألبوم أو الصور المنفصلة</p>
+</div>
+<!-- Number of Pages -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">عدد الصفحات</label>
+<div class="flex items-center">
+<button id="decrementAlbumPages" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-r-button text-gray-500 hover:bg-gray-50 transition-colors">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" id="albumPagesCount" value="20" min="20" max="100" step="2" class="w-16 h-10 border-y border-gray-300 text-center focus:outline-none" />
+<button id="incrementAlbumPages" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-l-button text-gray-500 hover:bg-gray-50 transition-colors">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<p class="text-sm text-gray-500 mt-1">الحد الأدنى 20 صفحة والحد الأقصى 100 صفحة</p>
+</div>
+<!-- Cover Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع الغلاف</label>
+<div class="grid grid-cols-1 gap-3">
+<label class="custom-radio">
+<input type="radio" name="albumCoverType" value="hardcover" checked>
+<span class="radio-mark"></span>
+<span>غلاف صلب فاخر</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="albumCoverType" value="leatherette">
+<span class="radio-mark"></span>
+<span>غلاف جلد صناعي</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="albumCoverType" value="photocover">
+<span class="radio-mark"></span>
+<span>غلاف بصورة شخصية</span>
+</label>
+</div>
+</div>
+</div>
+<div>
+<!-- Paper Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع الورق</label>
+<div class="grid grid-cols-1 gap-3">
+<label class="custom-radio">
+<input type="radio" name="albumPaperType" value="glossy" checked>
+<span class="radio-mark"></span>
+<span>ورق لامع فاخر</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="albumPaperType" value="matte">
+<span class="radio-mark"></span>
+<span>ورق مطفي فاخر</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="albumPaperType" value="pearl">
+<span class="radio-mark"></span>
+<span>ورق لؤلؤي</span>
+</label>
+</div>
+</div>
+<!-- Additional Features -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">مميزات إضافية</label>
+<div class="space-y-3">
+<label class="custom-checkbox">
+<input type="checkbox" name="albumFeatures" value="gift-box">
+<span class="checkmark"></span>
+<span>صندوق هدية فاخر</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="albumFeatures" value="name-engraving">
+<span class="checkmark"></span>
+<span>نقش الاسم على الغلاف</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="albumFeatures" value="gold-edges">
+<span class="checkmark"></span>
+<span>حواف ذهبية للصفحات</span>
+</label>
+</div>
+</div>
+<!-- Design Service -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">خدمة التصميم</label>
+<div class="bg-blue-50 rounded-lg p-4">
+<label class="custom-checkbox">
+<input type="checkbox" name="albumDesignService" value="professional-design">
+<span class="checkmark"></span>
+<span>تصميم احترافي للألبوم</span>
+</label>
+<p class="text-sm text-gray-600 mt-2">سيقوم مصمم محترف بترتيب وتنسيق الصور بشكل جذاب</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Personal Photo Options -->
+<div id="photoOptions" class="hidden">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<!-- Photo Size -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">مقاس الصورة</label>
+<div class="custom-select" id="photoSizeSelect">
+<div class="custom-select-header">
+<span id="photoSizeValue">4×6 سم (جواز)</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="4×6 سم (جواز)">4×6 سم (جواز)</div>
+<div class="custom-select-option" data-value="3.5×4.5 سم (فيزا شنغن)">3.5×4.5 سم (فيزا شنغن)</div>
+<div class="custom-select-option" data-value="5×5 سم (مربع)">5×5 سم (مربع)</div>
+<div class="custom-select-option" data-value="6×9 سم (كبير)">6×9 سم (كبير)</div>
+</div>
+</div>
+</div>
+<!-- Number of Copies -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">عدد النسخ</label>
+<div class="flex items-center">
+<button id="decrementPhotoCopies" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-r-button text-gray-500 hover:bg-gray-50 transition-colors">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" id="photoCopiesCount" value="6" min="1" class="w-16 h-10 border-y border-gray-300 text-center focus:outline-none" />
+<button id="incrementPhotoCopies" class="w-10 h-10 flex items-center justify-center border border-gray-300 rounded-l-button text-gray-500 hover:bg-gray-50 transition-colors">
+<i class="ri-add-line"></i>
+</button>
+</div>
+</div>
+</div>
+<div>
+<!-- Paper Type -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">نوع الورق</label>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+<label class="custom-radio">
+<input type="radio" name="photoPaperType" value="glossy" checked>
+<span class="radio-mark"></span>
+<span>لامع</span>
+</label>
+<label class="custom-radio">
+<input type="radio" name="photoPaperType" value="matte">
+<span class="radio-mark"></span>
+<span>مطفي</span>
+</label>
+</div>
+</div>
+<!-- Additional Options -->
+<div class="mb-6">
+<label class="block text-sm font-medium text-gray-700 mb-2">خيارات إضافية</label>
+<div class="space-y-3">
+<label class="custom-checkbox">
+<input type="checkbox" name="photoOptions" value="digital">
+<span class="checkmark"></span>
+<span>نسخة رقمية</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" name="photoOptions" value="express">
+<span class="checkmark"></span>
+<span>طباعة فورية</span>
+</label>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Options Section -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+<h2 class="text-xl font-bold mb-4">خيارات التوصيل</h2>
+<div class="space-y-6">
+<!-- Delivery Method -->
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-3">طريقة الاستلام</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Pickup Option -->
+<div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-colors delivery-option" data-method="pickup">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary flex-shrink-0">
+<i class="ri-store-2-line ri-lg"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium mb-1">استلام من المكتب</h4>
+<p class="text-sm text-gray-600">استلم طلبك من أقرب فرع لنا</p>
+<p class="text-sm text-primary mt-2">مجاني</p>
+</div>
+</div>
+</div>
+<!-- Delivery Option -->
+<div class="border border-gray-200 rounded-lg p-4 cursor-pointer hover:border-primary hover:bg-blue-50/30 transition-colors delivery-option" data-method="delivery">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full text-primary flex-shrink-0">
+<i class="ri-truck-line ri-lg"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium mb-1">توصيل للعنوان</h4>
+<p class="text-sm text-gray-600">توصيل طلبك إلى عنوانك</p>
+<p class="text-sm text-primary mt-2">2.00 دينار</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pickup Location (shown when pickup is selected) -->
+<div id="pickupLocationSection" class="border-t border-gray-200 pt-6">
+<label class="block text-sm font-medium text-gray-700 mb-3">اختر موقع الاستلام</label>
+<div class="custom-select" id="pickupLocationSelect">
+<div class="custom-select-header">
+<span id="pickupLocationValue">فرع الجامعة الأردنية</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="فرع الجامعة الأردنية">فرع الجامعة الأردنية</div>
+<div class="custom-select-option" data-value="فرع الجبيهة">فرع الجبيهة</div>
+<div class="custom-select-option" data-value="فرع شارع الجامعة">فرع شارع الجامعة</div>
+<div class="custom-select-option" data-value="فرع الدوار السابع">فرع الدوار السابع</div>
+<div class="custom-select-option" data-value="فرع وسط البلد">فرع وسط البلد</div>
+</div>
+</div>
+<div class="mt-4 bg-blue-50 rounded-lg p-4">
+<div class="flex items-start">
+<div class="w-5 h-5 flex items-center justify-center text-primary mt-0.5">
+<i class="ri-information-line"></i>
+</div>
+<div class="mr-2">
+<h5 class="font-medium text-sm">فرع الجامعة الأردنية</h5>
+<p class="text-sm text-gray-600 mt-1">شارع الجامعة، مقابل البوابة الرئيسية للجامعة الأردنية</p>
+<p class="text-sm text-gray-600 mt-1">مفتوح: 8:00 ص - 8:00 م</p>
+<p class="text-sm text-gray-600 mt-1">هاتف: 0777123456</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Address (hidden by default, shown when delivery is selected) -->
+<div id="deliveryAddressSection" class="border-t border-gray-200 pt-6 hidden">
+<label class="block text-sm font-medium text-gray-700 mb-3">عنوان التوصيل</label>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+<div>
+<label class="block text-sm text-gray-600 mb-1">المدينة</label>
+<div class="custom-select" id="citySelect">
+<div class="custom-select-header">
+<span id="cityValue">عمان</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="عمان">عمان</div>
+<div class="custom-select-option" data-value="إربد">إربد</div>
+<div class="custom-select-option" data-value="الزرقاء">الزرقاء</div>
+<div class="custom-select-option" data-value="العقبة">العقبة</div>
+<div class="custom-select-option" data-value="السلط">السلط</div>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm text-gray-600 mb-1">المنطقة</label>
+<div class="custom-select" id="areaSelect">
+<div class="custom-select-header">
+<span id="areaValue">الجامعة الأردنية</span>
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+<div class="custom-select-options">
+<div class="custom-select-option selected" data-value="الجامعة الأردنية">الجامعة الأردنية</div>
+<div class="custom-select-option" data-value="الجبيهة">الجبيهة</div>
+<div class="custom-select-option" data-value="شارع الجامعة">شارع الجامعة</div>
+<div class="custom-select-option" data-value="الدوار السابع">الدوار السابع</div>
+<div class="custom-select-option" data-value="وسط البلد">وسط البلد</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-sm text-gray-600 mb-1">العنوان التفصيلي</label>
+<input type="text" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="الشارع، رقم المبنى، علامة مميزة...">
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div>
+<label class="block text-sm text-gray-600 mb-1">رقم الهاتف</label>
+<input type="tel" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="07xxxxxxxx">
+</div>
+<div>
+<label class="block text-sm text-gray-600 mb-1">ملاحظات التوصيل</label>
+<input type="text" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="تعليمات خاصة للتوصيل...">
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Summary -->
+<div class="bg-white rounded-lg shadow-md p-6 mb-8">
+<h2 class="text-xl font-bold mb-4">ملخص الطلب</h2>
+<div class="border-b border-gray-200 pb-4 mb-4">
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">عدد الملفات:</span>
+<span class="font-medium">2 ملفات</span>
+</div>
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">عدد الصفحات الإجمالي:</span>
+<span class="font-medium">48 صفحة</span>
+</div>
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">عدد النسخ:</span>
+<span class="font-medium">1</span>
+</div>
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">نوع الورق:</span>
+<span class="font-medium">A4 عادي (80 جرام)</span>
+</div>
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">نوع التجليد:</span>
+<span class="font-medium">بدون تجليد</span>
+</div>
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">خيارات الألوان:</span>
+<span class="font-medium">أبيض وأسود</span>
+</div>
+<div class="flex justify-between">
+<span class="text-gray-600">طريقة الاستلام:</span>
+<span class="font-medium">استلام من المكتب</span>
+</div>
+</div>
+<div class="border-b border-gray-200 pb-4 mb-4">
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">تكلفة الطباعة:</span>
+<span class="font-medium">4.80 دينار</span>
+</div>
+<div class="flex justify-between mb-2">
+<span class="text-gray-600">تكلفة التجليد:</span>
+<span class="font-medium">0.00 دينار</span>
+</div>
+<div class="flex justify-between">
+<span class="text-gray-600">رسوم التوصيل:</span>
+<span class="font-medium">0.00 دينار</span>
+</div>
+</div>
+<div class="flex justify-between items-center text-lg font-bold">
+<span>الإجمالي:</span>
+<span class="text-primary">4.80 دينار</span>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-col sm:flex-row gap-4 justify-center">
+<button id="previewButton" class="bg-white border border-primary text-primary hover:bg-primary/5 px-8 py-3 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-eye-line"></i>
+</div>
+<span>معاينة الطلب</span>
+</div>
+</button>
+<!-- Preview Dialog -->
+<div id="previewDialog" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+<div class="fixed inset-10 bg-white rounded-lg shadow-xl flex flex-col">
+<!-- Dialog Header -->
+<div class="flex items-center justify-between p-4 border-b">
+<h3 class="text-xl font-bold">معاينة الطلب</h3>
+<button id="closePreview" class="text-gray-500 hover:text-gray-700">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-close-line ri-lg"></i>
+</div>
+</button>
+</div>
+<!-- Preview Content -->
+<div class="flex-1 p-4 overflow-hidden">
+<div class="h-full flex flex-col">
+<!-- Toolbar -->
+<div class="flex items-center justify-between mb-4 bg-gray-50 p-3 rounded-lg">
+<!-- Page Navigation -->
+<div class="flex items-center gap-2">
+<button id="prevPage" class="p-2 text-gray-600 hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</button>
+<span id="pageInfo" class="text-sm">صفحة <span id="currentPage">1</span> من <span id="totalPages">48</span></span>
+<button id="nextPage" class="p-2 text-gray-600 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-left-s-line"></i>
+</div>
+</button>
+</div>
+<!-- Zoom Controls -->
+<div class="flex items-center gap-2">
+<button id="zoomOut" class="p-2 text-gray-600 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-zoom-out-line"></i>
+</div>
+</button>
+<span id="zoomLevel" class="text-sm">100%</span>
+<button id="zoomIn" class="p-2 text-gray-600 hover:text-primary">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-zoom-in-line"></i>
+</div>
+</button>
+</div>
+</div>
+<!-- Preview Area -->
+<div class="flex-1 bg-gray-100 rounded-lg overflow-auto relative">
+<div id="previewContent" class="min-h-full flex items-center justify-center">
+<img src="https://readdy.ai/api/search-image?query=professional%20academic%20document%20page%20with%20text%20and%20diagrams%2C%20clean%20layout%2C%20academic%20style%2C%20white%20background&width=800&height=1000&seq=1&orientation=portrait" class="max-w-full max-h-full shadow-lg" alt="Preview">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/57f7084a-236c-4aae-9eac-78159886d33c" data-readdy="true" class="bg-primary hover:bg-primary/90 text-white px-8 py-3 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button inline-flex">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-arrow-left-line"></i>
+</div>
+<span>متابعة للدفع</span>
+</div>
+</a>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-gray-900 text-white pt-12 pb-6">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<!-- Company Info -->
+<div>
+<a href="#" class="font-['Pacifico'] text-2xl text-white mb-4 inline-block">JO PRINT</a>
+<p class="text-gray-400 mb-4">منصة متكاملة لخدمات الطلاب الأكاديمية من طباعة وملخصات ومعلمين ومستلزمات دراسية</p>
+</div>
+<!-- Quick Links -->
+<div>
+<h3 class="text-lg font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="text-gray-400 hover:text-white transition-colors">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">المعلمين</a></li>
+</ul>
+</div>
+<!-- Support -->
+<div>
+<h3 class="text-lg font-bold mb-4">الدعم والمساعدة</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">الأسئلة الشائعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">شروط الاستخدام</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">تواصل معنا</a></li>
+</ul>
+</div>
+<!-- Contact -->
+<div>
+<h3 class="text-lg font-bold mb-4">معلومات الاتصال</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<div class="w-5 h-5 flex items-center justify-center text-gray-400 mt-0.5">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="text-gray-400">عمان، الأردن - شارع الجامعة، مجمع الجامعة التجاري</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-phone-line"></i>
+</div>
+<span class="text-gray-400">+962 6 5355000</span>
+</li>
+<li class="flex items-center gap-3">
+<div class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-mail-line"></i>
+</div>
+<span class="text-gray-400">info@joprint.com</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-6">
+<div class="flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 JO PRINT. جميع الحقوق محفوظة.</p>
+<div class="flex items-center space-x-4 space-x-reverse">
+<div class="w-8 h-5 flex items-center justify-center">
+<i class="ri-visa-line text-gray-400"></i>
+</div>
+<div class="w-8 h-5 flex items-center justify-center">
+<i class="ri-mastercard-line text-gray-400"></i>
+</div>
+<div class="w-8 h-5 flex items-center justify-center">
+<i class="ri-paypal-line text-gray-400"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Cart & Account Dropdown Functionality
+const cartBtn = document.getElementById('cartBtn');
+const cartMenu = document.getElementById('cartMenu');
+const cartDropdown = document.getElementById('cartDropdown');
+const accountBtn = document.getElementById('accountBtn');
+const accountMenu = document.getElementById('accountMenu');
+const accountDropdown = document.getElementById('accountDropdown');
+// Cart Dropdown Functions
+function showCartMenu() {
+cartMenu.classList.remove('hidden');
+requestAnimationFrame(() => {
+cartMenu.classList.remove('opacity-0', 'scale-95');
+cartMenu.classList.add('opacity-100', 'scale-100');
+});
+}
+function hideCartMenu() {
+cartMenu.classList.add('opacity-0', 'scale-95');
+setTimeout(() => {
+cartMenu.classList.add('hidden');
+}, 200);
+}
+cartBtn.addEventListener('click', (e) => {
+e.stopPropagation();
+if (cartMenu.classList.contains('hidden')) {
+showCartMenu();
+hideAccountMenu(); // Hide account menu if open
+} else {
+hideCartMenu();
+}
+});
+// Close cart menu when clicking outside
+document.addEventListener('click', (e) => {
+if (!cartDropdown.contains(e.target)) {
+hideCartMenu();
+}
+});
+// Prevent cart menu from closing when clicking inside it
+cartMenu.addEventListener('click', (e) => {
+e.stopPropagation();
+});
+// Close cart menu on Escape key press
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape' && !cartMenu.classList.contains('hidden')) {
+hideCartMenu();
+}
+});
+function showAccountMenu() {
+accountMenu.classList.remove('hidden');
+// Use requestAnimationFrame to ensure the transition works
+requestAnimationFrame(() => {
+accountMenu.classList.remove('opacity-0', 'scale-95');
+accountMenu.classList.add('opacity-100', 'scale-100');
+});
+}
+function hideAccountMenu() {
+accountMenu.classList.add('opacity-0', 'scale-95');
+// Wait for transition to complete before hiding
+setTimeout(() => {
+accountMenu.classList.add('hidden');
+}, 200);
+}
+accountBtn.addEventListener('click', (e) => {
+e.stopPropagation();
+if (accountMenu.classList.contains('hidden')) {
+showAccountMenu();
+} else {
+hideAccountMenu();
+}
+});
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+if (!accountDropdown.contains(e.target)) {
+hideAccountMenu();
+}
+});
+// Prevent menu from closing when clicking inside it
+accountMenu.addEventListener('click', (e) => {
+e.stopPropagation();
+});
+// Close menu on Escape key press
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape' && !accountMenu.classList.contains('hidden')) {
+hideAccountMenu();
+}
+});
+// Delete File Functionality
+const deleteFileBtn = document.getElementById('deleteFileBtn');
+const deleteConfirmDialog = document.getElementById('deleteConfirmDialog');
+const cancelDelete = document.getElementById('cancelDelete');
+const confirmDelete = document.getElementById('confirmDelete');
+// Add ripple effect function
+function createRipple(event) {
+const button = event.currentTarget;
+const ripple = document.createElement('span');
+const rect = button.getBoundingClientRect();
+ripple.style.position = 'absolute';
+ripple.style.borderRadius = '50%';
+ripple.style.backgroundColor = 'rgba(0, 0, 0, 0.1)';
+ripple.style.width = ripple.style.height = '100px';
+ripple.style.transform = 'scale(0)';
+ripple.style.left = event.clientX - rect.left - 50 + 'px';
+ripple.style.top = event.clientY - rect.top - 50 + 'px';
+ripple.style.animation = 'ripple 0.6s linear';
+button.appendChild(ripple);
+setTimeout(() => ripple.remove(), 600);
+}
+// Add styles for ripple animation
+const style = document.createElement('style');
+style.textContent = `
+.ripple-effect {
+position: absolute;
+border-radius: 50%;
+background-color: rgba(0, 0, 0, 0.1);
+transform: scale(0);
+animation: ripple 0.6s linear;
+pointer-events: none;
+}
+@keyframes ripple {
+to {
+transform: scale(1);
+opacity: 0;
+}
+}
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(0.95); }
+100% { transform: scale(1); }
+}
+.pulse {
+animation: pulse 0.2s ease-in-out;
+}
+#deleteConfirmDialog {
+transition: all 0.3s ease-in-out;
+}
+`;
+document.head.appendChild(style);
+deleteFileBtn.addEventListener('click', () => {
+deleteConfirmDialog.classList.remove('hidden');
+deleteConfirmDialog.style.opacity = '0';
+document.body.style.overflow = 'hidden';
+requestAnimationFrame(() => {
+deleteConfirmDialog.style.transition = 'opacity 0.2s ease-out';
+deleteConfirmDialog.style.opacity = '1';
+});
+});
+// Enhanced cancel button functionality
+cancelDelete.addEventListener('click', (e) => {
+// Add visual feedback to button
+const button = e.currentTarget;
+button.classList.add('active');
+// Create and add ripple effect
+const ripple = document.createElement('span');
+const rect = button.getBoundingClientRect();
+const size = Math.max(rect.width, rect.height);
+ripple.style.width = ripple.style.height = `${size * 2}px`;
+ripple.style.left = `${e.clientX - rect.left - size}px`;
+ripple.style.top = `${e.clientY - rect.top - size}px`;
+ripple.classList.add('ripple-effect');
+button.appendChild(ripple);
+// Add pulse animation to button
+button.style.animation = 'pulse 0.3s ease-out';
+// Fade out dialog with smooth transition
+const dialog = document.getElementById('deleteConfirmDialog');
+dialog.style.transition = 'all 0.3s ease-in-out';
+dialog.style.opacity = '0';
+dialog.style.transform = 'scale(0.98)';
+// Clean up animations and restore state
+setTimeout(() => {
+// Remove ripple effect
+ripple.remove();
+// Remove button animations
+button.classList.remove('active');
+button.style.animation = '';
+// Hide dialog
+dialog.classList.add('hidden');
+// Reset dialog styles
+dialog.style.opacity = '';
+dialog.style.transform = '';
+// Restore page scroll
+document.body.style.overflow = '';
+}, 300);
+// Add styles for enhanced animations
+const style = document.createElement('style');
+style.textContent = `
+.active {
+transform: scale(0.98);
+}
+.ripple-effect {
+position: absolute;
+border-radius: 50%;
+background: rgba(0, 0, 0, 0.1);
+transform: scale(0);
+animation: ripple 0.6s ease-out;
+}
+@keyframes ripple {
+to {
+transform: scale(2);
+opacity: 0;
+}
+}
+@keyframes pulse {
+0% { transform: scale(1); }
+50% { transform: scale(0.98); }
+100% { transform: scale(1); }
+}
+`;
+document.head.appendChild(style);
+});
+// Add keyboard support for Escape key
+document.addEventListener('keydown', (e) => {
+if (e.key === 'Escape' && !deleteConfirmDialog.classList.contains('hidden')) {
+cancelDelete.click();
+}
+});
+// Close on outside click
+deleteConfirmDialog.addEventListener('click', (e) => {
+if (e.target === deleteConfirmDialog) {
+deleteConfirmDialog.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+// Add toast container to body
+const toastContainer = document.createElement('div');
+toastContainer.id = 'toastContainer';
+toastContainer.className = 'fixed bottom-4 right-4 z-50';
+document.body.appendChild(toastContainer);
+confirmDelete.addEventListener('click', () => {
+// Get the file item element
+const fileItem = deleteFileBtn.closest('.bg-gray-50');
+const fileData = {
+element: fileItem.cloneNode(true),
+index: Array.from(fileItem.parentNode.children).indexOf(fileItem)
+};
+// Remove the file item
+fileItem.remove();
+// Hide the dialog
+deleteConfirmDialog.classList.add('hidden');
+document.body.style.overflow = '';
+// Update order summary
+updateOrderSummary();
+// Create and show toast notification
+const toast = document.createElement('div');
+toast.className = 'bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center justify-between mb-3 transform translate-y-full animate-[slideIn_0.3s_ease-out_forwards]';
+toast.innerHTML = `
+<div class="flex items-center gap-3">
+<div class="w-5 h-5 flex items-center justify-center text-green-400">
+<i class="ri-check-line"></i>
+</div>
+<span>تم حذف الملف بنجاح</span>
+</div>
+<button id="undoDelete" class="text-primary hover:text-primary/80 font-medium mr-4">تراجع</button>
+`;
+// Add slide-in animation styles
+const style = document.createElement('style');
+style.textContent = `
+@keyframes slideIn {
+from {
+transform: translate(0, 100%);
+opacity: 0;
+}
+to {
+transform: translate(0, 0);
+opacity: 1;
+}
+}
+@keyframes slideOut {
+from {
+transform: translate(0, 0);
+opacity: 1;
+}
+to {
+transform: translate(0, 100%);
+opacity: 0;
+}
+}
+`;
+document.head.appendChild(style);
+// Add toast to container
+toastContainer.appendChild(toast);
+// Handle undo action
+const undoButton = toast.querySelector('#undoDelete');
+undoButton.addEventListener('click', () => {
+// Restore the file item
+const filesContainer = document.getElementById('uploadedFiles');
+if (fileData.index === 0) {
+filesContainer.prepend(fileData.element);
+} else {
+filesContainer.children[fileData.index - 1].after(fileData.element);
+}
+// Update order summary
+updateOrderSummary();
+// Remove toast with animation
+toast.style.animation = 'slideOut 0.3s ease-out forwards';
+setTimeout(() => toast.remove(), 300);
+});
+// Auto-remove toast after 5 seconds
+setTimeout(() => {
+if (toast.parentNode) {
+toast.style.animation = 'slideOut 0.3s ease-out forwards';
+setTimeout(() => toast.remove(), 300);
+}
+}, 5000);
+});
+// Preview Dialog Functionality
+const previewButton = document.getElementById('previewButton');
+const previewDialog = document.getElementById('previewDialog');
+const closePreview = document.getElementById('closePreview');
+const prevPage = document.getElementById('prevPage');
+const nextPage = document.getElementById('nextPage');
+const currentPage = document.getElementById('currentPage');
+const zoomIn = document.getElementById('zoomIn');
+const zoomOut = document.getElementById('zoomOut');
+const zoomLevel = document.getElementById('zoomLevel');
+const previewContent = document.getElementById('previewContent');
+let currentZoom = 100;
+let currentPageNum = 1;
+// Show preview dialog
+previewButton.addEventListener('click', () => {
+previewDialog.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+// Close preview dialog
+closePreview.addEventListener('click', () => {
+previewDialog.classList.add('hidden');
+document.body.style.overflow = '';
+});
+// Close on outside click
+previewDialog.addEventListener('click', (e) => {
+if (e.target === previewDialog) {
+previewDialog.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+// Page navigation
+prevPage.addEventListener('click', () => {
+if (currentPageNum > 1) {
+currentPageNum--;
+currentPage.textContent = currentPageNum;
+prevPage.disabled = currentPageNum === 1;
+// In a real implementation, you would load the previous page here
+}
+});
+nextPage.addEventListener('click', () => {
+if (currentPageNum < 48) {
+currentPageNum++;
+currentPage.textContent = currentPageNum;
+prevPage.disabled = false;
+// In a real implementation, you would load the next page here
+}
+});
+// Zoom controls
+zoomIn.addEventListener('click', () => {
+if (currentZoom < 200) {
+currentZoom += 25;
+updateZoom();
+}
+});
+zoomOut.addEventListener('click', () => {
+if (currentZoom > 50) {
+currentZoom -= 25;
+updateZoom();
+}
+});
+function updateZoom() {
+zoomLevel.textContent = `${currentZoom}%`;
+previewContent.style.transform = `scale(${currentZoom / 100})`;
+previewContent.style.transformOrigin = 'center center';
+}
+// Initialize state
+prevPage.disabled = true;
+// File Upload Functionality
+const dropArea = document.getElementById('dropArea');
+const fileInput = document.getElementById('fileInput');
+// Prevent default drag behaviors
+['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+dropArea.addEventListener(eventName, preventDefaults, false);
+});
+function preventDefaults(e) {
+e.preventDefault();
+e.stopPropagation();
+}
+// Highlight drop area when item is dragged over it
+['dragenter', 'dragover'].forEach(eventName => {
+dropArea.addEventListener(eventName, highlight, false);
+});
+['dragleave', 'drop'].forEach(eventName => {
+dropArea.addEventListener(eventName, unhighlight, false);
+});
+function highlight() {
+dropArea.classList.add('drag-over');
+}
+function unhighlight() {
+dropArea.classList.remove('drag-over');
+}
+// Handle dropped files
+dropArea.addEventListener('drop', handleDrop, false);
+function handleDrop(e) {
+const dt = e.dataTransfer;
+const files = dt.files;
+// Handle the files (in a real application, you would process them)
+console.log('Files dropped:', files);
+}
+// Handle click on the file input button
+fileInput.addEventListener('change', function() {
+// Handle the selected files (in a real application, you would process them)
+console.log('Files selected:', this.files);
+});
+// Print Type Selection Functionality
+const printTypeOptions = document.querySelectorAll('.print-type-option');
+const documentOptions = document.getElementById('documentOptions');
+const posterOptions = document.getElementById('posterOptions');
+const photoOptions = document.getElementById('photoOptions');
+const albumOptions = document.getElementById('albumOptions');
+printTypeOptions.forEach(option => {
+option.addEventListener('click', function() {
+// Remove selected class from all options
+printTypeOptions.forEach(opt => {
+opt.classList.remove('border-primary', 'bg-blue-50/30', 'selected');
+opt.classList.add('border-gray-200');
+});
+// Add selected class to clicked option
+this.classList.remove('border-gray-200');
+this.classList.add('border-primary', 'bg-blue-50/30', 'selected');
+// Show/hide appropriate options
+const type = this.getAttribute('data-type');
+documentOptions.classList.add('hidden');
+posterOptions.classList.add('hidden');
+photoOptions.classList.add('hidden');
+albumOptions.classList.add('hidden');
+if (type === 'documents') {
+documentOptions.classList.remove('hidden');
+} else if (type === 'poster') {
+posterOptions.classList.remove('hidden');
+} else if (type === 'photo') {
+photoOptions.classList.remove('hidden');
+} else if (type === 'album') {
+albumOptions.classList.remove('hidden');
+}
+// Update order summary
+updateOrderSummary();
+});
+});
+// Album Pages Functionality
+const decrementAlbumPagesBtn = document.getElementById('decrementAlbumPages');
+const incrementAlbumPagesBtn = document.getElementById('incrementAlbumPages');
+const albumPagesInput = document.getElementById('albumPagesCount');
+if (decrementAlbumPagesBtn && incrementAlbumPagesBtn && albumPagesInput) {
+decrementAlbumPagesBtn.addEventListener('click', function() {
+const currentValue = parseInt(albumPagesInput.value);
+if (currentValue > 20) {
+albumPagesInput.value = currentValue - 2;
+updateOrderSummary();
+}
+});
+incrementAlbumPagesBtn.addEventListener('click', function() {
+const currentValue = parseInt(albumPagesInput.value);
+if (currentValue < 100) {
+albumPagesInput.value = currentValue + 2;
+updateOrderSummary();
+}
+});
+albumPagesInput.addEventListener('change', function() {
+let value = parseInt(this.value);
+if (value < 20) value = 20;
+if (value > 100) value = 100;
+// Ensure even number of pages
+value = Math.round(value / 2) * 2;
+this.value = value;
+updateOrderSummary();
+});
+}
+// Photo Copies Functionality
+const decrementPhotoBtn = document.getElementById('decrementPhotoCopies');
+const incrementPhotoBtn = document.getElementById('incrementPhotoCopies');
+const photoCopiesInput = document.getElementById('photoCopiesCount');
+if (decrementPhotoBtn && incrementPhotoBtn && photoCopiesInput) {
+decrementPhotoBtn.addEventListener('click', function() {
+const currentValue = parseInt(photoCopiesInput.value);
+if (currentValue > 1) {
+photoCopiesInput.value = currentValue - 1;
+updateOrderSummary();
+}
+});
+incrementPhotoBtn.addEventListener('click', function() {
+const currentValue = parseInt(photoCopiesInput.value);
+photoCopiesInput.value = currentValue + 1;
+updateOrderSummary();
+});
+photoCopiesInput.addEventListener('change', function() {
+if (this.value < 1) {
+this.value = 1;
+}
+updateOrderSummary();
+});
+}
+// Custom Select Functionality
+const customSelects = document.querySelectorAll('.custom-select');
+customSelects.forEach(select => {
+const header = select.querySelector('.custom-select-header');
+const options = select.querySelector('.custom-select-options');
+const optionItems = select.querySelectorAll('.custom-select-option');
+const valueSpan = select.querySelector('[id$="Value"]');
+header.addEventListener('click', function() {
+options.classList.toggle('show');
+});
+optionItems.forEach(option => {
+option.addEventListener('click', function() {
+const value = this.getAttribute('data-value');
+valueSpan.textContent = value;
+// Remove selected class from all options
+optionItems.forEach(opt => opt.classList.remove('selected'));
+// Add selected class to clicked option
+this.classList.add('selected');
+// Hide options
+options.classList.remove('show');
+// Update order summary
+updateOrderSummary();
+});
+});
+// Close options when clicking outside
+document.addEventListener('click', function(e) {
+if (!select.contains(e.target)) {
+options.classList.remove('show');
+}
+});
+});
+// Number of Copies Functionality
+const decrementBtn = document.getElementById('decrementCopies');
+const incrementBtn = document.getElementById('incrementCopies');
+const copiesInput = document.getElementById('copiesCount');
+decrementBtn.addEventListener('click', function() {
+const currentValue = parseInt(copiesInput.value);
+if (currentValue > 1) {
+copiesInput.value = currentValue - 1;
+updateOrderSummary();
+}
+});
+incrementBtn.addEventListener('click', function() {
+const currentValue = parseInt(copiesInput.value);
+copiesInput.value = currentValue + 1;
+updateOrderSummary();
+});
+copiesInput.addEventListener('change', function() {
+if (this.value < 1) {
+this.value = 1;
+}
+updateOrderSummary();
+});
+// Delivery Options Functionality
+const deliveryOptions = document.querySelectorAll('.delivery-option');
+const pickupLocationSection = document.getElementById('pickupLocationSection');
+const deliveryAddressSection = document.getElementById('deliveryAddressSection');
+deliveryOptions.forEach(option => {
+option.addEventListener('click', function() {
+// Remove active class from all options
+deliveryOptions.forEach(opt => {
+opt.classList.remove('border-primary', 'bg-blue-50/30');
+opt.classList.add('border-gray-200');
+});
+// Add active class to clicked option
+this.classList.remove('border-gray-200');
+this.classList.add('border-primary', 'bg-blue-50/30');
+const method = this.getAttribute('data-method');
+if (method === 'pickup') {
+pickupLocationSection.classList.remove('hidden');
+deliveryAddressSection.classList.add('hidden');
+} else {
+pickupLocationSection.classList.add('hidden');
+deliveryAddressSection.classList.remove('hidden');
+}
+// Update order summary
+updateOrderSummary();
+});
+});
+// Radio Button Change Events
+const radioButtons = document.querySelectorAll('input[type="radio"]');
+radioButtons.forEach(radio => {
+radio.addEventListener('change', updateOrderSummary);
+});
+// Checkbox Change Events
+const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+checkboxes.forEach(checkbox => {
+checkbox.addEventListener('change', updateOrderSummary);
+});
+// Function to update order summary
+function updateOrderSummary() {
+// In a real application, this would calculate totals based on selections
+console.log('Updating order summary...');
+// Example: Update number of copies in summary
+const copiesCount = document.getElementById('copiesCount').value;
+const copiesSummary = document.querySelector('div.flex.justify-between.mb-2:nth-child(3) span:last-child');
+if (copiesSummary) {
+copiesSummary.textContent = copiesCount;
+}
+// Example: Update paper type in summary
+const paperType = document.getElementById('paperTypeValue').textContent;
+const paperTypeSummary = document.querySelector('div.flex.justify-between.mb-2:nth-child(4) span:last-child');
+if (paperTypeSummary) {
+paperTypeSummary.textContent = paperType;
+}
+// Example: Update delivery method in summary
+let deliveryMethod = 'استلام من المكتب';
+const activeDeliveryOption = document.querySelector('.delivery-option.border-primary');
+if (activeDeliveryOption && activeDeliveryOption.getAttribute('data-method') === 'delivery') {
+deliveryMethod = 'توصيل للعنوان';
+// Update delivery fee
+const deliveryFeeSummary = document.querySelector('div.flex.justify-between:nth-child(3) span:last-child');
+if (deliveryFeeSummary) {
+deliveryFeeSummary.textContent = '2.00 دينار';
+}
+// Update total
+const totalSummary = document.querySelector('div.flex.justify-between.items-center.text-lg.font-bold span:last-child');
+if (totalSummary) {
+totalSummary.textContent = '6.80 دينار';
+}
+} else {
+// Reset delivery fee
+const deliveryFeeSummary = document.querySelector('div.flex.justify-between:nth-child(3) span:last-child');
+if (deliveryFeeSummary) {
+deliveryFeeSummary.textContent = '0.00 دينار';
+}
+// Reset total
+const totalSummary = document.querySelector('div.flex.justify-between.items-center.text-lg.font-bold span:last-child');
+if (totalSummary) {
+totalSummary.textContent = '4.80 دينار';
+}
+}
+const deliveryMethodSummary = document.querySelector('div.flex.justify-between:nth-child(7) span:last-child');
+if (deliveryMethodSummary) {
+deliveryMethodSummary.textContent = deliveryMethod;
+}
+}
+// Set initial state
+deliveryOptions[0].click(); // Select pickup by default
+});
+</script>
+</body>
+</html>

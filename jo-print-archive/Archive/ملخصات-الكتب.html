@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JO PRINT - ملخصات الكتب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1e88e5',secondary:'#ff6f00'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.toast {
+position: fixed;
+bottom: -100px;
+left: 50%;
+transform: translateX(-50%);
+background-color: #1e88e5;
+color: white;
+padding: 1rem 2rem;
+border-radius: 8px;
+box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+transition: bottom 0.3s ease-in-out;
+z-index: 9999;
+}
+.toast.show {
+bottom: 24px;
+}
+html[dir="ltr"] body {
+font-family: 'Roboto', sans-serif;
+}
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #1e88e5;
+cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #1e88e5;
+cursor: pointer;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-checkbox {
+display: none;
+}
+.custom-checkbox + label {
+position: relative;
+padding-right: 30px;
+cursor: pointer;
+display: inline-block;
+}
+.custom-checkbox + label:before {
+content: '';
+position: absolute;
+right: 0;
+top: 0;
+width: 20px;
+height: 20px;
+border: 2px solid #ccc;
+border-radius: 4px;
+background: #fff;
+}
+.custom-checkbox:checked + label:before {
+background: #1e88e5;
+border-color: #1e88e5;
+}
+.custom-checkbox:checked + label:after {
+content: '';
+position: absolute;
+right: 7px;
+top: 4px;
+width: 6px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+html[dir="ltr"] .custom-checkbox + label {
+padding-right: 0;
+padding-left: 30px;
+}
+html[dir="ltr"] .custom-checkbox + label:before {
+right: auto;
+left: 0;
+}
+html[dir="ltr"] .custom-checkbox:checked + label:after {
+right: auto;
+left: 7px;
+}
+.switch {
+position: relative;
+display: inline-block;
+width: 48px;
+height: 24px;
+}
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+border-radius: 34px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #1e88e5;
+}
+input:checked + .slider:before {
+transform: translateX(24px);
+}
+html[dir="ltr"] input:checked + .slider:before {
+transform: translateX(24px);
+}
+html[dir="rtl"] input:checked + .slider:before {
+transform: translateX(-24px);
+}
+.summary-card {
+transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.summary-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+.star-rating {
+display: inline-flex;
+direction: ltr;
+}
+.filter-sheet {
+transform: translateY(100%);
+transition: transform 0.3s ease-in-out;
+}
+.filter-sheet.active {
+transform: translateY(0);
+}
+.modal {
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.modal.active {
+opacity: 1;
+visibility: visible;
+}
+@media (max-width: 768px) {
+.desktop-filters {
+display: none;
+}
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center">
+<a href="#" class="font-['Pacifico'] text-primary text-2xl">GO PRINT</a>
+<nav class="hidden md:flex ml-8">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="px-3 py-2 text-gray-700 hover:text-primary">الرئيسية</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary">خدمات الطباعة</a>
+<a href="#" class="px-3 py-2 text-primary font-medium">ملخصات الكتب</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/8ee6a544-f3a7-4758-b5c9-19ee9e168b49" data-readdy="true" class="px-3 py-2 text-gray-700 hover:text-primary">المعلمين</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary">مكاتب الطباعة</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary">المتجر</a>
+</nav>
+</div>
+<div class="flex items-center space-x-reverse space-x-4">
+<button id="language-toggle" class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-global-line"></i>
+</span>
+<span class="mr-1 text-sm">English</span>
+</button>
+<a href="#" class="relative text-gray-700 hover:text-primary">
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-shopping-cart-2-line"></i>
+</span>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+</a>
+<a href="#" class="text-gray-700 hover:text-primary">
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-user-line"></i>
+</span>
+</a>
+<button class="md:hidden text-gray-700" id="mobile-menu-button">
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-menu-line"></i>
+</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<div class="bg-primary/5 py-6">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row justify-between items-center">
+<div>
+<h1 class="text-2xl md:text-3xl font-bold text-gray-800">ملخصات الكتب</h1>
+<p class="text-gray-600 mt-2">اكتشف مجموعة واسعة من ملخصات الكتب المدرسية والجامعية</p>
+</div>
+<div class="mt-4 md:mt-0">
+<div class="relative">
+<input type="text" placeholder="ابحث عن ملخص..." class="w-full md:w-64 pl-10 pr-4 py-2 rounded border-none shadow-sm focus:ring-2 focus:ring-primary/50 focus:outline-none">
+<span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 flex items-center justify-center">
+<i class="ri-search-line"></i>
+</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container mx-auto px-4 py-6">
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6">
+<div class="flex justify-center">
+<div class="inline-flex rounded-full bg-gray-100 p-1">
+<button id="school-tab" class="px-4 py-2 rounded-full bg-primary text-white text-sm font-medium !rounded-button whitespace-nowrap">المُلخصات المدرسية</button>
+<button id="university-tab" class="px-4 py-2 rounded-full text-gray-700 hover:bg-gray-200 text-sm font-medium !rounded-button whitespace-nowrap">المُلخصات الجامعية</button>
+</div>
+</div>
+</div>
+<div class="flex flex-col md:flex-row gap-6">
+<!-- Filters Sidebar (Desktop) -->
+<div class="desktop-filters md:w-1/4 lg:w-1/5 bg-white rounded-lg shadow-sm p-4 h-fit sticky top-24">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-medium text-gray-800">الفلترة</h3>
+<button class="text-primary text-sm">إعادة ضبط</button>
+</div>
+<div id="school-filters" class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">المرحلة الدراسية</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="elementary" class="custom-checkbox">
+<label for="elementary" class="text-gray-600 text-sm">المرحلة الابتدائية (1-6)</label>
+</div>
+<div>
+<input type="checkbox" id="middle" class="custom-checkbox">
+<label for="middle" class="text-gray-600 text-sm">المرحلة الإعدادية (7-9)</label>
+</div>
+<div>
+<input type="checkbox" id="secondary" class="custom-checkbox">
+<label for="secondary" class="text-gray-600 text-sm">المرحلة الثانوية (10-12)</label>
+</div>
+</div>
+</div>
+<div id="school-subjects" class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">المادة الدراسية</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="math" class="custom-checkbox">
+<label for="math" class="text-gray-600 text-sm">الرياضيات</label>
+</div>
+<div>
+<input type="checkbox" id="science" class="custom-checkbox">
+<label for="science" class="text-gray-600 text-sm">العلوم</label>
+</div>
+<div>
+<input type="checkbox" id="arabic" class="custom-checkbox">
+<label for="arabic" class="text-gray-600 text-sm">اللغة العربية</label>
+</div>
+<div>
+<input type="checkbox" id="english" class="custom-checkbox">
+<label for="english" class="text-gray-600 text-sm">اللغة الإنجليزية</label>
+</div>
+<div>
+<input type="checkbox" id="social" class="custom-checkbox">
+<label for="social" class="text-gray-600 text-sm">الدراسات الاجتماعية</label>
+</div>
+<div>
+<input type="checkbox" id="islamic" class="custom-checkbox">
+<label for="islamic" class="text-gray-600 text-sm">التربية الإسلامية</label>
+</div>
+</div>
+</div>
+<div id="university-filters" class="border-t border-gray-100 py-4 hidden">
+<h4 class="font-medium text-gray-700 mb-3">الجامعة</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="jordan-university" class="custom-checkbox">
+<label for="jordan-university" class="text-gray-600 text-sm">الجامعة الأردنية</label>
+</div>
+<div>
+<input type="checkbox" id="yarmouk-university" class="custom-checkbox">
+<label for="yarmouk-university" class="text-gray-600 text-sm">جامعة اليرموك</label>
+</div>
+<div>
+<input type="checkbox" id="just-university" class="custom-checkbox">
+<label for="just-university" class="text-gray-600 text-sm">جامعة العلوم والتكنولوجيا</label>
+</div>
+<div>
+<input type="checkbox" id="hashemite-university" class="custom-checkbox">
+<label for="hashemite-university" class="text-gray-600 text-sm">الجامعة الهاشمية</label>
+</div>
+<div>
+<input type="checkbox" id="mutah-university" class="custom-checkbox">
+<label for="mutah-university" class="text-gray-600 text-sm">جامعة مؤتة</label>
+</div>
+</div>
+</div>
+<div id="university-subjects" class="border-t border-gray-100 py-4 hidden">
+<h4 class="font-medium text-gray-700 mb-3">الكلية</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="engineering" class="custom-checkbox">
+<label for="engineering" class="text-gray-600 text-sm">كلية الهندسة</label>
+</div>
+<div>
+<input type="checkbox" id="medicine" class="custom-checkbox">
+<label for="medicine" class="text-gray-600 text-sm">كلية الطب</label>
+</div>
+<div>
+<input type="checkbox" id="business" class="custom-checkbox">
+<label for="business" class="text-gray-600 text-sm">كلية إدارة الأعمال</label>
+</div>
+<div>
+<input type="checkbox" id="science" class="custom-checkbox">
+<label for="science" class="text-gray-600 text-sm">كلية العلوم</label>
+</div>
+<div>
+<input type="checkbox" id="it" class="custom-checkbox">
+<label for="it" class="text-gray-600 text-sm">كلية تكنولوجيا المعلومات</label>
+</div>
+<div>
+<input type="checkbox" id="law" class="custom-checkbox">
+<label for="law" class="text-gray-600 text-sm">كلية الحقوق</label>
+</div>
+<div>
+<input type="checkbox" id="pharmacy" class="custom-checkbox">
+<label for="pharmacy" class="text-gray-600 text-sm">كلية الصيدلة</label>
+</div>
+<div>
+<input type="checkbox" id="arts" class="custom-checkbox">
+<label for="arts" class="text-gray-600 text-sm">كلية الآداب</label>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">نطاق السعر</h4>
+<div class="mt-2">
+<div class="flex justify-between mb-2">
+<span class="text-gray-600 text-sm">0 د.أ</span>
+<span class="text-gray-600 text-sm">15 د.أ</span>
+</div>
+<input type="range" min="0" max="15" value="10" id="price-range" class="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer relative">
+<div class="mt-2 text-sm text-gray-700 text-center">
+الحد الأقصى: <span class="font-medium">10 د.أ</span>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">التقييم</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="rating5" class="custom-checkbox">
+<label for="rating5" class="text-gray-600 text-sm flex items-center">
+<div class="star-rating mr-2">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+5 نجوم
+</label>
+</div>
+<div>
+<input type="checkbox" id="rating4" class="custom-checkbox">
+<label for="rating4" class="text-gray-600 text-sm flex items-center">
+<div class="star-rating mr-2">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+4 نجوم وأعلى
+</label>
+</div>
+<div>
+<input type="checkbox" id="rating3" class="custom-checkbox">
+<label for="rating3" class="text-gray-600 text-sm flex items-center">
+<div class="star-rating mr-2">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+3 نجوم وأعلى
+</label>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 pt-4">
+<h4 class="font-medium text-gray-700 mb-3">ميزات إضافية</h4>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-gray-600 text-sm">معتمد من وزارة التربية</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600 text-sm">يتضمن تمارين تدريبية</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600 text-sm">مواد تحضير التوجيهي</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="md:w-3/4 lg:w-4/5">
+<!-- Sort and View Options -->
+<div class="bg-white rounded-lg shadow-sm p-4 mb-6 flex justify-between items-center">
+<div class="flex items-center">
+<span class="text-gray-600 text-sm ml-2">ترتيب حسب:</span>
+<select class="border-none text-gray-700 text-sm bg-gray-100 rounded py-1 px-2 pr-8 focus:outline-none focus:ring-2 focus:ring-primary/50">
+<option>الأكثر شيوعاً</option>
+<option>السعر: من الأقل إلى الأعلى</option>
+<option>السعر: من الأعلى إلى الأقل</option>
+<option>أحدث الإضافات</option>
+<option>التقييم</option>
+</select>
+</div>
+<div class="flex items-center">
+<span class="text-gray-600 text-sm hidden md:inline ml-2">عرض:</span>
+<div class="flex space-x-reverse space-x-2">
+<button id="grid-view" class="w-8 h-8 flex items-center justify-center bg-primary text-white rounded">
+<i class="ri-grid-line"></i>
+</button>
+<button id="list-view" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-list-check"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- Mobile Filter Button -->
+<div class="md:hidden mb-4">
+<button id="mobile-filter-button" class="w-full bg-white rounded-lg shadow-sm py-3 px-4 text-gray-700 flex items-center justify-center !rounded-button whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center mr-2">
+<i class="ri-filter-3-line"></i>
+</span>
+فلترة النتائج
+</button>
+</div>
+<!-- School Summaries Grid -->
+<div id="school-summaries" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-all duration-300" data-view="grid">
+<!-- Summary Card 1 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20geometric%20shapes%20and%20patterns%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=400&height=250&seq=1&orientation=landscape" alt="ملخص الرياضيات" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف السابع</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص الرياضيات الشامل</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الأول</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(128)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">5.99 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 2 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=science%20textbook%20cover%20with%20biology%20illustrations%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20green%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20high%20school%20students&width=400&height=250&seq=2&orientation=landscape" alt="ملخص العلوم" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف العاشر</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص العلوم العامة</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الثاني</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(95)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">6.50 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 3 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Arabic%20language%20textbook%20cover%20with%20calligraphy%20and%20traditional%20patterns%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20red%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20elementary%20school%20students&width=400&height=250&seq=3&orientation=landscape" alt="ملخص اللغة العربية" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف الخامس</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص اللغة العربية</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الأول</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(210)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">4.75 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 4 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=English%20language%20textbook%20cover%20with%20modern%20design%2C%20professional%20educational%20layout%2C%20purple%20color%20scheme%2C%20Arabic%20and%20English%20text%2C%20suitable%20for%20middle%20school%20students&width=400&height=250&seq=4&orientation=landscape" alt="ملخص اللغة الإنجليزية" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف الثامن</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص اللغة الإنجليزية</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الثاني</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(67)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">5.25 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 5 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Islamic%20studies%20textbook%20cover%20with%20mosque%20silhouette%20and%20geometric%20patterns%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20green%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20elementary%20school%20students&width=400&height=250&seq=5&orientation=landscape" alt="ملخص التربية الإسلامية" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف السادس</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص التربية الإسلامية</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الأول</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(142)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">4.50 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 6 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Social%20studies%20textbook%20cover%20with%20map%20and%20historical%20elements%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20orange%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20high%20school%20students&width=400&height=250&seq=6&orientation=landscape" alt="ملخص الدراسات الاجتماعية" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف التاسع</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص الدراسات الاجتماعية</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الثاني</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(89)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">5.75 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 7 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Physics%20textbook%20cover%20with%20scientific%20illustrations%20and%20formulas%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20high%20school%20students&width=400&height=250&seq=7&orientation=landscape" alt="ملخص الفيزياء" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف الحادي عشر</div>
+<div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs py-1 px-2 rounded">مادة توجيهي</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص الفيزياء الشامل</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الأول</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(176)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">7.99 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Card 8 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Chemistry%20textbook%20cover%20with%20molecular%20structures%20and%20laboratory%20equipment%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20purple%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20high%20school%20students&width=400&height=250&seq=8&orientation=landscape" alt="ملخص الكيمياء" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف الثاني عشر</div>
+<div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs py-1 px-2 rounded">مادة توجيهي</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ملخص الكيمياء المتقدم</h3>
+<p class="text-gray-500 text-sm mb-2">الفصل الدراسي الثاني</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(153)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">8.50 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summaries Grid (Hidden by Default) -->
+<div id="university-summaries" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 transition-all duration-300" data-view="grid">
+<!-- University Summary Card 1 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=engineering%20mechanics%20textbook%20cover%20with%20technical%20drawings%20and%20formulas%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=9&orientation=landscape" alt="ميكانيكا هندسية" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية الهندسة</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">ميكانيكا هندسية</h3>
+<p class="text-gray-500 text-sm mb-2">ENGR 201 | د. محمد العبدالله</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(87)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">9.99 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 2 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=organic%20chemistry%20textbook%20cover%20with%20molecular%20structures%20and%20laboratory%20equipment%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20green%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=10&orientation=landscape" alt="الكيمياء العضوية" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية العلوم</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">الكيمياء العضوية</h3>
+<p class="text-gray-500 text-sm mb-2">CHEM 301 | د. سارة الخطيب</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(124)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">11.50 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 3 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=business%20management%20textbook%20cover%20with%20professional%20office%20setting%20and%20business%20charts%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=11&orientation=landscape" alt="إدارة الأعمال" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية إدارة الأعمال</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">مبادئ إدارة الأعمال</h3>
+<p class="text-gray-500 text-sm mb-2">BUS 101 | د. أحمد الراشد</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(198)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">8.75 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 4 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=computer%20science%20textbook%20cover%20with%20programming%20code%20and%20digital%20elements%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20purple%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=12&orientation=landscape" alt="علوم الحاسوب" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية تكنولوجيا المعلومات</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">مقدمة في البرمجة</h3>
+<p class="text-gray-500 text-sm mb-2">CS 101 | د. ليلى حسين</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(73)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">10.25 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 5 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=medicine%20anatomy%20textbook%20cover%20with%20human%20body%20illustrations%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20red%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=13&orientation=landscape" alt="التشريح البشري" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية الطب</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">التشريح البشري</h3>
+<p class="text-gray-500 text-sm mb-2">MED 201 | د. عمر القاسم</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(215)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">14.99 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 6 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=psychology%20textbook%20cover%20with%20brain%20illustrations%20and%20human%20silhouettes%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20teal%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=14&orientation=landscape" alt="علم النفس" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية الآداب</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">مدخل إلى علم النفس</h3>
+<p class="text-gray-500 text-sm mb-2">PSY 101 | د. هدى المصري</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(109)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">9.50 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 7 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=economics%20textbook%20cover%20with%20financial%20charts%20and%20graphs%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=15&orientation=landscape" alt="الاقتصاد" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية الاقتصاد</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">مبادئ الاقتصاد الكلي</h3>
+<p class="text-gray-500 text-sm mb-2">ECON 201 | د. نادر العمري</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(167)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">10.75 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- University Summary Card 8 -->
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=law%20textbook%20cover%20with%20justice%20scales%20and%20legal%20symbols%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20maroon%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20university%20students&width=400&height=250&seq=16&orientation=landscape" alt="القانون" class="w-full h-40 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">كلية الحقوق</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">القانون المدني</h3>
+<p class="text-gray-500 text-sm mb-2">LAW 301 | د. سمير الحداد</p>
+<div class="flex items-center mb-3">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(92)</span>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-bold text-gray-800">12.50 د.أ</span>
+<div class="flex space-x-reverse space-x-2">
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-download-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-shopping-cart-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded hover:bg-gray-200">
+<i class="ri-printer-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-8 flex justify-center">
+<nav class="flex items-center">
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100">
+<i class="ri-arrow-right-s-line"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded-full mx-1 bg-primary text-white">1</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded-full mx-1 border border-gray-300 text-gray-600 hover:bg-gray-100">2</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded-full mx-1 border border-gray-300 text-gray-600 hover:bg-gray-100">3</a>
+<span class="mx-1 text-gray-500">...</span>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded-full mx-1 border border-gray-300 text-gray-600 hover:bg-gray-100">8</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 hover:bg-gray-100">
+<i class="ri-arrow-left-s-line"></i>
+</a>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<!-- Mobile Filter Sheet -->
+<div id="filter-sheet" class="filter-sheet fixed bottom-0 left-0 right-0 bg-white rounded-t-xl shadow-lg z-50 p-4 h-4/5 overflow-y-auto md:hidden">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-medium text-gray-800">الفلترة</h3>
+<div class="flex items-center">
+<button id="reset-filters" class="text-primary text-sm ml-4">إعادة ضبط</button>
+<button id="close-filter-sheet" class="text-gray-500">
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-close-line"></i>
+</span>
+</button>
+</div>
+</div>
+<div class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">المرحلة الدراسية</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="elementary-mobile" class="custom-checkbox">
+<label for="elementary-mobile" class="text-gray-600 text-sm">المرحلة الابتدائية (1-6)</label>
+</div>
+<div>
+<input type="checkbox" id="middle-mobile" class="custom-checkbox">
+<label for="middle-mobile" class="text-gray-600 text-sm">المرحلة الإعدادية (7-9)</label>
+</div>
+<div>
+<input type="checkbox" id="secondary-mobile" class="custom-checkbox">
+<label for="secondary-mobile" class="text-gray-600 text-sm">المرحلة الثانوية (10-12)</label>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">المادة الدراسية</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="math-mobile" class="custom-checkbox">
+<label for="math-mobile" class="text-gray-600 text-sm">الرياضيات</label>
+</div>
+<div>
+<input type="checkbox" id="science-mobile" class="custom-checkbox">
+<label for="science-mobile" class="text-gray-600 text-sm">العلوم</label>
+</div>
+<div>
+<input type="checkbox" id="arabic-mobile" class="custom-checkbox">
+<label for="arabic-mobile" class="text-gray-600 text-sm">اللغة العربية</label>
+</div>
+<div>
+<input type="checkbox" id="english-mobile" class="custom-checkbox">
+<label for="english-mobile" class="text-gray-600 text-sm">اللغة الإنجليزية</label>
+</div>
+<div>
+<input type="checkbox" id="social-mobile" class="custom-checkbox">
+<label for="social-mobile" class="text-gray-600 text-sm">الدراسات الاجتماعية</label>
+</div>
+<div>
+<input type="checkbox" id="islamic-mobile" class="custom-checkbox">
+<label for="islamic-mobile" class="text-gray-600 text-sm">التربية الإسلامية</label>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">نطاق السعر</h4>
+<div class="mt-2">
+<div class="flex justify-between mb-2">
+<span class="text-gray-600 text-sm">0 د.أ</span>
+<span class="text-gray-600 text-sm">15 د.أ</span>
+</div>
+<input type="range" min="0" max="15" value="10" id="price-range" class="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer relative">
+<div class="mt-2 text-sm text-gray-700 text-center">
+الحد الأقصى: <span class="font-medium">10 د.أ</span>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 py-4">
+<h4 class="font-medium text-gray-700 mb-3">التقييم</h4>
+<div class="space-y-2">
+<div>
+<input type="checkbox" id="rating5-mobile" class="custom-checkbox">
+<label for="rating5-mobile" class="text-gray-600 text-sm flex items-center">
+<div class="star-rating mr-2">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+5 نجوم
+</label>
+</div>
+<div>
+<input type="checkbox" id="rating4-mobile" class="custom-checkbox">
+<label for="rating4-mobile" class="text-gray-600 text-sm flex items-center">
+<div class="star-rating mr-2">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+4 نجوم وأعلى
+</label>
+</div>
+<div>
+<input type="checkbox" id="rating3-mobile" class="custom-checkbox">
+<label for="rating3-mobile" class="text-gray-600 text-sm flex items-center">
+<div class="star-rating mr-2">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+3 نجوم وأعلى
+</label>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 pt-4">
+<h4 class="font-medium text-gray-700 mb-3">ميزات إضافية</h4>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-gray-600 text-sm">معتمد من وزارة التربية</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600 text-sm">يتضمن تمارين تدريبية</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-gray-600 text-sm">مواد تحضير التوجيهي</span>
+<label class="switch">
+<input type="checkbox">
+<span class="slider"></span>
+</label>
+</div>
+</div>
+</div>
+<div class="mt-6">
+<button class="w-full bg-primary text-white py-3 rounded-lg font-medium !rounded-button whitespace-nowrap">تطبيق الفلترة</button>
+</div>
+</div>
+<!-- Payment Required Modal -->
+<div id="payment-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="absolute inset-0 bg-black bg-opacity-50"></div>
+<div class="bg-white rounded-lg shadow-xl w-full max-w-md relative z-10">
+<div class="p-6">
+<div class="text-center mb-6">
+<span class="w-16 h-16 flex items-center justify-center bg-primary/10 text-primary rounded-full mx-auto mb-4">
+<i class="ri-lock-line text-2xl"></i>
+</span>
+<h3 class="text-xl font-bold text-gray-800 mb-2">يجب الدفع أولاً</h3>
+<p class="text-gray-600">يرجى إتمام عملية الدفع للوصول إلى محتوى الملخص</p>
+</div>
+<div class="space-y-4">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/a5b3befb-fc08-4f51-82ca-cda05e71c8db" data-readdy="true" class="w-full flex items-center justify-center bg-primary text-white px-4 py-3 rounded-lg !rounded-button whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-shopping-cart-line"></i>
+</span>
+شراء الآن
+</a>
+<button class="w-full flex items-center justify-center bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 !rounded-button whitespace-nowrap close-payment-modal">
+إغلاق
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Detail Modal -->
+<div id="summary-modal" class="modal fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="absolute inset-0 bg-black bg-opacity-50" id="modal-overlay"></div>
+<div class="bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-[90vh] overflow-y-auto relative z-10">
+<button id="close-modal" class="absolute top-4 left-4 text-gray-500 hover:text-gray-700">
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-close-line"></i>
+</span>
+</button>
+<div class="p-6">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="md:w-2/5">
+<div class="bg-gray-100 rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20geometric%20shapes%20and%20patterns%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=400&height=500&seq=17&orientation=portrait" alt="ملخص الرياضيات" class="w-full h-auto object-cover">
+</div>
+<div class="mt-4 grid grid-cols-4 gap-2">
+<div class="bg-gray-100 rounded cursor-pointer overflow-hidden border-2 border-primary">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20geometric%20shapes%20and%20patterns%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=100&height=100&seq=18&orientation=squarish" alt="صفحة 1" class="w-full h-auto object-cover">
+</div>
+<div class="bg-gray-100 rounded cursor-pointer overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20page%20with%20equations%20and%20examples%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=100&height=100&seq=19&orientation=squarish" alt="صفحة 2" class="w-full h-auto object-cover">
+</div>
+<div class="bg-gray-100 rounded cursor-pointer overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20page%20with%20geometric%20diagrams%20and%20problems%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=100&height=100&seq=20&orientation=squarish" alt="صفحة 3" class="w-full h-auto object-cover">
+</div>
+<div class="bg-gray-100 rounded cursor-pointer overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20page%20with%20tables%20and%20charts%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=100&height=100&seq=21&orientation=squarish" alt="صفحة 4" class="w-full h-auto object-cover">
+</div>
+</div>
+</div>
+<div class="md:w-3/5">
+<div class="flex items-center mb-2">
+<span class="bg-primary text-white text-xs py-1 px-2 rounded ml-2">الصف السابع</span>
+<span class="bg-blue-100 text-blue-700 text-xs py-1 px-2 rounded">الفصل الدراسي الأول</span>
+</div>
+<h2 class="text-2xl font-bold text-gray-800 mb-2">ملخص الرياضيات الشامل</h2>
+<div class="flex items-center mb-4">
+<div class="star-rating">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-sm mr-1">(128 تقييم)</span>
+</div>
+<div class="text-2xl font-bold text-gray-800 mb-4">5.99 د.أ</div>
+<div class="flex flex-wrap gap-3 mb-6">
+<button class="flex items-center bg-primary text-white px-4 py-2 rounded-lg !rounded-button whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-download-line"></i>
+</span>
+تحميل الآن
+</button>
+<button class="flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 !rounded-button whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-shopping-cart-line"></i>
+</span>
+إضافة للسلة
+</button>
+<button class="flex items-center bg-gray-100 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-200 !rounded-button whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-printer-line"></i>
+</span>
+طباعة الآن
+</button>
+</div>
+<div class="mb-6">
+<h3 class="font-medium text-gray-800 mb-2">وصف الملخص</h3>
+<p class="text-gray-600">يقدم هذا الملخص شرحاً مفصلاً لمنهج الرياضيات للصف السابع للفصل الدراسي الأول. يغطي الملخص جميع الوحدات المقررة بأسلوب سهل ومبسط مع أمثلة توضيحية وتمارين محلولة لكل درس. يساعد الطلاب على فهم المفاهيم الأساسية وتطبيقها بشكل صحيح.</p>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="bg-gray-50 p-3 rounded">
+<h4 class="text-sm font-medium text-gray-700 mb-1">عدد الصفحات</h4>
+<p class="text-gray-600">48 صفحة</p>
+</div>
+<div class="bg-gray-50 p-3 rounded">
+<h4 class="text-sm font-medium text-gray-700 mb-1">صيغة الملف</h4>
+<p class="text-gray-600">PDF</p>
+</div>
+<div class="bg-gray-50 p-3 rounded">
+<h4 class="text-sm font-medium text-gray-700 mb-1">حجم الملف</h4>
+<p class="text-gray-600">4.2 ميجابايت</p>
+</div>
+<div class="bg-gray-50 p-3 rounded">
+<h4 class="text-sm font-medium text-gray-700 mb-1">تاريخ النشر</h4>
+<p class="text-gray-600">15 سبتمبر 2024</p>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="font-medium text-gray-800 mb-2">محتويات الملخص</h3>
+<ul class="space-y-2 text-gray-600">
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-checkbox-circle-line"></i>
+</span>
+الوحدة الأولى: الأعداد الصحيحة والعمليات عليها
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-checkbox-circle-line"></i>
+</span>
+الوحدة الثانية: الجبر والمعادلات
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-checkbox-circle-line"></i>
+</span>
+الوحدة الثالثة: الهندسة والقياس
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-checkbox-circle-line"></i>
+</span>
+الوحدة الرابعة: الإحصاء والاحتمالات
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-checkbox-circle-line"></i>
+</span>
+ملحق: تمارين إضافية مع الحلول
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="mt-8 border-t border-gray-100 pt-6">
+<h3 class="font-medium text-gray-800 mb-4">ملخصات مشابهة</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20algebra%20focus%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20blue%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=300&height=180&seq=22&orientation=landscape" alt="ملخص الجبر" class="w-full h-32 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف السابع</div>
+</div>
+<div class="p-3">
+<h3 class="font-medium text-gray-800 text-sm mb-1">ملخص الجبر المتقدم</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating text-xs">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(76)</span>
+</div>
+<div class="text-sm font-bold text-gray-800">4.99 د.أ</div>
+</div>
+</div>
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20geometry%20focus%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20green%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=300&height=180&seq=23&orientation=landscape" alt="ملخص الهندسة" class="w-full h-32 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف السابع</div>
+</div>
+<div class="p-3">
+<h3 class="font-medium text-gray-800 text-sm mb-1">ملخص الهندسة الأساسية</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating text-xs">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-half-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(112)</span>
+</div>
+<div class="text-sm font-bold text-gray-800">5.50 د.أ</div>
+</div>
+</div>
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20statistics%20focus%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20purple%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=300&height=180&seq=24&orientation=landscape" alt="ملخص الإحصاء" class="w-full h-32 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف السابع</div>
+</div>
+<div class="p-3">
+<h3 class="font-medium text-gray-800 text-sm mb-1">ملخص الإحصاء والاحتمالات</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating text-xs">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-line text-gray-300"></i>
+<i class="ri-star-line text-gray-300"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(54)</span>
+</div>
+<div class="text-sm font-bold text-gray-800">4.75 د.أ</div>
+</div>
+</div>
+<div class="summary-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=mathematics%20textbook%20cover%20with%20problem%20solving%20focus%2C%20professional%20educational%20design%2C%20clean%20layout%2C%20orange%20color%20scheme%2C%20Arabic%20text%2C%20suitable%20for%20middle%20school%20students&width=300&height=180&seq=25&orientation=landscape" alt="ملخص حل المسائل" class="w-full h-32 object-cover object-top">
+<div class="absolute top-2 right-2 bg-primary text-white text-xs py-1 px-2 rounded">الصف السابع</div>
+</div>
+<div class="p-3">
+<h3 class="font-medium text-gray-800 text-sm mb-1">ملخص مهارات حل المسائل</h3>
+<div class="flex items-center mb-2">
+<div class="star-rating text-xs">
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+<i class="ri-star-fill text-yellow-400"></i>
+</div>
+<span class="text-gray-500 text-xs mr-1">(187)</span>
+</div>
+<div class="text-sm font-bold text-gray-800">6.25 د.أ</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="bg-white mt-12 border-t border-gray-100">
+<div class="container mx-auto px-4 py-8">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<a href="#" class="font-['Pacifico'] text-primary text-2xl">GO PRINT</a>
+<p class="text-gray-600 mt-4">منصة JO PRINT هي المنصة الرائدة في الأردن لتوفير ملخصات الكتب المدرسية والجامعية بجودة عالية وأسعار مناسبة.</p>
+</div>
+<div>
+<h4 class="font-medium text-gray-800 mb-4">روابط سريعة</h4>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-600 hover:text-primary">الرئيسية</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">خدماتنا</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">من نحن</a></li>
+<li><a href="#" class="text-gray-600 hover:text-primary">اتصل بنا</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-medium text-gray-800 mb-4">تواصل معنا</h4>
+<ul class="space-y-2">
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-map-pin-line"></i>
+</span>
+<span class="text-gray-600">عمان، الأردن - شارع الجامعة</span>
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-phone-line"></i>
+</span>
+<span class="text-gray-600">+962 79 123 4567</span>
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-mail-line"></i>
+</span>
+<span class="text-gray-600">info@joprint.jo</span>
+</li>
+</ul>
+<div class="mt-4 flex space-x-reverse space-x-3">
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-primary hover:text-white">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-primary hover:text-white">
+<i class="ri-instagram-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-primary hover:text-white">
+<i class="ri-twitter-x-line"></i>
+</a>
+<a href="#" class="w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 rounded-full hover:bg-primary hover:text-white">
+<i class="ri-whatsapp-line"></i>
+</a>
+</div>
+</div>
+<div>
+<h4 class="font-medium text-gray-800 mb-4">النشرة الإخبارية</h4>
+<p class="text-gray-600 mb-4">اشترك في نشرتنا الإخبارية للحصول على آخر العروض والتحديثات</p>
+<div class="flex">
+<input type="email" placeholder="البريد الإلكتروني" class="flex-1 px-4 py-2 rounded-r-lg border-none focus:outline-none focus:ring-2 focus:ring-primary/50">
+<button class="bg-primary text-white px-4 py-2 rounded-l-lg !rounded-button whitespace-nowrap">اشتراك</button>
+</div>
+<div class="mt-4">
+<h4 class="font-medium text-gray-800 mb-2">وسائل الدفع</h4>
+<div class="flex space-x-reverse space-x-3">
+<span class="w-8 h-8 flex items-center justify-center text-gray-600">
+<i class="ri-visa-fill text-xl"></i>
+</span>
+<span class="w-8 h-8 flex items-center justify-center text-gray-600">
+<i class="ri-mastercard-fill text-xl"></i>
+</span>
+<span class="w-8 h-8 flex items-center justify-center text-gray-600">
+<i class="ri-paypal-fill text-xl"></i>
+</span>
+<span class="w-8 h-8 flex items-center justify-center text-gray-600">
+<i class="ri-bank-card-fill text-xl"></i>
+</span>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-100 mt-8 pt-6 text-center">
+<p class="text-gray-600">© 2025 JO PRINT. جميع الحقوق محفوظة.</p>
+</div>
+</div>
+</footer>
+<script>
+function showToast(message) {
+const existingToast = document.querySelector('.toast');
+if (existingToast) {
+existingToast.remove();
+}
+const toast = document.createElement('div');
+toast.className = 'toast';
+toast.textContent = message;
+document.body.appendChild(toast);
+setTimeout(() => {
+toast.classList.add('show');
+}, 100);
+setTimeout(() => {
+toast.classList.remove('show');
+setTimeout(() => {
+toast.remove();
+}, 300);
+}, 3000);
+}
+function filterSummariesByPrice(maxPrice) {
+const summaryCards = document.querySelectorAll('.summary-card');
+summaryCards.forEach(card => {
+const priceText = card.querySelector('.font-bold.text-gray-800').textContent;
+const price = parseFloat(priceText.replace(' د.أ', ''));
+if (price <= maxPrice) {
+card.style.display = '';
+} else {
+card.style.display = 'none';
+}
+});
+}
+function updatePriceRangeUI(value) {
+const maxPriceSpans = document.querySelectorAll('.mt-2.text-sm.text-gray-700.text-center span');
+maxPriceSpans.forEach(span => {
+span.textContent = value + ' د.أ';
+});
+filterSummariesByPrice(value);
+}
+function resetFilters() {
+// Reset checkboxes
+const checkboxIds = [
+'elementary', 'middle', 'secondary',
+'math', 'science', 'arabic', 'english', 'social', 'islamic',
+'elementary-mobile', 'middle-mobile', 'secondary-mobile',
+'math-mobile', 'science-mobile', 'arabic-mobile', 'english-mobile', 'social-mobile', 'islamic-mobile',
+'rating5', 'rating4', 'rating3',
+'rating5-mobile', 'rating4-mobile', 'rating3-mobile'
+];
+checkboxIds.forEach(id => {
+const checkbox = document.getElementById(id);
+if (checkbox) {
+checkbox.checked = false;
+}
+});
+// Reset range inputs
+const rangeInputs = document.querySelectorAll('#price-range');
+rangeInputs.forEach(input => {
+input.value = 15;
+updatePriceRangeUI(15);
+});
+// Reset switches
+const switches = document.querySelectorAll('.switch input[type="checkbox"]');
+switches.forEach(switchInput => {
+switchInput.checked = false;
+});
+// Show all summaries
+const summaryCards = document.querySelectorAll('.summary-card');
+summaryCards.forEach(card => {
+card.style.display = '';
+});
+showToast('تم إعادة ضبط الفلترة بنجاح');
+}
+document.addEventListener('DOMContentLoaded', function() {
+const priceRangeInputs = document.querySelectorAll('#price-range');
+priceRangeInputs.forEach(input => {
+input.addEventListener('input', function() {
+updatePriceRangeUI(this.value);
+});
+});
+});
+document.addEventListener('DOMContentLoaded', function() {
+// View Switching
+const gridView = document.getElementById('grid-view');
+const listView = document.getElementById('list-view');
+const schoolSummariesContainer = document.getElementById('school-summaries');
+const universitySummariesContainer = document.getElementById('university-summaries');
+function switchToListView() {
+gridView.classList.remove('bg-primary', 'text-white');
+gridView.classList.add('bg-gray-100', 'text-gray-600');
+listView.classList.add('bg-primary', 'text-white');
+listView.classList.remove('bg-gray-100', 'text-gray-600');
+[schoolSummariesContainer, universitySummariesContainer].forEach(container => {
+container.classList.remove('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+container.classList.add('grid-cols-1');
+container.setAttribute('data-view', 'list');
+container.querySelectorAll('.summary-card').forEach(card => {
+card.classList.add('flex', 'flex-row');
+const imgContainer = card.querySelector('.relative');
+const contentContainer = card.querySelector('.p-4');
+imgContainer.classList.remove('w-full');
+imgContainer.classList.add('w-48', 'shrink-0');
+contentContainer.classList.add('flex-1', 'flex', 'flex-col', 'justify-between');
+const img = imgContainer.querySelector('img');
+img.classList.remove('h-40');
+img.classList.add('h-32');
+});
+});
+}
+function switchToGridView() {
+listView.classList.remove('bg-primary', 'text-white');
+listView.classList.add('bg-gray-100', 'text-gray-600');
+gridView.classList.add('bg-primary', 'text-white');
+gridView.classList.remove('bg-gray-100', 'text-gray-600');
+[schoolSummariesContainer, universitySummariesContainer].forEach(container => {
+container.classList.remove('grid-cols-1');
+container.classList.add('grid-cols-1', 'sm:grid-cols-2', 'lg:grid-cols-3', 'xl:grid-cols-4');
+container.setAttribute('data-view', 'grid');
+container.querySelectorAll('.summary-card').forEach(card => {
+card.classList.remove('flex', 'flex-row');
+const imgContainer = card.querySelector('.relative');
+const contentContainer = card.querySelector('.p-4');
+imgContainer.classList.remove('w-48', 'shrink-0');
+imgContainer.classList.add('w-full');
+contentContainer.classList.remove('flex-1', 'flex', 'flex-col', 'justify-between');
+const img = imgContainer.querySelector('img');
+img.classList.remove('h-32');
+img.classList.add('h-40');
+});
+});
+}
+gridView.addEventListener('click', switchToGridView);
+listView.addEventListener('click', switchToListView);
+// Tab Switching
+const schoolTab = document.getElementById('school-tab');
+const universityTab = document.getElementById('university-tab');
+const schoolSummaries = document.getElementById('school-summaries');
+const universitySummaries = document.getElementById('university-summaries');
+const schoolFilters = document.getElementById('school-filters');
+const schoolSubjects = document.getElementById('school-subjects');
+const universityFilters = document.getElementById('university-filters');
+const universitySubjects = document.getElementById('university-subjects');
+schoolTab.addEventListener('click', function() {
+schoolTab.classList.add('bg-primary', 'text-white');
+schoolTab.classList.remove('text-gray-700', 'hover:bg-gray-200');
+universityTab.classList.remove('bg-primary', 'text-white');
+universityTab.classList.add('text-gray-700', 'hover:bg-gray-200');
+schoolSummaries.classList.remove('hidden');
+universitySummaries.classList.add('hidden');
+schoolFilters.classList.remove('hidden');
+schoolSubjects.classList.remove('hidden');
+universityFilters.classList.add('hidden');
+universitySubjects.classList.add('hidden');
+});
+universityTab.addEventListener('click', function() {
+universityTab.classList.add('bg-primary', 'text-white');
+universityTab.classList.remove('text-gray-700', 'hover:bg-gray-200');
+schoolTab.classList.remove('bg-primary', 'text-white');
+schoolTab.classList.add('text-gray-700', 'hover:bg-gray-200');
+universitySummaries.classList.remove('hidden');
+schoolSummaries.classList.add('hidden');
+universityFilters.classList.remove('hidden');
+universitySubjects.classList.remove('hidden');
+schoolFilters.classList.add('hidden');
+schoolSubjects.classList.add('hidden');
+});
+});
+document.addEventListener('DOMContentLoaded', function() {
+// Reset Filters
+const resetButtons = document.querySelectorAll('#reset-filters, .text-primary.text-sm');
+resetButtons.forEach(button => {
+button.addEventListener('click', resetFilters);
+});
+// Switch Filters
+const switchFilters = document.querySelectorAll('.switch input[type="checkbox"]');
+switchFilters.forEach(switchInput => {
+const filterName = switchInput.closest('.flex').querySelector('.text-gray-600').textContent;
+switchInput.addEventListener('change', function() {
+const summaryCards = document.querySelectorAll('.summary-card');
+summaryCards.forEach(card => {
+// Add visual transition
+card.style.transition = 'opacity 0.3s ease';
+setTimeout(() => {
+if (this.checked) {
+// Apply filter effect (example: fade non-matching items)
+if (!card.dataset[this.id]) {
+card.classList.add('filtered');
+}
+showToast(`تم تفعيل فلترة: ${filterName}`);
+} else {
+card.classList.remove('filtered');
+showToast(`تم إلغاء فلترة: ${filterName}`);
+}
+}, 50);
+});
+// Add subtle flash effect to the list
+const summariesContainer = document.querySelector('.grid.grid-cols-1.sm\\:grid-cols-2.lg\\:grid-cols-3.xl\\:grid-cols-4.gap-4');
+summariesContainer.style.transition = 'transform 0.2s ease';
+summariesContainer.style.transform = 'scale(0.99)';
+setTimeout(() => {
+summariesContainer.style.transform = 'scale(1)';
+}, 200);
+});
+});
+// Mobile Filter Sheet
+const mobileFilterButton = document.getElementById('mobile-filter-button');
+const filterSheet = document.getElementById('filter-sheet');
+const closeFilterSheet = document.getElementById('close-filter-sheet');
+mobileFilterButton.addEventListener('click', function() {
+filterSheet.classList.add('active');
+document.body.style.overflow = 'hidden';
+});
+closeFilterSheet.addEventListener('click', function() {
+filterSheet.classList.remove('active');
+document.body.style.overflow = '';
+});
+});
+document.addEventListener('DOMContentLoaded', function() {
+const paymentModal = document.getElementById('payment-modal');
+// Print functionality
+document.querySelectorAll('.ri-printer-line').forEach(printButton => {
+printButton.parentElement.addEventListener('click', function(e) {
+e.stopPropagation();
+paymentModal.classList.add('active');
+document.body.style.overflow = 'hidden';
+});
+});
+// Download functionality
+document.querySelectorAll('.ri-download-line').forEach(downloadButton => {
+downloadButton.parentElement.addEventListener('click', function(e) {
+e.stopPropagation();
+paymentModal.classList.add('active');
+document.body.style.overflow = 'hidden';
+});
+});
+// Close payment modal
+document.querySelectorAll('.close-payment-modal').forEach(button => {
+button.addEventListener('click', function() {
+paymentModal.classList.remove('active');
+document.body.style.overflow = '';
+});
+});
+// Summary Modal
+const summaryCards = document.querySelectorAll('.summary-card');
+const summaryModal = document.getElementById('summary-modal');
+const closeModal = document.getElementById('close-modal');
+const modalOverlay = document.getElementById('modal-overlay');
+summaryCards.forEach(card => {
+card.addEventListener('click', function() {
+summaryModal.classList.add('active');
+document.body.style.overflow = 'hidden';
+});
+});
+closeModal.addEventListener('click', function() {
+summaryModal.classList.remove('active');
+document.body.style.overflow = '';
+});
+modalOverlay.addEventListener('click', function() {
+summaryModal.classList.remove('active');
+document.body.style.overflow = '';
+});
+});
+document.addEventListener('DOMContentLoaded', function() {
+// Language Toggle
+const languageToggle = document.getElementById('language-toggle');
+languageToggle.addEventListener('click', function() {
+const html = document.documentElement;
+const currentDir = html.getAttribute('dir');
+if (currentDir === 'rtl') {
+html.setAttribute('dir', 'ltr');
+html.setAttribute('lang', 'en');
+languageToggle.innerHTML = '<span class="w-6 h-6 flex items-center justify-center"><i class="ri-global-line"></i></span><span class="ml-1 text-sm">العربية</span>';
+} else {
+html.setAttribute('dir', 'rtl');
+html.setAttribute('lang', 'ar');
+languageToggle.innerHTML = '<span class="w-6 h-6 flex items-center justify-center"><i class="ri-global-line"></i></span><span class="mr-1 text-sm">English</span>';
+}
+});
+});
+</script>
+</body>
+</html>

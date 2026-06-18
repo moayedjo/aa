@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jo Print | جو برنت</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1976D2',secondary:'#64B5F6'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.ltr {
+direction: ltr;
+font-family: 'Poppins', sans-serif;
+}
+.custom-checkbox {
+appearance: none;
+width: 1.25rem;
+height: 1.25rem;
+border: 2px solid #cbd5e1;
+border-radius: 4px;
+position: relative;
+cursor: pointer;
+transition: all 0.2s;
+}
+.custom-checkbox:checked {
+background-color: #1976D2;
+border-color: #1976D2;
+}
+.custom-checkbox:checked::after {
+content: '';
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%) rotate(45deg);
+width: 0.3rem;
+height: 0.6rem;
+border-bottom: 2px solid white;
+border-right: 2px solid white;
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 3rem;
+height: 1.5rem;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #e2e8f0;
+transition: .4s;
+border-radius: 34px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 1.1rem;
+width: 1.1rem;
+right: 0.2rem;
+bottom: 0.2rem;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #1976D2;
+}
+input:checked + .switch-slider:before {
+transform: translateX(-1.5rem);
+}
+.custom-range {
+-webkit-appearance: none;
+width: 100%;
+height: 6px;
+background: #e2e8f0;
+border-radius: 5px;
+outline: none;
+}
+.custom-range::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+background: #1976D2;
+border-radius: 50%;
+cursor: pointer;
+}
+.custom-range::-moz-range-thumb {
+width: 18px;
+height: 18px;
+background: #1976D2;
+border-radius: 50%;
+cursor: pointer;
+border: none;
+}
+.hero-section {
+background-image: linear-gradient(to left, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.9)), url('https://readdy.ai/api/search-image?query=modern%2520university%2520campus%2520with%2520students%2520studying%2520in%2520a%2520bright%2520environment%2520with%2520bookshelves%2520and%2520computers%252C%2520Arabic%2520atmosphere%252C%2520clean%2520design%252C%2520soft%2520lighting%252C%2520blue%2520accents&width=1600&height=800&seq=1&orientation=landscape');
+background-size: cover;
+background-position: center;
+}
+.search-input:focus {
+outline: none;
+}
+.card-hover:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+.language-switch {
+transition: transform 0.3s ease;
+}
+.language-switch.active {
+transform: translateX(24px);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Header -->
+<header class="sticky top-0 z-50 bg-white shadow-sm">
+<div class="container mx-auto px-4 py-3 flex items-center justify-between">
+<!-- Logo -->
+<div class="font-['Pacifico'] text-2xl text-primary">Jo Print</div>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex items-center space-x-1 space-x-reverse">
+<a href="#" class="px-3 py-2 font-medium text-primary">الرئيسية</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700 hover:text-primary">خدمات الطباعة</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700 hover:text-primary">ملخصات الكتب</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700 hover:text-primary">المعلمون</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700 hover:text-primary">مكاتب الطباعة</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700 hover:text-primary">حسابي</a>
+</nav>
+<!-- Right Side Actions -->
+<div class="flex items-center space-x-4 space-x-reverse">
+<!-- Search -->
+<div class="relative hidden md:block">
+<input type="text" placeholder="ابحث هنا..." class="search-input w-64 py-2 pr-10 pl-4 border border-gray-200 rounded-full text-sm focus:border-primary">
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<div class="w-5 h-5 flex items-center justify-center text-gray-500">
+<i class="ri-search-line"></i>
+</div>
+</div>
+</div>
+<!-- Language Switcher -->
+<div class="flex items-center bg-gray-100 rounded-full p-1">
+<button id="ar-btn" class="px-3 py-1 rounded-full bg-primary text-white text-sm">العربية</button>
+<button id="en-btn" class="px-3 py-1 rounded-full text-gray-700 text-sm">English</button>
+</div>
+<!-- Cart -->
+<div class="relative w-10 h-10 flex items-center justify-center">
+<i class="ri-shopping-cart-line text-xl text-gray-700"></i>
+<span class="absolute -top-1 -left-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+</div>
+<!-- User -->
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-user-line text-xl text-gray-700"></i>
+</div>
+<!-- Mobile Menu Button -->
+<button id="mobile-menu-button" class="md:hidden w-10 h-10 flex items-center justify-center">
+<i class="ri-menu-line text-xl text-gray-700"></i>
+</button>
+</div>
+</div>
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-200 py-2">
+<div class="container mx-auto px-4">
+<!-- Mobile Search -->
+<div class="relative mb-3">
+<input type="text" placeholder="ابحث هنا..." class="search-input w-full py-2 pr-10 pl-4 border border-gray-200 rounded-full text-sm">
+<div class="absolute inset-y-0 right-0 pr-3 flex items-center">
+<div class="w-5 h-5 flex items-center justify-center text-gray-500">
+<i class="ri-search-line"></i>
+</div>
+</div>
+</div>
+<!-- Mobile Navigation -->
+<nav class="flex flex-col space-y-2">
+<a href="#" class="px-3 py-2 font-medium text-primary">الرئيسية</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700">خدمات الطباعة</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700">ملخصات الكتب</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700">المعلمون</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700">مكاتب الطباعة</a>
+<a href="#" class="px-3 py-2 font-medium text-gray-700">حسابي</a>
+</nav>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="hero-section py-16 md:py-24">
+<div class="container mx-auto px-4">
+<div class="max-w-2xl">
+<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">خدمات طباعة رقمية احترافية في الأردن</h1>
+<p class="text-lg text-gray-700 mb-8">نقدم لك مجموعة متكاملة من خدمات الطباعة الرقمية عالية الجودة، من طباعة المستندات إلى التصميم والطباعة الإعلانية بأحدث التقنيات.</p>
+<div class="flex flex-wrap gap-4">
+<button class="bg-primary hover:bg-blue-700 text-white px-6 py-3 rounded-button flex items-center !whitespace-nowrap">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-upload-2-line"></i>
+</div>
+ارفع ملفك
+</button>
+<button class="bg-white hover:bg-gray-100 text-primary border border-primary px-6 py-3 rounded-button flex items-center !whitespace-nowrap">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-map-pin-time-line"></i>
+</div>
+تتبع طلبك
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Services Section -->
+<section class="py-12 bg-white">
+<div class="container mx-auto px-4">
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-12">خدماتنا الرئيسية</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Print & Deliver Card -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-48 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=modern%2520printing%2520service%2520with%2520high-quality%2520printers%2520and%2520papers%252C%2520clean%2520workspace%252C%2520professional%2520environment%252C%2520blue%2520color%2520scheme%252C%2520university%2520setting&width=600&height=400&seq=2&orientation=landscape" alt="خدمات الطباعة" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-3 text-gray-900">طباعة وتوصيل</h3>
+<p class="text-gray-600 mb-4">اطبع ملفاتك واستلمها في مكانك أو قم بتوصيلها إلى أي مكان تريده بسرعة وسهولة.</p>
+<button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-button !whitespace-nowrap">اطبع الآن</button>
+</div>
+</div>
+<!-- Book Summaries Card -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-48 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=book%2520summaries%2520and%2520study%2520materials%252C%2520organized%2520notes%252C%2520highlighted%2520texts%252C%2520academic%2520environment%252C%2520clean%2520workspace%252C%2520blue%2520color%2520scheme&width=600&height=400&seq=3&orientation=landscape" alt="ملخصات الكتب" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-3 text-gray-900">ملخصات الكتب</h3>
+<p class="text-gray-600 mb-4">احصل على ملخصات دقيقة وشاملة للكتب والمراجع الدراسية لتوفير وقتك وجهدك.</p>
+<button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-button !whitespace-nowrap">استعرض الملخصات</button>
+</div>
+</div>
+<!-- Tutors Card -->
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-48 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=professional%2520tutors%2520teaching%2520students%252C%2520one-on-one%2520tutoring%252C%2520academic%2520setting%252C%2520middle%2520eastern%2520students%2520and%2520teachers%252C%2520clean%2520workspace%252C%2520blue%2520color%2520scheme&width=600&height=400&seq=4&orientation=landscape" alt="المعلمون" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-3 text-gray-900">المعلمون</h3>
+<p class="text-gray-600 mb-4">تواصل مع معلمين محترفين في مختلف المجالات للحصول على دروس خصوصية عالية الجودة.</p>
+<button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-button !whitespace-nowrap">ابحث عن معلم</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Printing Offices Section -->
+<section class="py-12 bg-gray-50">
+<div class="container mx-auto px-4">
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-6">مكاتب الطباعة القريبة منك</h2>
+<p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">اختر من بين مجموعة واسعة من مكاتب الطباعة المنتشرة في مختلف المناطق للحصول على خدمة سريعة وموثوقة.</p>
+<div class="bg-white rounded-lg shadow-md overflow-hidden">
+<div class="h-96 relative">
+<div class="absolute top-4 right-4 z-10 bg-white rounded-lg shadow-md p-4 w-80">
+<h3 class="text-lg font-bold mb-3">ابحث عن مكتب طباعة</h3>
+<div class="mb-4">
+<label class="block text-gray-700 text-sm font-medium mb-2">المدينة</label>
+<div class="relative">
+<select class="w-full border border-gray-300 rounded-md py-2 pr-4 pl-10 appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+<option>الرياض</option>
+<option>جدة</option>
+<option>الدمام</option>
+<option>مكة</option>
+<option>المدينة</option>
+</select>
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<div class="w-5 h-5 flex items-center justify-center text-gray-500">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-gray-700 text-sm font-medium mb-2">الحي</label>
+<div class="relative">
+<select class="w-full border border-gray-300 rounded-md py-2 pr-4 pl-10 appearance-none focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+<option>العليا</option>
+<option>النخيل</option>
+<option>الملز</option>
+<option>السليمانية</option>
+<option>الروضة</option>
+</select>
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<div class="w-5 h-5 flex items-center justify-center text-gray-500">
+<i class="ri-arrow-down-s-line"></i>
+</div>
+</div>
+</div>
+</div>
+<button class="w-full bg-primary hover:bg-blue-700 text-white py-2 rounded-button !whitespace-nowrap">ابحث</button>
+</div>
+<div style="background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png'); background-size: cover; background-position: center;" class="w-full h-full"></div>
+</div>
+<div class="p-6">
+<h3 class="text-xl font-bold mb-4">مكاتب الطباعة المميزة</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-bold mb-2">مكتب النخبة للطباعة</h4>
+<div class="flex items-center text-yellow-500 mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-half-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(4.5)</span>
+</div>
+<p class="text-gray-600 text-sm mb-2">الرياض، حي العليا، شارع التحلية</p>
+<p class="text-gray-600 text-sm mb-3">يفتح: 8:00 ص - 10:00 م</p>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-bold mb-2">مركز الطالب للطباعة</h4>
+<div class="flex items-center text-yellow-500 mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-line"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(4.0)</span>
+</div>
+<p class="text-gray-600 text-sm mb-2">الرياض، حي النخيل، طريق الملك فهد</p>
+<p class="text-gray-600 text-sm mb-3">يفتح: 9:00 ص - 11:00 م</p>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+<div class="border border-gray-200 rounded-lg p-4">
+<h4 class="font-bold mb-2">الطباعة السريعة</h4>
+<div class="flex items-center text-yellow-500 mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(5.0)</span>
+</div>
+<p class="text-gray-600 text-sm mb-2">الرياض، حي السليمانية، شارع الأمير سلطان</p>
+<p class="text-gray-600 text-sm mb-3">يفتح: 7:00 ص - 12:00 م</p>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Book Summaries Section -->
+<section class="py-12 bg-white">
+<div class="container mx-auto px-4">
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-6">ملخصات الكتب المميزة</h2>
+<p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">وفر وقتك واحصل على ملخصات دقيقة وشاملة للكتب والمراجع الدراسية المهمة.</p>
+<div class="relative">
+<!-- Carousel Controls -->
+<div class="absolute -left-4 top-1/2 transform -translate-y-1/2 z-10">
+<button class="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 hover:text-primary">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-arrow-left-s-line"></i>
+</div>
+</button>
+</div>
+<div class="absolute -right-4 top-1/2 transform -translate-y-1/2 z-10">
+<button class="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 hover:text-primary">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</button>
+</div>
+<!-- Carousel Items -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-40 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=academic%2520book%2520about%2520economics%2520with%2520professional%2520cover%252C%2520blue%2520color%2520scheme%252C%2520clean%2520design%252C%2520university%2520textbook&width=400&height=300&seq=5&orientation=landscape" alt="كتاب الاقتصاد الكلي" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-4">
+<h3 class="font-bold mb-2">مبادئ الاقتصاد الكلي</h3>
+<p class="text-sm text-gray-600 mb-3">ملخص شامل لأهم نظريات الاقتصاد الكلي والسياسات النقدية والمالية.</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">25 ريال</span>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-40 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=academic%2520book%2520about%2520computer%2520science%2520with%2520professional%2520cover%252C%2520programming%2520concepts%252C%2520blue%2520color%2520scheme%252C%2520clean%2520design%252C%2520university%2520textbook&width=400&height=300&seq=6&orientation=landscape" alt="كتاب البرمجة" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-4">
+<h3 class="font-bold mb-2">أساسيات علوم الحاسب</h3>
+<p class="text-sm text-gray-600 mb-3">ملخص لمفاهيم البرمجة وهياكل البيانات والخوارزميات الأساسية.</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">30 ريال</span>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-40 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=academic%2520book%2520about%2520biology%2520with%2520professional%2520cover%252C%2520cell%2520structures%252C%2520blue%2520color%2520scheme%252C%2520clean%2520design%252C%2520university%2520textbook&width=400&height=300&seq=7&orientation=landscape" alt="كتاب الأحياء" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-4">
+<h3 class="font-bold mb-2">علم الأحياء الجزيئي</h3>
+<p class="text-sm text-gray-600 mb-3">ملخص للمفاهيم الأساسية في علم الأحياء الجزيئي والخلايا.</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">20 ريال</span>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="h-40 overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=academic%2520book%2520about%2520psychology%2520with%2520professional%2520cover%252C%2520human%2520mind%2520concepts%252C%2520blue%2520color%2520scheme%252C%2520clean%2520design%252C%2520university%2520textbook&width=400&height=300&seq=8&orientation=landscape" alt="كتاب علم النفس" class="w-full h-full object-cover object-top">
+</div>
+<div class="p-4">
+<h3 class="font-bold mb-2">مدخل إلى علم النفس</h3>
+<p class="text-sm text-gray-600 mb-3">ملخص للنظريات الأساسية في علم النفس والسلوك البشري.</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">22 ريال</span>
+<button class="text-primary hover:text-blue-700 text-sm font-medium !whitespace-nowrap">عرض التفاصيل</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="text-center mt-10">
+<button class="bg-white hover:bg-gray-100 text-primary border border-primary px-6 py-3 rounded-button !whitespace-nowrap">عرض جميع الملخصات</button>
+</div>
+</div>
+</section>
+<!-- Tutors Section -->
+<section class="py-12 bg-gray-50">
+<div class="container mx-auto px-4">
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-6">معلمون متميزون</h2>
+<p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">تواصل مع نخبة من المعلمين المتخصصين في مختلف المجالات للحصول على دروس خصوصية عالية الجودة.</p>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="p-6">
+<div class="flex items-center mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden ml-4">
+<img src="https://readdy.ai/api/search-image?query=professional%2520middle%2520eastern%2520male%2520teacher%2520portrait%252C%2520academic%2520setting%252C%2520clean%2520background%252C%2520professional%2520attire&width=200&height=200&seq=9&orientation=squarish" alt="د. أحمد محمد" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h3 class="font-bold text-lg">د. أحمد محمد</h3>
+<p class="text-gray-600">أستاذ الرياضيات</p>
+</div>
+</div>
+<div class="flex items-center text-yellow-500 mb-3">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-half-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(4.5)</span>
+</div>
+<p class="text-gray-600 text-sm mb-4">متخصص في الرياضيات المتقدمة والتحليل الرياضي، خبرة 10 سنوات في التدريس الجامعي.</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">الجبر الخطي</span>
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">التفاضل والتكامل</span>
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">الإحصاء</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">150 ريال / ساعة</span>
+<button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-button !whitespace-nowrap">حجز موعد</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="p-6">
+<div class="flex items-center mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden ml-4">
+<img src="https://readdy.ai/api/search-image?query=professional%2520middle%2520eastern%2520female%2520teacher%2520portrait%252C%2520academic%2520setting%252C%2520clean%2520background%252C%2520professional%2520attire%252C%2520hijab&width=200&height=200&seq=10&orientation=squarish" alt="د. سارة العلي" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h3 class="font-bold text-lg">د. سارة العلي</h3>
+<p class="text-gray-600">أستاذة اللغة الإنجليزية</p>
+</div>
+</div>
+<div class="flex items-center text-yellow-500 mb-3">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(5.0)</span>
+</div>
+<p class="text-gray-600 text-sm mb-4">متخصصة في تدريس اللغة الإنجليزية للمستويات المتقدمة والتحضير لاختبارات IELTS و TOEFL.</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">المحادثة</span>
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">الكتابة الأكاديمية</span>
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">IELTS</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">180 ريال / ساعة</span>
+<button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-button !whitespace-nowrap">حجز موعد</button>
+</div>
+</div>
+</div>
+<div class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
+<div class="p-6">
+<div class="flex items-center mb-4">
+<div class="w-16 h-16 rounded-full overflow-hidden ml-4">
+<img src="https://readdy.ai/api/search-image?query=professional%2520middle%2520eastern%2520male%2520teacher%2520portrait%252C%2520academic%2520setting%252C%2520clean%2520background%252C%2520professional%2520attire%252C%2520glasses&width=200&height=200&seq=11&orientation=squarish" alt="د. خالد العمري" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h3 class="font-bold text-lg">د. خالد العمري</h3>
+<p class="text-gray-600">أستاذ الفيزياء</p>
+</div>
+</div>
+<div class="flex items-center text-yellow-500 mb-3">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-line"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(4.0)</span>
+</div>
+<p class="text-gray-600 text-sm mb-4">متخصص في الفيزياء النظرية والتطبيقية، خبرة 8 سنوات في تدريس المقررات الجامعية.</p>
+<div class="flex flex-wrap gap-2 mb-4">
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">الميكانيكا</span>
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">الكهرومغناطيسية</span>
+<span class="bg-blue-100 text-primary text-xs py-1 px-2 rounded-full">الفيزياء الحديثة</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="font-bold text-primary">160 ريال / ساعة</span>
+<button class="bg-primary hover:bg-blue-700 text-white px-4 py-2 rounded-button !whitespace-nowrap">حجز موعد</button>
+</div>
+</div>
+</div>
+</div>
+<div class="text-center mt-10">
+<button class="bg-white hover:bg-gray-100 text-primary border border-primary px-6 py-3 rounded-button !whitespace-nowrap">عرض جميع المعلمين</button>
+</div>
+</div>
+</section>
+<!-- Statistics Section -->
+<section class="py-12 bg-white">
+<div class="container mx-auto px-4">
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-12">إحصائيات خدماتنا</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-white rounded-lg shadow-md p-6">
+<h3 class="text-xl font-bold mb-4">توزيع الخدمات</h3>
+<div id="services-chart" class="h-80"></div>
+</div>
+<div class="bg-white rounded-lg shadow-md p-6">
+<h3 class="text-xl font-bold mb-4">رضا العملاء</h3>
+<div id="satisfaction-chart" class="h-80"></div>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonials Section -->
+<section class="py-12 bg-gray-50">
+<div class="container mx-auto px-4">
+<h2 class="text-2xl md:text-3xl font-bold text-center mb-6">آراء عملائنا</h2>
+<p class="text-center text-gray-600 mb-12 max-w-2xl mx-auto">استمع إلى تجارب عملائنا الحقيقية مع خدماتنا المختلفة.</p>
+<div class="relative">
+<!-- Carousel Controls -->
+<div class="absolute -left-4 top-1/2 transform -translate-y-1/2 z-10">
+<button class="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 hover:text-primary">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-arrow-left-s-line"></i>
+</div>
+</button>
+</div>
+<div class="absolute -right-4 top-1/2 transform -translate-y-1/2 z-10">
+<button class="w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-gray-700 hover:text-primary">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-arrow-right-s-line"></i>
+</div>
+</button>
+</div>
+<!-- Carousel Items -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white rounded-lg shadow-md p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 rounded-full overflow-hidden ml-3">
+<img src="https://readdy.ai/api/search-image?query=middle%2520eastern%2520male%2520student%2520portrait%252C%2520university%2520setting%252C%2520clean%2520background&width=100&height=100&seq=12&orientation=squarish" alt="محمد العبدالله" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h3 class="font-bold">محمد العبدالله</h3>
+<p class="text-gray-600 text-sm">طالب هندسة</p>
+</div>
+</div>
+<div class="flex items-center text-yellow-500 mb-3">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+</div>
+<p class="text-gray-600 text-sm">"خدمة الطباعة والتوصيل كانت ممتازة جدًا. تم توصيل المستندات في الوقت المحدد وبجودة عالية. سأستخدم الخدمة مرة أخرى بالتأكيد."</p>
+</div>
+<div class="bg-white rounded-lg shadow-md p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 rounded-full overflow-hidden ml-3">
+<img src="https://readdy.ai/api/search-image?query=middle%2520eastern%2520female%2520student%2520portrait%252C%2520university%2520setting%252C%2520clean%2520background%252C%2520hijab&width=100&height=100&seq=13&orientation=squarish" alt="نورة السالم" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h3 class="font-bold">نورة السالم</h3>
+<p class="text-gray-600 text-sm">طالبة طب</p>
+</div>
+</div>
+<div class="flex items-center text-yellow-500 mb-3">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-half-fill"></i>
+</div>
+</div>
+<p class="text-gray-600 text-sm">"ملخصات الكتب ساعدتني كثيرًا في دراستي. المعلومات منظمة بشكل جيد وسهلة الفهم. أنصح بها لجميع الطلاب الذين يبحثون عن توفير الوقت."</p>
+</div>
+<div class="bg-white rounded-lg shadow-md p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 rounded-full overflow-hidden ml-3">
+<img src="https://readdy.ai/api/search-image?query=middle%2520eastern%2520male%2520student%2520portrait%252C%2520university%2520setting%252C%2520clean%2520background%252C%2520glasses&width=100&height=100&seq=14&orientation=squarish" alt="فهد الناصر" class="w-full h-full object-cover object-top">
+</div>
+<div>
+<h3 class="font-bold">فهد الناصر</h3>
+<p class="text-gray-600 text-sm">طالب إدارة أعمال</p>
+</div>
+</div>
+<div class="flex items-center text-yellow-500 mb-3">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-fill"></i>
+</div>
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-star-line"></i>
+</div>
+</div>
+<p class="text-gray-600 text-sm">"تجربتي مع المعلمين كانت رائعة. الدكتور أحمد ساعدني كثيرًا في فهم المفاهيم الصعبة في الرياضيات المالية. أسلوبه في الشرح ممتاز."</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Newsletter Section -->
+<section class="py-12 bg-primary">
+<div class="container mx-auto px-4">
+<div class="max-w-2xl mx-auto text-center">
+<h2 class="text-2xl md:text-3xl font-bold text-white mb-4">اشترك في نشرتنا الإخبارية</h2>
+<p class="text-white opacity-90 mb-8">احصل على آخر العروض والخدمات الجديدة مباشرة إلى بريدك الإلكتروني.</p>
+<div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+<input type="email" placeholder="أدخل بريدك الإلكتروني" class="flex-1 py-3 px-4 rounded-button border-none text-sm">
+<button class="bg-white hover:bg-gray-100 text-primary font-medium py-3 px-6 rounded-button !whitespace-nowrap">اشترك الآن</button>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-gray-900 text-white py-12">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<div class="font-['Pacifico'] text-2xl text-white mb-4">Jo Print</div>
+<p class="text-gray-400 mb-6">منصة متكاملة لخدمات الطباعة الرقمية والتصميم في الأردن، نقدم خدمات طباعية احترافية بجودة عالية.</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-facebook-fill"></i>
+</div>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-twitter-x-fill"></i>
+</div>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-instagram-fill"></i>
+</div>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center hover:bg-primary transition-colors">
+<div class="w-5 h-5 flex items-center justify-center">
+<i class="ri-linkedin-fill"></i>
+</div>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">المعلمون</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">مكاتب الطباعة</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">الدعم</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white">الأسئلة الشائعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">سياسة الخصوصية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">شروط الاستخدام</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">سياسة الإرجاع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white">اتصل بنا</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">معلومات الاتصال</h3>
+<ul class="space-y-2">
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="text-gray-400">عمان، المملكة الأردنية الهاشمية</span>
+</li>
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-phone-line"></i>
+</div>
+<span class="text-gray-400">+962 6 234 5678</span>
+</li>
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center ml-2 text-primary">
+<i class="ri-mail-line"></i>
+</div>
+<span class="text-gray-400">info@joprint.jo</span>
+</li>
+</ul>
+<h3 class="text-lg font-bold mt-6 mb-4">وسائل الدفع</h3>
+<div class="flex space-x-3 space-x-reverse">
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<div class="w-6 h-6 flex items-center justify-center text-blue-800">
+<i class="ri-visa-fill"></i>
+</div>
+</div>
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<div class="w-6 h-6 flex items-center justify-center text-red-600">
+<i class="ri-mastercard-fill"></i>
+</div>
+</div>
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<div class="w-6 h-6 flex items-center justify-center text-blue-500">
+<i class="ri-paypal-fill"></i>
+</div>
+</div>
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<div class="w-6 h-6 flex items-center justify-center text-green-600">
+<i class="ri-bank-card-fill"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-800 mt-10 pt-6 text-center">
+<p class="text-gray-400">© 2025 جو برنت. جميع الحقوق محفوظة.</p>
+</div>
+</div>
+</footer>
+<!-- Mobile FAB -->
+<div class="fixed bottom-6 left-6 md:hidden z-30">
+<button class="w-14 h-14 bg-primary rounded-full shadow-lg flex items-center justify-center text-white">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-customer-service-2-line"></i>
+</div>
+</button>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Mobile Menu Toggle
+const mobileMenuButton = document.getElementById('mobile-menu-button');
+const mobileMenu = document.getElementById('mobile-menu');
+mobileMenuButton.addEventListener('click', function() {
+mobileMenu.classList.toggle('hidden');
+});
+// Language Switcher
+const arBtn = document.getElementById('ar-btn');
+const enBtn = document.getElementById('en-btn');
+arBtn.addEventListener('click', function() {
+document.documentElement.setAttribute('dir', 'rtl');
+document.documentElement.setAttribute('lang', 'ar');
+arBtn.classList.add('bg-primary', 'text-white');
+arBtn.classList.remove('text-gray-700');
+enBtn.classList.remove('bg-primary', 'text-white');
+enBtn.classList.add('text-gray-700');
+});
+enBtn.addEventListener('click', function() {
+document.documentElement.setAttribute('dir', 'ltr');
+document.documentElement.setAttribute('lang', 'en');
+enBtn.classList.add('bg-primary', 'text-white');
+enBtn.classList.remove('text-gray-700');
+arBtn.classList.remove('bg-primary', 'text-white');
+arBtn.classList.add('text-gray-700');
+});
+});
+document.addEventListener('DOMContentLoaded', function() {
+// Services Chart
+const servicesChart = echarts.init(document.getElementById('services-chart'));
+const servicesOption = {
+animation: false,
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+top: 'bottom',
+left: 'center',
+textStyle: {
+color: '#1f2937'
+}
+},
+series: [
+{
+name: 'الخدمات',
+type: 'pie',
+radius: ['40%', '70%'],
+avoidLabelOverlap: false,
+itemStyle: {
+borderRadius: 10,
+borderColor: '#fff',
+borderWidth: 2
+},
+label: {
+show: false,
+position: 'center'
+},
+emphasis: {
+label: {
+show: true,
+fontSize: 16,
+fontWeight: 'bold'
+}
+},
+labelLine: {
+show: false
+},
+data: [
+{ value: 45, name: 'خدمات الطباعة', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+{ value: 30, name: 'ملخصات الكتب', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+{ value: 20, name: 'المعلمون', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+{ value: 5, name: 'خدمات أخرى', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
+]
+}
+]
+};
+servicesChart.setOption(servicesOption);
+// Satisfaction Chart
+const satisfactionChart = echarts.init(document.getElementById('satisfaction-chart'));
+const satisfactionOption = {
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+top: 10,
+right: 10,
+bottom: 60,
+left: 60
+},
+xAxis: {
+type: 'category',
+data: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو'],
+axisLine: {
+lineStyle: {
+color: '#1f2937'
+}
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#1f2937'
+}
+},
+min: 3,
+max: 5
+},
+series: [
+{
+name: 'خدمات الطباعة',
+type: 'line',
+smooth: true,
+data: [4.2, 4.3, 4.5, 4.4, 4.6, 4.7],
+lineStyle: {
+color: 'rgba(87, 181, 231, 1)'
+},
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(87, 181, 231, 0.2)'
+}, {
+offset: 1, color: 'rgba(87, 181, 231, 0.05)'
+}]
+}
+}
+},
+{
+name: 'ملخصات الكتب',
+type: 'line',
+smooth: true,
+data: [4.0, 4.1, 4.2, 4.4, 4.5, 4.6],
+lineStyle: {
+color: 'rgba(141, 211, 199, 1)'
+},
+itemStyle: {
+color: 'rgba(141, 211, 199, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(141, 211, 199, 0.2)'
+}, {
+offset: 1, color: 'rgba(141, 211, 199, 0.05)'
+}]
+}
+}
+},
+{
+name: 'المعلمون',
+type: 'line',
+smooth: true,
+data: [4.3, 4.4, 4.3, 4.5, 4.7, 4.8],
+lineStyle: {
+color: 'rgba(251, 191, 114, 1)'
+},
+itemStyle: {
+color: 'rgba(251, 191, 114, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0, color: 'rgba(251, 191, 114, 0.2)'
+}, {
+offset: 1, color: 'rgba(251, 191, 114, 0.05)'
+}]
+}
+}
+}
+]
+};
+satisfactionChart.setOption(satisfactionOption);
+// Resize charts when window resizes
+window.addEventListener('resize', function() {
+servicesChart.resize();
+satisfactionChart.resize();
+});
+});
+</script>
+</body>
+</html>

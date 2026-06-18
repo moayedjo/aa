@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JO PRINT - الدفع وتأكيد الطلب</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0078D4',secondary:'#50C8FF'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+  font-family: 'Tajawal', sans-serif;
+}
+.ltr {
+  direction: ltr;
+}
+.rtl {
+  direction: rtl;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.custom-radio {
+  display: flex;
+  align-items: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+.custom-radio input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+.radio-mark {
+  height: 20px;
+  width: 20px;
+  background-color: #fff;
+  border: 2px solid #ddd;
+  border-radius: 50%;
+  margin-left: 8px;
+  position: relative;
+}
+.custom-radio:hover input ~ .radio-mark {
+  border-color: #ccc;
+}
+.custom-radio input:checked ~ .radio-mark {
+  border-color: #0078D4;
+}
+.radio-mark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0078D4;
+}
+.custom-radio input:checked ~ .radio-mark:after {
+  display: block;
+}
+.progress-steps {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+.progress-steps::before {
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #e2e8f0;
+  z-index: 0;
+}
+.progress-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.step-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.step-number.active {
+  background-color: #0078D4;
+  border-color: #0078D4;
+  color: white;
+}
+.step-number.completed {
+  background-color: #0078D4;
+  border-color: #0078D4;
+  color: white;
+}
+.step-title {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+.step-title.active {
+  color: #0078D4;
+  font-weight: 600;
+}
+.custom-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+.custom-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #e2e8f0;
+  transition: .4s;
+  border-radius: 24px;
+}
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  right: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+input:checked + .switch-slider {
+  background-color: #0078D4;
+}
+input:checked + .switch-slider:before {
+  transform: translateX(-24px);
+}
+.payment-card {
+  transition: all 0.3s ease;
+}
+.payment-card.selected {
+  border-color: #0078D4;
+  background-color: rgba(0, 120, 212, 0.05);
+}
+.card-input {
+  transition: all 0.3s ease;
+}
+.card-input:focus {
+  border-color: #0078D4;
+  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+}
+.card-number-input {
+  letter-spacing: 1px;
+}
+.success-checkmark {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  position: relative;
+}
+.success-checkmark .check-icon {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  border-radius: 50%;
+  box-sizing: content-box;
+  border: 4px solid #0078D4;
+}
+.success-checkmark .check-icon::before {
+  top: 48px;
+  left: 26px;
+  transform: rotate(45deg);
+  position: absolute;
+  content: "";
+  width: 4px;
+  height: 24px;
+  background-color: #0078D4;
+}
+.success-checkmark .check-icon::after {
+  top: 42px;
+  left: 14px;
+  transform: rotate(135deg);
+  position: absolute;
+  content: "";
+  width: 4px;
+  height: 16px;
+  background-color: #0078D4;
+}
+.order-collapse-btn {
+  transition: transform 0.3s ease;
+}
+.order-collapse-btn.collapsed {
+  transform: rotate(180deg);
+}
+</style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+<!-- Header -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 py-3">
+    <div class="flex items-center justify-between">
+      <!-- Logo -->
+      <a href="#" class="font-['Pacifico'] text-2xl text-primary">JO PRINT</a>
+      
+      <!-- Progress Steps -->
+      <div class="hidden md:block flex-1 max-w-xl mx-auto px-4">
+        <div class="progress-steps">
+          <div class="progress-step">
+            <div class="step-number completed">
+              <div class="w-4 h-4 flex items-center justify-center text-white">
+                <i class="ri-check-line"></i>
+              </div>
+            </div>
+            <div class="step-title">رفع الملفات</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-number completed">
+              <div class="w-4 h-4 flex items-center justify-center text-white">
+                <i class="ri-check-line"></i>
+              </div>
+            </div>
+            <div class="step-title">خيارات الطباعة</div>
+          </div>
+          <div class="progress-step">
+            <div class="step-number active">3</div>
+            <div class="step-title active">التوصيل والدفع</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Side Actions -->
+      <div class="flex items-center space-x-4 space-x-reverse">
+        <!-- Cart -->
+        <div class="relative">
+          <button class="relative p-2 text-gray-600 hover:text-primary transition-colors">
+            <div class="w-6 h-6 flex items-center justify-center">
+              <i class="ri-shopping-cart-line"></i>
+            </div>
+            <span class="absolute -top-1 -left-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+          </button>
+        </div>
+        
+        <!-- User Account -->
+        <div class="relative">
+          <button class="flex items-center space-x-2 space-x-reverse">
+            <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
+              <div class="w-5 h-5 flex items-center justify-center text-gray-600">
+                <i class="ri-user-line"></i>
+              </div>
+            </div>
+            <span class="hidden md:inline text-sm font-medium">حسابي</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="py-8 md:py-12">
+  <div class="container mx-auto px-4">
+    <!-- Back Button -->
+    <div class="mb-6">
+      <a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/93310aac-7a7c-4bb8-9dec-d2f2a27e5141" data-readdy="true" class="inline-flex items-center text-gray-600 hover:text-primary transition-colors">
+        <div class="w-5 h-5 flex items-center justify-center ml-1">
+          <i class="ri-arrow-right-line"></i>
+        </div>
+        <span>العودة إلى صفحة رفع الملفات</span>
+      </a>
+    </div>
+    
+    <!-- Page Title -->
+    <div class="mb-8 text-center">
+      <h1 class="text-3xl font-bold mb-2">الدفع وتأكيد الطلب</h1>
+      <p class="text-gray-600">اختر طريقة الدفع المناسبة وأكمل طلبك</p>
+    </div>
+    
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column - Payment Methods -->
+      <div class="lg:col-span-2 space-y-6">
+        <!-- Payment Methods Section -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-bold mb-6">طرق الدفع</h2>
+          
+          <!-- Payment Method Cards -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <!-- Credit Card Option -->
+            <div class="payment-card selected border border-gray-200 rounded-lg p-4 cursor-pointer" data-method="credit-card">
+              <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-primary mb-3">
+                  <i class="ri-bank-card-line ri-lg"></i>
+                </div>
+                <h4 class="font-medium">بطاقة ائتمان</h4>
+                <p class="text-xs text-gray-500 mt-1">فيزا، ماستركارد</p>
+              </div>
+            </div>
+            
+            <!-- Cash on Delivery Option -->
+            <div class="payment-card border border-gray-200 rounded-lg p-4 cursor-pointer" data-method="cod">
+              <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 flex items-center justify-center bg-green-100 rounded-full text-green-600 mb-3">
+                  <i class="ri-cash-line ri-lg"></i>
+                </div>
+                <h4 class="font-medium">الدفع عند الاستلام</h4>
+                <p class="text-xs text-gray-500 mt-1">ادفع نقداً عند التسليم</p>
+              </div>
+            </div>
+            
+            <!-- E-Wallet Option -->
+            <div class="payment-card border border-gray-200 rounded-lg p-4 cursor-pointer" data-method="e-wallet">
+              <div class="flex flex-col items-center text-center">
+                <div class="w-12 h-12 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 mb-3">
+                  <i class="ri-wallet-3-line ri-lg"></i>
+                </div>
+                <h4 class="font-medium">محفظة إلكترونية</h4>
+                <p class="text-xs text-gray-500 mt-1">زين كاش، أورانج موني</p>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Credit Card Form -->
+          <div id="creditCardForm" class="border-t border-gray-200 pt-6">
+            <div class="mb-6">
+              <div class="flex items-center mb-4">
+                <div class="flex space-x-2 space-x-reverse">
+                  <div class="w-10 h-6 flex items-center justify-center">
+                    <i class="ri-visa-fill ri-lg text-blue-800"></i>
+                  </div>
+                  <div class="w-10 h-6 flex items-center justify-center">
+                    <i class="ri-mastercard-fill ri-lg text-orange-600"></i>
+                  </div>
+                  <div class="w-10 h-6 flex items-center justify-center">
+                    <i class="ri-american-express-fill ri-lg text-blue-600"></i>
+                  </div>
+                </div>
+                <div class="mr-auto flex items-center">
+                  <div class="w-5 h-5 flex items-center justify-center text-green-600 ml-1">
+                    <i class="ri-lock-line"></i>
+                  </div>
+                  <span class="text-sm text-gray-600">دفع آمن ومشفر</span>
+                </div>
+              </div>
+              
+              <!-- Card Number -->
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">رقم البطاقة</label>
+                <div class="relative">
+                  <input type="text" id="cardNumber" class="card-input card-number-input w-full border border-gray-300 rounded-button p-3 focus:outline-none pr-12" placeholder="0000 0000 0000 0000" maxlength="19">
+                  <div class="absolute left-3 top-1/2 transform -translate-y-1/2">
+                    <div id="cardTypeIcon" class="w-6 h-6 flex items-center justify-center text-gray-400">
+                      <i class="ri-bank-card-line"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-2 gap-4 mb-4">
+                <!-- Expiry Date -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">تاريخ الانتهاء</label>
+                  <input type="text" id="expiryDate" class="card-input w-full border border-gray-300 rounded-button p-3 focus:outline-none" placeholder="MM / YY" maxlength="7">
+                </div>
+                
+                <!-- CVV -->
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-2">رمز الأمان (CVV)</label>
+                  <div class="relative">
+                    <input type="text" id="cvv" class="card-input w-full border border-gray-300 rounded-button p-3 focus:outline-none" placeholder="000" maxlength="3">
+                    <div class="absolute left-3 top-1/2 transform -translate-y-1/2 cursor-help group">
+                      <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+                        <i class="ri-question-line"></i>
+                      </div>
+                      <div class="hidden group-hover:block absolute bottom-full left-0 mb-2 w-48 bg-gray-800 text-white text-xs rounded p-2 z-10">
+                        رمز الأمان المكون من 3 أرقام على ظهر البطاقة
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Cardholder Name -->
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">اسم حامل البطاقة</label>
+                <input type="text" id="cardholderName" class="card-input w-full border border-gray-300 rounded-button p-3 focus:outline-none" placeholder="الاسم كما يظهر على البطاقة">
+              </div>
+            </div>
+            
+            <!-- Save Card Info -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center">
+                <label class="custom-switch ml-3">
+                  <input type="checkbox" checked>
+                  <span class="switch-slider"></span>
+                </label>
+                <span class="text-sm">حفظ بيانات البطاقة للمرة القادمة</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Cash on Delivery Form -->
+          <div id="codForm" class="border-t border-gray-200 pt-6 hidden">
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
+              <div class="flex items-start">
+                <div class="w-5 h-5 flex items-center justify-center text-yellow-600 mt-0.5">
+                  <i class="ri-information-line"></i>
+                </div>
+                <div class="mr-2">
+                  <p class="text-sm text-gray-700">سيتم الدفع نقداً عند استلام الطلب. يرجى التأكد من توفر المبلغ المطلوب.</p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">ملاحظات خاصة بالدفع</label>
+              <textarea rows="3" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none" placeholder="أي تعليمات خاصة بالدفع عند الاستلام..."></textarea>
+            </div>
+          </div>
+          
+          <!-- E-Wallet Form -->
+          <div id="eWalletForm" class="border-t border-gray-200 pt-6 hidden">
+            <div class="mb-6">
+              <label class="block text-sm font-medium text-gray-700 mb-3">اختر المحفظة الإلكترونية</label>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <label class="custom-radio border border-gray-200 rounded-lg p-3 flex items-center">
+                  <input type="radio" name="walletType" value="zain" checked>
+                  <span class="radio-mark"></span>
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 flex items-center justify-center bg-red-100 rounded-full text-red-600 ml-2">
+                      <i class="ri-smartphone-line"></i>
+                    </div>
+                    <span>زين كاش</span>
+                  </div>
+                </label>
+                
+                <label class="custom-radio border border-gray-200 rounded-lg p-3 flex items-center">
+                  <input type="radio" name="walletType" value="orange">
+                  <span class="radio-mark"></span>
+                  <div class="flex items-center">
+                    <div class="w-8 h-8 flex items-center justify-center bg-orange-100 rounded-full text-orange-600 ml-2">
+                      <i class="ri-smartphone-line"></i>
+                    </div>
+                    <span>أورانج موني</span>
+                  </div>
+                </label>
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="block text-sm font-medium text-gray-700 mb-2">رقم الهاتف المرتبط بالمحفظة</label>
+              <input type="tel" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" placeholder="07xxxxxxxx">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Billing Address -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-xl font-bold">عنوان الفواتير</h2>
+            <div class="flex items-center">
+              <label class="custom-switch ml-3">
+                <input type="checkbox" id="sameAsDelivery" checked>
+                <span class="switch-slider"></span>
+              </label>
+              <span class="text-sm">نفس عنوان التوصيل</span>
+            </div>
+          </div>
+          
+          <div id="billingAddressForm" class="hidden">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">الاسم الأول</label>
+                <input type="text" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">الاسم الأخير</label>
+                <input type="text" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              </div>
+            </div>
+            
+            <div class="mb-4">
+              <label class="block text-sm text-gray-600 mb-1">العنوان</label>
+              <input type="text" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">المدينة</label>
+                <input type="text" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              </div>
+              <div>
+                <label class="block text-sm text-gray-600 mb-1">رقم الهاتف</label>
+                <input type="tel" class="w-full border border-gray-300 rounded-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              </div>
+            </div>
+          </div>
+          
+          <div id="billingAddressSummary">
+            <div class="bg-gray-50 rounded-lg p-4">
+              <div class="flex items-start">
+                <div class="w-5 h-5 flex items-center justify-center text-primary mt-0.5">
+                  <i class="ri-map-pin-line"></i>
+                </div>
+                <div class="mr-2">
+                  <p class="text-sm">محمد أحمد العبدالله</p>
+                  <p class="text-sm text-gray-600 mt-1">عمان، الجامعة الأردنية، شارع الملكة رانيا</p>
+                  <p class="text-sm text-gray-600 mt-1">0791234567</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Right Column - Order Summary -->
+      <div class="lg:col-span-1">
+        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">ملخص الطلب</h2>
+            <button id="toggleOrderDetails" class="text-gray-500 hover:text-primary transition-colors">
+              <div class="w-6 h-6 flex items-center justify-center order-collapse-btn">
+                <i class="ri-arrow-up-s-line"></i>
+              </div>
+            </button>
+          </div>
+          
+          <!-- Order Details (Collapsible) -->
+          <div id="orderDetails" class="border-b border-gray-200 pb-4 mb-4">
+            <!-- Files -->
+            <div class="mb-4">
+              <h3 class="font-medium text-sm text-gray-500 mb-2">الملفات</h3>
+              <div class="space-y-3">
+                <div class="flex items-start">
+                  <div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-lg text-primary flex-shrink-0">
+                    <i class="ri-file-pdf-line"></i>
+                  </div>
+                  <div class="mr-2 flex-1">
+                    <p class="text-sm font-medium">مشروع التخرج النهائي.pdf</p>
+                    <p class="text-xs text-gray-500">32 صفحة</p>
+                  </div>
+                </div>
+                <div class="flex items-start">
+                  <div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-lg text-green-600 flex-shrink-0">
+                    <i class="ri-file-excel-line"></i>
+                  </div>
+                  <div class="mr-2 flex-1">
+                    <p class="text-sm font-medium">بيانات البحث.xlsx</p>
+                    <p class="text-xs text-gray-500">16 صفحة</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Print Options -->
+            <div class="mb-4">
+              <h3 class="font-medium text-sm text-gray-500 mb-2">خيارات الطباعة</h3>
+              <div class="space-y-1 text-sm">
+                <div class="flex justify-between">
+                  <span class="text-gray-600">عدد النسخ:</span>
+                  <span>1</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">نوع الورق:</span>
+                  <span>A4 عادي (80 جرام)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">نوع التجليد:</span>
+                  <span>بدون تجليد</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">خيارات الألوان:</span>
+                  <span>أبيض وأسود</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">طباعة الصفحات:</span>
+                  <span>وجه واحد</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Delivery Info -->
+            <div>
+              <h3 class="font-medium text-sm text-gray-500 mb-2">معلومات التوصيل</h3>
+              <div class="bg-gray-50 rounded-lg p-3">
+                <div class="flex items-start">
+                  <div class="w-5 h-5 flex items-center justify-center text-primary mt-0.5">
+                    <i class="ri-map-pin-line"></i>
+                  </div>
+                  <div class="mr-2">
+                    <p class="text-sm font-medium">استلام من المكتب</p>
+                    <p class="text-xs text-gray-600 mt-1">فرع الجامعة الأردنية</p>
+                    <p class="text-xs text-gray-600 mt-1">شارع الجامعة، مقابل البوابة الرئيسية للجامعة الأردنية</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Price Summary -->
+          <div class="space-y-2 mb-6">
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">تكلفة الطباعة:</span>
+              <span>4.80 دينار</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">تكلفة التجليد:</span>
+              <span>0.00 دينار</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">رسوم التوصيل:</span>
+              <span>0.00 دينار</span>
+            </div>
+            <div class="flex justify-between text-sm pt-2 border-t border-gray-200">
+              <span class="text-gray-600">المجموع الفرعي:</span>
+              <span>4.80 دينار</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-600">الضريبة (16%):</span>
+              <span>0.77 دينار</span>
+            </div>
+            <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
+              <span>الإجمالي:</span>
+              <span class="text-primary">5.57 دينار</span>
+            </div>
+          </div>
+          
+          <!-- Promo Code -->
+          <div class="mb-6">
+            <div class="flex items-center">
+              <input type="text" placeholder="كود الخصم" class="flex-1 border border-gray-300 rounded-r-button p-3 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary">
+              <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-3 rounded-l-button font-medium transition-colors whitespace-nowrap">تطبيق</button>
+            </div>
+          </div>
+          
+          <!-- Place Order Button -->
+          <button id="placeOrderBtn" class="w-full bg-primary hover:bg-primary/90 text-white px-6 py-3 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">
+            <div class="flex items-center justify-center gap-2">
+              <span>تأكيد الطلب</span>
+              <div class="w-5 h-5 flex items-center justify-center">
+                <i class="ri-check-line"></i>
+              </div>
+            </div>
+          </button>
+          
+          <!-- Secure Payment Note -->
+          <div class="mt-4 flex items-center justify-center text-xs text-gray-500">
+            <div class="w-4 h-4 flex items-center justify-center mr-1">
+              <i class="ri-lock-line"></i>
+            </div>
+            <span>جميع المعاملات مشفرة وآمنة</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Order Confirmation Modal -->
+<div id="orderConfirmationModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+  <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden">
+    <div class="p-6 text-center">
+      <div class="success-checkmark mb-6">
+        <div class="check-icon"></div>
+      </div>
+      
+      <h3 class="text-2xl font-bold text-gray-800 mb-2">تم تأكيد طلبك بنجاح!</h3>
+      <p class="text-gray-600 mb-6">شكراً لك على طلبك. سنقوم بمعالجته على الفور.</p>
+      
+      <div class="bg-gray-50 rounded-lg p-4 mb-6">
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">رقم الطلب:</span>
+          <span class="font-medium">#ORD-2025-7842</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">تاريخ الطلب:</span>
+          <span>13 أبريل 2025</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">طريقة الدفع:</span>
+          <span>بطاقة ائتمان</span>
+        </div>
+        <div class="flex justify-between mb-2">
+          <span class="text-gray-600">المبلغ الإجمالي:</span>
+          <span class="font-medium text-primary">5.57 دينار</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-gray-600">موعد التسليم المتوقع:</span>
+          <span>14 أبريل 2025</span>
+        </div>
+      </div>
+      
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button id="downloadReceiptBtn" class="bg-white border border-primary text-primary hover:bg-primary/5 px-6 py-2 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">
+          <div class="flex items-center justify-center gap-2">
+            <div class="w-5 h-5 flex items-center justify-center">
+              <i class="ri-download-line"></i>
+            </div>
+            <span>تحميل الإيصال</span>
+          </div>
+        </button>
+        <button id="trackOrderBtn" class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-button font-medium transition-colors whitespace-nowrap !rounded-button">
+          <div class="flex items-center justify-center gap-2">
+            <span>تتبع الطلب</span>
+            <div class="w-5 h-5 flex items-center justify-center">
+              <i class="ri-arrow-left-line"></i>
+            </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-gray-900 text-white pt-12 pb-6">
+  <div class="container mx-auto px-4">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <!-- Company Info -->
+      <div>
+        <a href="#" class="font-['Pacifico'] text-2xl text-white mb-4 inline-block">JO PRINT</a>
+        <p class="text-gray-400 mb-4">منصة متكاملة لخدمات الطلاب الأكاديمية من طباعة وملخصات ومعلمين ومستلزمات دراسية</p>
+      </div>
+      
+      <!-- Quick Links -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">روابط سريعة</h3>
+        <ul class="space-y-2">
+          <li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/93310aac-7a7c-4bb8-9dec-d2f2a27e5141" data-readdy="true" class="text-gray-400 hover:text-white transition-colors">الرئيسية</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">خدمات الطباعة</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">ملخصات الكتب</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">المعلمين</a></li>
+        </ul>
+      </div>
+      
+      <!-- Support -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">الدعم والمساعدة</h3>
+        <ul class="space-y-2">
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">الأسئلة الشائعة</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">شروط الاستخدام</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white transition-colors">تواصل معنا</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact -->
+      <div>
+        <h3 class="text-lg font-bold mb-4">معلومات الاتصال</h3>
+        <ul class="space-y-3">
+          <li class="flex items-start gap-3">
+            <div class="w-5 h-5 flex items-center justify-center text-gray-400 mt-0.5">
+              <i class="ri-map-pin-line"></i>
+            </div>
+            <span class="text-gray-400">عمان، الأردن - شارع الجامعة، مجمع الجامعة التجاري</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+              <i class="ri-phone-line"></i>
+            </div>
+            <span class="text-gray-400">+962 6 5355000</span>
+          </li>
+          <li class="flex items-center gap-3">
+            <div class="w-5 h-5 flex items-center justify-center text-gray-400">
+              <i class="ri-mail-line"></i>
+            </div>
+            <span class="text-gray-400">info@joprint.com</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="border-t border-gray-800 pt-6">
+      <div class="flex flex-col md:flex-row justify-between items-center">
+        <p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 JO PRINT. جميع الحقوق محفوظة.</p>
+        <div class="flex items-center space-x-4 space-x-reverse">
+          <div class="w-8 h-5 flex items-center justify-center">
+            <i class="ri-visa-fill text-gray-400"></i>
+          </div>
+          <div class="w-8 h-5 flex items-center justify-center">
+            <i class="ri-mastercard-fill text-gray-400"></i>
+          </div>
+          <div class="w-8 h-5 flex items-center justify-center">
+            <i class="ri-paypal-fill text-gray-400"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Payment Method Selection
+  const paymentCards = document.querySelectorAll('.payment-card');
+  const creditCardForm = document.getElementById('creditCardForm');
+  const codForm = document.getElementById('codForm');
+  const eWalletForm = document.getElementById('eWalletForm');
+  
+  paymentCards.forEach(card => {
+    card.addEventListener('click', function() {
+      // Remove selected class from all cards
+      paymentCards.forEach(c => c.classList.remove('selected'));
+      
+      // Add selected class to clicked card
+      this.classList.add('selected');
+      
+      // Show/hide appropriate form
+      const method = this.getAttribute('data-method');
+      creditCardForm.classList.add('hidden');
+      codForm.classList.add('hidden');
+      eWalletForm.classList.add('hidden');
+      
+      if (method === 'credit-card') {
+        creditCardForm.classList.remove('hidden');
+      } else if (method === 'cod') {
+        codForm.classList.remove('hidden');
+      } else if (method === 'e-wallet') {
+        eWalletForm.classList.remove('hidden');
+      }
+    });
+  });
+  
+  // Credit Card Number Formatting
+  const cardNumberInput = document.getElementById('cardNumber');
+  const cardTypeIcon = document.getElementById('cardTypeIcon');
+  
+  cardNumberInput.addEventListener('input', function(e) {
+    // Remove non-digits
+    let value = this.value.replace(/\D/g, '');
+    
+    // Add spaces after every 4 digits
+    let formattedValue = '';
+    for (let i = 0; i < value.length; i++) {
+      if (i > 0 && i % 4 === 0) {
+        formattedValue += ' ';
+      }
+      formattedValue += value[i];
+    }
+    
+    // Update input value
+    this.value = formattedValue;
+    
+    // Detect card type
+    if (value.startsWith('4')) {
+      cardTypeIcon.innerHTML = '<i class="ri-visa-fill text-blue-800"></i>';
+    } else if (value.startsWith('5')) {
+      cardTypeIcon.innerHTML = '<i class="ri-mastercard-fill text-orange-600"></i>';
+    } else if (value.startsWith('3')) {
+      cardTypeIcon.innerHTML = '<i class="ri-american-express-fill text-blue-600"></i>';
+    } else {
+      cardTypeIcon.innerHTML = '<i class="ri-bank-card-line text-gray-400"></i>';
+    }
+  });
+  
+  // Expiry Date Formatting
+  const expiryDateInput = document.getElementById('expiryDate');
+  
+  expiryDateInput.addEventListener('input', function(e) {
+    // Remove non-digits
+    let value = this.value.replace(/\D/g, '');
+    
+    // Format as MM / YY
+    if (value.length > 0) {
+      if (value.length <= 2) {
+        this.value = value;
+      } else {
+        this.value = value.substring(0, 2) + ' / ' + value.substring(2, 4);
+      }
+    }
+  });
+  
+  // CVV Input - Numbers Only
+  const cvvInput = document.getElementById('cvv');
+  
+  cvvInput.addEventListener('input', function(e) {
+    this.value = this.value.replace(/\D/g, '');
+  });
+  
+  // Toggle Billing Address Form
+  const sameAsDeliveryCheckbox = document.getElementById('sameAsDelivery');
+  const billingAddressForm = document.getElementById('billingAddressForm');
+  const billingAddressSummary = document.getElementById('billingAddressSummary');
+  
+  sameAsDeliveryCheckbox.addEventListener('change', function() {
+    if (this.checked) {
+      billingAddressForm.classList.add('hidden');
+      billingAddressSummary.classList.remove('hidden');
+    } else {
+      billingAddressForm.classList.remove('hidden');
+      billingAddressSummary.classList.add('hidden');
+    }
+  });
+  
+  // Toggle Order Details
+  const toggleOrderDetailsBtn = document.getElementById('toggleOrderDetails');
+  const orderDetailsSection = document.getElementById('orderDetails');
+  const collapseBtn = document.querySelector('.order-collapse-btn');
+  
+  toggleOrderDetailsBtn.addEventListener('click', function() {
+    orderDetailsSection.classList.toggle('hidden');
+    collapseBtn.classList.toggle('collapsed');
+  });
+  
+  // Place Order Button
+  const placeOrderBtn = document.getElementById('placeOrderBtn');
+  const orderConfirmationModal = document.getElementById('orderConfirmationModal');
+  
+  placeOrderBtn.addEventListener('click', function() {
+    // Show loading state
+    const originalText = this.innerHTML;
+    this.innerHTML = '<div class="flex items-center justify-center gap-2"><div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div><span>جاري المعالجة...</span></div>';
+    this.disabled = true;
+    
+    // Simulate processing delay
+    setTimeout(() => {
+      // Show confirmation modal
+      orderConfirmationModal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // Reset button
+      this.innerHTML = originalText;
+      this.disabled = false;
+    }, 1500);
+  });
+  
+  // Close Modal Buttons
+  const downloadReceiptBtn = document.getElementById('downloadReceiptBtn');
+  const trackOrderBtn = document.getElementById('trackOrderBtn');
+  
+  function closeModal() {
+    orderConfirmationModal.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+  
+  downloadReceiptBtn.addEventListener('click', closeModal);
+  trackOrderBtn.addEventListener('click', closeModal);
+  
+  // Close modal when clicking outside
+  orderConfirmationModal.addEventListener('click', function(e) {
+    if (e.target === this) {
+      closeModal();
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>سلة التسوق - Jo Print</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#007FFF',secondary:'#005BB5'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+input[type="number"] {
+-moz-appearance: textfield;
+}
+.custom-checkbox {
+position: relative;
+padding-right: 28px;
+cursor: pointer;
+user-select: none;
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+height: 0;
+width: 0;
+}
+.checkmark {
+position: absolute;
+top: 0;
+right: 0;
+height: 20px;
+width: 20px;
+border: 2px solid #ccc;
+border-radius: 4px;
+}
+.custom-checkbox:hover input ~ .checkmark {
+border-color: #007FFF;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #007FFF;
+border-color: #007FFF;
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.custom-checkbox .checkmark:after {
+right: 6px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 24px;
+}
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .3s;
+border-radius: 24px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+right: 4px;
+bottom: 3px;
+background-color: white;
+transition: .3s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #007FFF;
+}
+input:checked + .slider:before {
+transform: translateX(-26px);
+}
+[dir="ltr"] .slider:before {
+right: auto;
+left: 4px;
+}
+[dir="ltr"] input:checked + .slider:before {
+transform: translateX(26px);
+}
+[dir="ltr"] .custom-checkbox {
+padding-right: 0;
+padding-left: 28px;
+}
+[dir="ltr"] .checkmark {
+right: auto;
+left: 0;
+}
+[dir="ltr"] .custom-checkbox .checkmark:after {
+right: auto;
+left: 6px;
+}
+.quantity-input:focus {
+outline: none;
+border-color: #007FFF;
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Header -->
+<header class="bg-primary text-white shadow-md">
+<div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="font-['Pacifico'] text-2xl">logo</span>
+<div class="language-toggle ms-4 flex items-center">
+<span class="text-sm">AR</span>
+<label class="switch mx-2">
+<input type="checkbox" id="languageToggle">
+<span class="slider"></span>
+</label>
+<span class="text-sm">EN</span>
+</div>
+</div>
+<nav class="hidden md:flex space-x-6 rtl:space-x-reverse">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">الرئيسية</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/93310aac-7a7c-4bb8-9dec-d2f2a27e5141" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">خدمات الطباعة</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/7a08f868-a153-467f-b21f-45e4de4de1d9" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">ملخصات الكتب</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/8ee6a544-f3a7-4758-b5c9-19ee9e168b49" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">المعلمين</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">مكاتب الطباعة</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/86f06e84-a99c-4c5d-ac74-1bb683a5934e" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">المتجر</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="cart-container relative">
+<button class="w-10 h-10 flex items-center justify-center text-white relative">
+<i class="ri-shopping-cart-2-line text-xl"></i>
+<span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+</button>
+</div>
+<div class="user-container relative">
+<div class="relative">
+<button id="userMenuButton" class="w-10 h-10 flex items-center justify-center text-white">
+<i class="ri-user-line text-xl"></i>
+</button>
+<div id="userDropdownMenu" class="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 hidden">
+<a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+<i class="ri-login-box-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">تسجيل الدخول</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+<i class="ri-user-add-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">إنشاء حساب</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+<i class="ri-user-settings-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">حسابي</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+<i class="ri-file-list-3-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">طلباتي</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+<i class="ri-map-pin-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">عناويني</span>
+</a>
+<a href="#" class="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-50">
+<i class="ri-heart-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">تفضيلاتي</span>
+</a>
+<div class="border-t border-gray-100 my-1"></div>
+<a href="#" class="flex items-center px-4 py-2 text-red-600 hover:bg-gray-50">
+<i class="ri-logout-box-line w-5 h-5 flex items-center justify-center"></i>
+<span class="mr-3">تسجيل الخروج</span>
+</a>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const userMenuButton = document.getElementById('userMenuButton');
+  const userDropdownMenu = document.getElementById('userDropdownMenu');
+  let isMenuOpen = false;
+
+  userMenuButton.addEventListener('click', function(e) {
+    e.stopPropagation();
+    isMenuOpen = !isMenuOpen;
+    userDropdownMenu.classList.toggle('hidden');
+  });
+
+  document.addEventListener('click', function(e) {
+    if (isMenuOpen && !userDropdownMenu.contains(e.target)) {
+      isMenuOpen = false;
+      userDropdownMenu.classList.add('hidden');
+    }
+  });
+});
+</script>
+</div>
+<button class="w-10 h-10 md:hidden flex items-center justify-center text-white">
+<i class="ri-menu-line text-xl"></i>
+</button>
+</div>
+</div>
+</header>
+<!-- Breadcrumb -->
+<div class="bg-white py-3 shadow-sm">
+<div class="container mx-auto px-4">
+<div class="text-sm text-gray-600">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="hover:text-primary">الرئيسية</a>
+<span class="mx-2">/</span>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/86f06e84-a99c-4c5d-ac74-1bb683a5934e" data-readdy="true" class="hover:text-primary">المتجر</a>
+<span class="mx-2">/</span>
+<span class="text-gray-800 font-medium">سلة التسوق</span>
+</div>
+</div>
+</div>
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-8">
+<div id="toastNotification" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 opacity-0 translate-y-2 z-50 flex items-center gap-2">
+<i class="ri-check-line text-green-400"></i>
+<span id="toastMessage"></span>
+</div>
+<h1 class="text-3xl font-bold text-gray-800 mb-8">سلة التسوق</h1>
+<div class="flex flex-col lg:flex-row gap-8">
+<!-- Cart Items (Right Side) -->
+<div class="lg:w-8/12 w-full">
+<div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold text-gray-800">المنتجات (3)</h2>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/86f06e84-a99c-4c5d-ac74-1bb683a5934e" data-readdy="true" class="text-primary hover:text-secondary flex items-center gap-1 text-sm">
+<i class="ri-arrow-right-line"></i>
+<span>مواصلة التسوق</span>
+</a>
+</div>
+<!-- Cart Item 1 -->
+<div class="border-b pb-6 mb-6">
+<div class="flex flex-col sm:flex-row gap-4">
+<div class="w-full sm:w-24 h-24 bg-gray-100 rounded overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=custom%2520printed%2520blue%2520t-shirt%2520with%2520modern%2520design%252C%2520clean%2520product%2520photography%2520with%2520simple%2520background&width=200&height=200&seq=5&orientation=squarish" alt="تيشيرت مطبوع أزرق" class="w-full h-full object-cover object-top">
+</div>
+<div class="flex-1">
+<div class="flex flex-col sm:flex-row justify-between gap-2">
+<div>
+<h3 class="font-medium text-gray-800 mb-1">تيشيرت مطبوع أزرق</h3>
+<p class="text-sm text-gray-500 mb-2">المقاس: M | اللون: أزرق</p>
+</div>
+<div class="text-right">
+<span class="font-bold text-gray-900">15.00 د.أ</span>
+</div>
+</div>
+<div class="flex flex-wrap justify-between items-center mt-3">
+<div class="flex items-center border rounded overflow-hidden">
+<button class="quantity-decrease w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" min="1" value="1" class="quantity-input w-12 h-8 border-none text-center text-gray-800 bg-white">
+<button class="quantity-increase w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<button class="remove-item text-red-500 hover:text-red-700 flex items-center gap-1 text-sm mt-2 sm:mt-0">
+<i class="ri-delete-bin-line"></i>
+<span>إزالة</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Item 2 -->
+<div class="border-b pb-6 mb-6">
+<div class="flex flex-col sm:flex-row gap-4">
+<div class="w-full sm:w-24 h-24 bg-gray-100 rounded overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=custom%2520printed%2520notebook%2520with%2520elegant%2520minimalist%2520design%252C%2520professional%2520product%2520photography%2520with%2520simple%2520background&width=200&height=200&seq=7&orientation=squarish" alt="دفتر ملاحظات" class="w-full h-full object-cover object-top">
+</div>
+<div class="flex-1">
+<div class="flex flex-col sm:flex-row justify-between gap-2">
+<div>
+<h3 class="font-medium text-gray-800 mb-1">دفتر ملاحظات</h3>
+<p class="text-sm text-gray-500 mb-2">الحجم: A5 | اللون: أبيض</p>
+</div>
+<div class="text-right">
+<span class="font-bold text-gray-900">5.00 د.أ</span>
+</div>
+</div>
+<div class="flex flex-wrap justify-between items-center mt-3">
+<div class="flex items-center border rounded overflow-hidden">
+<button class="quantity-decrease w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" min="1" value="1" class="quantity-input w-12 h-8 border-none text-center text-gray-800 bg-white">
+<button class="quantity-increase w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<button class="remove-item text-red-500 hover:text-red-700 flex items-center gap-1 text-sm mt-2 sm:mt-0">
+<i class="ri-delete-bin-line"></i>
+<span>إزالة</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Cart Item 3 -->
+<div class="pb-2">
+<div class="flex flex-col sm:flex-row gap-4">
+<div class="w-full sm:w-24 h-24 bg-gray-100 rounded overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=custom%2520printed%2520ceramic%2520mug%2520with%2520elegant%2520design%252C%2520professional%2520product%2520photography%2520with%2520simple%2520background&width=200&height=200&seq=8&orientation=squarish" alt="كوب مطبوع" class="w-full h-full object-cover object-top">
+</div>
+<div class="flex-1">
+<div class="flex flex-col sm:flex-row justify-between gap-2">
+<div>
+<h3 class="font-medium text-gray-800 mb-1">كوب مطبوع</h3>
+<p class="text-sm text-gray-500 mb-2">اللون: أبيض | الحجم: عادي</p>
+</div>
+<div class="text-right">
+<span class="font-bold text-gray-900">8.00 د.أ</span>
+</div>
+</div>
+<div class="flex flex-wrap justify-between items-center mt-3">
+<div class="flex items-center border rounded overflow-hidden">
+<button class="quantity-decrease w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+<i class="ri-subtract-line"></i>
+</button>
+<input type="number" min="1" value="1" class="quantity-input w-12 h-8 border-none text-center text-gray-800 bg-white">
+<button class="quantity-increase w-8 h-8 flex items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors">
+<i class="ri-add-line"></i>
+</button>
+</div>
+<button class="remove-item text-red-500 hover:text-red-700 flex items-center gap-1 text-sm mt-2 sm:mt-0">
+<i class="ri-delete-bin-line"></i>
+<span>إزالة</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Shipping Information -->
+<div class="bg-white rounded-lg shadow-sm p-6">
+<h2 class="text-xl font-bold text-gray-800 mb-6">معلومات التوصيل</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-gray-700 font-medium mb-2">المحافظة *</label>
+<div class="relative">
+<select class="w-full px-4 py-2 border border-gray-300 rounded appearance-none focus:outline-none focus:border-primary pr-10 bg-white">
+<option value="" disabled selected>اختر المحافظة</option>
+<option value="amman">عمان</option>
+<option value="irbid">إربد</option>
+<option value="zarqa">الزرقاء</option>
+<option value="mafraq">المفرق</option>
+<option value="ajloun">عجلون</option>
+<option value="jerash">جرش</option>
+<option value="madaba">مادبا</option>
+<option value="balqa">البلقاء</option>
+<option value="karak">الكرك</option>
+<option value="tafilah">الطفيلة</option>
+<option value="maan">معان</option>
+<option value="aqaba">العقبة</option>
+</select>
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-arrow-down-s-line text-gray-500"></i>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-gray-700 font-medium mb-2">المنطقة *</label>
+<input type="text" placeholder="أدخل المنطقة" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary">
+</div>
+<div class="md:col-span-2">
+<label class="block text-gray-700 font-medium mb-2">العنوان التفصيلي *</label>
+<textarea placeholder="أدخل العنوان التفصيلي" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary"></textarea>
+</div>
+<div>
+<label class="block text-gray-700 font-medium mb-2">رقم الهاتف *</label>
+<input type="tel" placeholder="07xxxxxxxx" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary">
+</div>
+<div>
+<label class="block text-gray-700 font-medium mb-2">البريد الإلكتروني</label>
+<input type="email" placeholder="example@domain.com" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary">
+</div>
+</div>
+<div class="mt-6 bg-blue-50 p-4 rounded-lg flex items-start gap-3">
+<i class="ri-information-line text-primary mt-1"></i>
+<div>
+<p class="text-gray-700 text-sm">وقت التوصيل المتوقع:</p>
+<p class="font-medium text-gray-800">2-3 أيام عمل لمحافظة عمان</p>
+<p class="font-medium text-gray-800">3-5 أيام عمل لباقي المحافظات</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Summary (Left Side) -->
+<div class="lg:w-4/12 w-full">
+<div class="bg-white rounded-lg shadow-sm p-6 sticky top-4">
+<h2 class="text-xl font-bold text-gray-800 mb-6">ملخص الطلب</h2>
+<div class="space-y-3 mb-6">
+<div class="flex justify-between">
+<span class="text-gray-600">المجموع الفرعي:</span>
+<span class="font-medium text-gray-800">28.00 د.أ</span>
+</div>
+<div class="flex justify-between">
+<span class="text-gray-600">ضريبة المبيعات (16%):</span>
+<span class="font-medium text-gray-800">4.48 د.أ</span>
+</div>
+<div class="flex justify-between">
+<span class="text-gray-600">رسوم التوصيل:</span>
+<span class="font-medium text-gray-800">2.00 د.أ</span>
+</div>
+</div>
+<div class="border-t pt-4 mb-6">
+<div class="flex justify-between items-center">
+<span class="font-bold text-gray-800">المجموع النهائي:</span>
+<span class="font-bold text-xl text-primary">34.48 د.أ</span>
+</div>
+</div>
+<div class="mb-6">
+<label class="custom-checkbox flex items-center text-gray-700 mb-3 cursor-pointer group">
+<input type="checkbox" id="termsCheckbox">
+<span class="checkmark"></span>
+<span class="text-sm group-hover:text-primary transition-colors">أوافق على <a href="#" class="text-primary hover:underline">الشروط والأحكام</a></span>
+</label>
+<button id="proceedToPayment" class="w-full bg-primary hover:bg-secondary text-white py-3 px-4 rounded-button font-medium transition duration-200 whitespace-nowrap flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+<i class="ri-secure-payment-line"></i>
+<span>متابعة الدفع</span>
+</button>
+</div>
+<div class="bg-gray-50 p-4 rounded-lg">
+<h3 class="font-medium text-gray-800 mb-3">طرق الدفع المتاحة</h3>
+<div class="flex flex-wrap gap-3 mb-3">
+<div class="w-12 h-8 bg-white rounded border flex items-center justify-center">
+<i class="ri-visa-fill text-blue-800 text-xl"></i>
+</div>
+<div class="w-12 h-8 bg-white rounded border flex items-center justify-center">
+<i class="ri-mastercard-fill text-red-600 text-xl"></i>
+</div>
+<div class="w-12 h-8 bg-white rounded border flex items-center justify-center">
+<i class="ri-bank-card-fill text-gray-700 text-xl"></i>
+</div>
+<div class="w-12 h-8 bg-white rounded border flex items-center justify-center">
+<i class="ri-cash-line text-green-600 text-xl"></i>
+</div>
+</div>
+<div class="text-sm text-gray-600">
+<div class="flex items-center gap-2 mb-1">
+<i class="ri-secure-payment-line text-green-600"></i>
+<span>جميع المعاملات آمنة ومشفرة</span>
+</div>
+<div class="flex items-center gap-2">
+<i class="ri-truck-line text-blue-600"></i>
+<span>التوصيل متاح فقط داخل الأردن</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-gray-800 text-white pt-12 pb-6 mt-16">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+<div>
+<h3 class="text-xl font-bold mb-4">Jo Print</h3>
+<p class="text-gray-400 mb-4">نقدم خدمات طباعة عالية الجودة ومنتجات مخصصة لتلبية احتياجاتك الشخصية والتجارية.</p>
+<div class="flex space-x-4 rtl:space-x-reverse">
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-instagram-line"></i>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-twitter-x-line"></i>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-whatsapp-line"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="text-gray-400 hover:text-white transition duration-200">الرئيسية</a></li>
+<li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/86f06e84-a99c-4c5d-ac74-1bb683a5934e" data-readdy="true" class="text-gray-400 hover:text-white transition duration-200">المتجر</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">من نحن</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">اتصل بنا</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-xl font-bold mb-4">خدمة العملاء</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">الأسئلة الشائعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">سياسة الشحن</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">سياسة الإرجاع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">الخصوصية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">الشروط والأحكام</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-xl font-bold mb-4">اتصل بنا</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<i class="ri-map-pin-line mt-1"></i>
+<span class="text-gray-400">عمان، الأردن<br>شارع المدينة المنورة، مجمع الحسيني</span>
+</li>
+<li class="flex items-center gap-3">
+<i class="ri-phone-line"></i>
+<span class="text-gray-400">+962 6 123 4567</span>
+</li>
+<li class="flex items-center gap-3">
+<i class="ri-mail-line"></i>
+<span class="text-gray-400">info@joprint.com</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="pt-8 mt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 Jo Print. جميع الحقوق محفوظة.</p>
+<div class="flex items-center gap-3">
+<span class="text-gray-400 text-sm">وسائل الدفع:</span>
+<div class="flex gap-2">
+<i class="ri-visa-fill text-2xl text-gray-300"></i>
+<i class="ri-mastercard-fill text-2xl text-gray-300"></i>
+<i class="ri-paypal-fill text-2xl text-gray-300"></i>
+<i class="ri-bank-card-fill text-2xl text-gray-300"></i>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<!-- Mobile Bottom Navigation -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t z-30">
+<div class="flex justify-around">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="flex flex-col items-center py-2 px-3">
+<i class="ri-home-4-line text-xl text-gray-600"></i>
+<span class="text-xs mt-1 text-gray-600">الرئيسية</span>
+</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/86f06e84-a99c-4c5d-ac74-1bb683a5934e" data-readdy="true" class="flex flex-col items-center py-2 px-3">
+<i class="ri-store-2-line text-xl text-gray-600"></i>
+<span class="text-xs mt-1 text-gray-600">المتجر</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3 text-primary">
+<i class="ri-shopping-cart-2-line text-xl"></i>
+<span class="text-xs mt-1">السلة</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3">
+<i class="ri-user-line text-xl text-gray-600"></i>
+<span class="text-xs mt-1 text-gray-600">حسابي</span>
+</a>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const toastNotification = document.getElementById('toastNotification');
+const termsCheckbox = document.getElementById('termsCheckbox');
+const proceedToPayment = document.getElementById('proceedToPayment');
+termsCheckbox.addEventListener('change', function() {
+proceedToPayment.disabled = !this.checked;
+});
+proceedToPayment.addEventListener('click', function(e) {
+if (!termsCheckbox.checked) {
+e.preventDefault();
+showToast('يرجى الموافقة على الشروط والأحكام أولاً');
+} else {
+// Proceed with payment logic
+showToast('جاري تحويلك إلى صفحة الدفع...');
+}
+});
+const toastMessage = document.getElementById('toastMessage');
+function showToast(message) {
+toastMessage.textContent = message;
+toastNotification.classList.remove('opacity-0', 'translate-y-2');
+setTimeout(() => {
+toastNotification.classList.add('opacity-0', 'translate-y-2');
+}, 3000);
+}
+// Quantity controls
+const quantityInputs = document.querySelectorAll('.quantity-input');
+const decreaseButtons = document.querySelectorAll('.quantity-decrease');
+const increaseButtons = document.querySelectorAll('.quantity-increase');
+const removeButtons = document.querySelectorAll('.remove-item');
+// Update cart totals
+function updateCartTotals() {
+let subtotal = 0;
+const items = [
+{ price: 15.00, input: quantityInputs[0] },
+{ price: 5.00, input: quantityInputs[1] },
+{ price: 8.00, input: quantityInputs[2] }
+];
+items.forEach(item => {
+subtotal += item.price * parseInt(item.input.value);
+});
+const tax = subtotal * 0.16;
+const shipping = 2.00;
+const total = subtotal + tax + shipping;
+// Update display (would update actual elements in a real implementation)
+console.log({
+subtotal: subtotal.toFixed(2),
+tax: tax.toFixed(2),
+shipping: shipping.toFixed(2),
+total: total.toFixed(2)
+});
+}
+// Decrease quantity
+decreaseButtons.forEach((button, index) => {
+button.addEventListener('click', function() {
+const input = quantityInputs[index];
+let value = parseInt(input.value);
+if (value > 1) {
+input.value = value - 1;
+updateCartTotals();
+showToast('تم تحديث الكمية');
+}
+});
+});
+// Increase quantity
+increaseButtons.forEach((button, index) => {
+button.addEventListener('click', function() {
+const input = quantityInputs[index];
+let value = parseInt(input.value);
+input.value = value + 1;
+updateCartTotals();
+showToast('تم تحديث الكمية');
+});
+});
+// Handle manual input
+quantityInputs.forEach(input => {
+input.addEventListener('change', function() {
+if (parseInt(this.value) < 1 || isNaN(parseInt(this.value))) {
+this.value = 1;
+}
+updateCartTotals();
+showToast('تم تحديث الكمية');
+});
+});
+// Remove item
+removeButtons.forEach((button, index) => {
+button.addEventListener('click', function() {
+const itemContainer = this.closest('.border-b, .pb-2');
+itemContainer.style.opacity = '0.5';
+setTimeout(() => {
+itemContainer.style.display = 'none';
+updateCartTotals();
+// Update cart count
+const cartCountBadge = document.querySelector('.ri-shopping-cart-2-line').nextElementSibling;
+let cartCount = parseInt(cartCountBadge.textContent);
+cartCountBadge.textContent = cartCount - 1;
+showToast('تم إزالة المنتج من السلة');
+}, 500);
+});
+});
+// Language toggle
+const languageToggle = document.getElementById('languageToggle');
+const htmlElement = document.documentElement;
+languageToggle.addEventListener('change', function() {
+if (this.checked) {
+htmlElement.setAttribute('dir', 'ltr');
+htmlElement.setAttribute('lang', 'en');
+} else {
+htmlElement.setAttribute('dir', 'rtl');
+htmlElement.setAttribute('lang', 'ar');
+}
+});
+});
+</script>
+</body>
+</html>

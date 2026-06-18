@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JO PRINT - خدمات الطباعة والقرطاسية الجامعية</title>
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>tailwind.config={theme:{extend:{colors:{primary:'#1E88E5',secondary:'#64B5F6'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        .logo {
+            font-family: 'Pacifico', serif;
+        }
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .custom-checkbox {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .custom-checkbox input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        .custom-checkbox input:checked ~ .checkmark {
+            background-color: #1E88E5;
+            border-color: #1E88E5;
+        }
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .custom-checkbox input:checked ~ .checkmark:after {
+            display: block;
+        }
+        .custom-radio {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        .custom-radio input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .radio-mark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        .custom-radio input:checked ~ .radio-mark {
+            border-color: #1E88E5;
+        }
+        .radio-mark:after {
+            content: "";
+            position: absolute;
+            display: none;
+            top: 4px;
+            left: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #1E88E5;
+        }
+        .custom-radio input:checked ~ .radio-mark:after {
+            display: block;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #1E88E5;
+        }
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+        .custom-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            border-radius: 5px;
+            background: #e0e0e0;
+            outline: none;
+        }
+        .custom-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1E88E5;
+            cursor: pointer;
+        }
+        .custom-range::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #1E88E5;
+            cursor: pointer;
+        }
+        .file-drop-area {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 100%;
+            padding: 2rem 1rem;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            transition: 0.2s;
+            background-color: #f9fafb;
+        }
+        .file-drop-area.is-active {
+            background-color: rgba(30, 136, 229, 0.05);
+            border-color: #1E88E5;
+        }
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            cursor: pointer;
+            opacity: 0;
+        }
+        .file-msg {
+            display: inline-block;
+            margin-left: 0.5rem;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="sticky top-0 bg-white shadow-sm z-50">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <a href="#" class="logo text-primary text-2xl font-bold">JO PRINT</a>
+            </div>
+            
+            <nav class="hidden md:flex items-center space-x-8 space-x-reverse">
+                <a href="#" class="text-gray-800 hover:text-primary font-medium transition">الرئيسية</a>
+                <a href="#printing" class="text-gray-800 hover:text-primary font-medium transition">خدمات الطباعة</a>
+                <a href="#shop" class="text-gray-800 hover:text-primary font-medium transition">المتجر</a>
+            </nav>
+            
+            <div class="flex items-center">
+                <div class="relative w-10 h-10 flex items-center justify-center">
+                    <button class="text-gray-700 hover:text-primary transition">
+                        <i class="ri-shopping-cart-2-line ri-lg"></i>
+                    </button>
+                    <span class="absolute -top-1 -left-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+                </div>
+                
+                <button class="md:hidden w-10 h-10 flex items-center justify-center text-gray-700">
+                    <i class="ri-menu-line ri-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative py-16 md:py-24 overflow-hidden">
+        <div class="absolute inset-0 z-0" style="background-image: url('https://readdy.ai/api/search-image?query=modern%20print%20shop%20with%20blue%20color%20scheme%2C%20clean%20academic%20environment%2C%20university%20students%20printing%20documents%2C%20high%20quality%20printing%20machines%2C%20bright%20and%20organized%20space%2C%20professional%20printing%20service&width=1200&height=600&seq=123&orientation=landscape'); background-size: cover; background-position: center;">
+            <div class="absolute inset-0 bg-gradient-to-l from-transparent via-primary/20 to-primary/80"></div>
+        </div>
+        
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-2xl">
+                <h1 class="text-4xl md:text-5xl font-bold text-white mb-6">اطبع ملفاتك بسهولة واطلب أدواتك الجامعية من مكان واحد</h1>
+                <p class="text-white/90 text-lg mb-8">منصة طلابية أردنية تقدم خدمات طباعة ملفات عالية الجودة وتوصيل أدوات قرطاسية للطلبة، عبر واجهة سهلة وسريعة.</p>
+                <button class="bg-white text-primary px-8 py-3 rounded-button font-bold text-lg shadow-lg hover:bg-gray-100 transition whitespace-nowrap">ابدأ الآن</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Printing Services Section -->
+    <section id="printing" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">خدمات الطباعة</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">قم برفع ملفاتك واختر خيارات الطباعة المناسبة، وسنقوم بتوصيلها إليك في أسرع وقت</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-6 md:p-8">
+                <!-- Progress Steps -->
+                <div class="flex justify-between items-center mb-8">
+                    <div class="flex flex-col items-center">
+                        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-primary text-white font-bold">١</div>
+                        <span class="text-sm mt-2 text-primary font-medium">رفع الملف</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-2">
+                        <div class="h-full bg-primary" style="width: 0%"></div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 font-bold">٢</div>
+                        <span class="text-sm mt-2 text-gray-500">خيارات الطباعة</span>
+                    </div>
+                    <div class="flex-1 h-1 bg-gray-200 mx-2"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-500 font-bold">٣</div>
+                        <span class="text-sm mt-2 text-gray-500">التوصيل والدفع</span>
+                    </div>
+                </div>
+                
+                <!-- File Upload -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">رفع الملفات</h3>
+                    <div class="file-drop-area mb-4">
+                        <input type="file" class="file-input" multiple>
+                        <div class="flex flex-col items-center justify-center text-center">
+                            <div class="w-16 h-16 flex items-center justify-center text-primary mb-2">
+                                <i class="ri-upload-cloud-line ri-3x"></i>
+                            </div>
+                            <span class="text-gray-600">اسحب وأفلت الملفات هنا أو</span>
+                            <span class="text-primary font-medium">اختر الملفات</span>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-500">* يمكنك رفع ملفات بصيغة PDF، DOCX، PPT بحجم أقصى 50 ميجابايت</div>
+                </div>
+                
+                <!-- Print Options -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">خيارات الطباعة</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Paper Type -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">نوع الورق</label>
+                            <div class="grid grid-cols-3 gap-3">
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="paperType" class="absolute opacity-0 w-0 h-0" checked>
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all peer-checked:border-primary peer-checked:bg-primary/5">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-file-paper-line ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">عادي</span>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="paperType" class="absolute opacity-0 w-0 h-0">
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-file-paper-2-line ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">لامع</span>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="paperType" class="absolute opacity-0 w-0 h-0">
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-file-paper-fill ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">مقوى</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Binding Type -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">نوع التجليد</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="bindingType" class="absolute opacity-0 w-0 h-0" checked>
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-file-line ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">بدون تجليد</span>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="bindingType" class="absolute opacity-0 w-0 h-0">
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-spiral-line ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">حلزوني</span>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="bindingType" class="absolute opacity-0 w-0 h-0">
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-attachment-line ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">دباسة</span>
+                                    </div>
+                                </label>
+                                <label class="relative cursor-pointer">
+                                    <input type="radio" name="bindingType" class="absolute opacity-0 w-0 h-0">
+                                    <div class="border border-gray-200 hover:border-primary rounded p-3 text-center transition-all">
+                                        <div class="w-10 h-10 mx-auto flex items-center justify-center text-gray-500 mb-2">
+                                            <i class="ri-book-line ri-2x"></i>
+                                        </div>
+                                        <span class="text-sm font-medium">حراري</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Copies -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">عدد النسخ</label>
+                            <div class="flex items-center border border-gray-300 rounded overflow-hidden">
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 bg-gray-100 border-l border-gray-300">
+                                    <i class="ri-subtract-line"></i>
+                                </button>
+                                <input type="number" min="1" value="1" class="w-full h-10 text-center border-none focus:outline-none text-gray-700">
+                                <button class="w-10 h-10 flex items-center justify-center text-gray-500 bg-gray-100 border-r border-gray-300">
+                                    <i class="ri-add-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Delivery Time -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">وقت التوصيل</label>
+                            <select class="w-full h-10 px-3 border border-gray-300 rounded focus:outline-none focus:border-primary pr-8">
+                                <option>صباحاً (9:00 - 12:00)</option>
+                                <option>ظهراً (12:00 - 3:00)</option>
+                                <option>مساءً (3:00 - 6:00)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Delivery and Payment -->
+                <div class="mb-8">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">التوصيل والدفع</h3>
+                    
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <!-- Delivery Address -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">عنوان التوصيل</label>
+                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary" rows="3" placeholder="أدخل عنوان التوصيل بالتفصيل"></textarea>
+                        </div>
+                        
+                        <!-- Payment Method -->
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">طريقة الدفع</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center cursor-pointer">
+                                    <span class="custom-radio">
+                                        <input type="radio" name="paymentMethod" checked>
+                                        <span class="radio-mark"></span>
+                                    </span>
+                                    <div class="flex items-center mr-3">
+                                        <div class="w-8 h-8 flex items-center justify-center text-blue-600 ml-2">
+                                            <i class="ri-bank-card-line ri-lg"></i>
+                                        </div>
+                                        <span>الدفع بالبطاقة</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center cursor-pointer">
+                                    <span class="custom-radio">
+                                        <input type="radio" name="paymentMethod">
+                                        <span class="radio-mark"></span>
+                                    </span>
+                                    <div class="flex items-center mr-3">
+                                        <div class="w-8 h-8 flex items-center justify-center text-green-600 ml-2">
+                                            <i class="ri-cash-line ri-lg"></i>
+                                        </div>
+                                        <span>الدفع عند الاستلام</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-between mt-8">
+                    <button class="border border-gray-300 text-gray-700 px-6 py-2 rounded-button font-medium hover:bg-gray-50 transition whitespace-nowrap">رجوع</button>
+                    <button class="bg-primary text-white px-8 py-2 rounded-button font-medium hover:bg-primary/90 transition whitespace-nowrap">تأكيد الطلب</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shop Section -->
+    <section id="shop" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">متجر القرطاسية</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">تسوق أفضل منتجات القرطاسية والأدوات المكتبية بأسعار مناسبة وتوصيل سريع</p>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Product 1 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden transition-transform hover:shadow-md hover:-translate-y-1">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://readdy.ai/api/search-image?query=premium%20blue%20notebook%20with%20university%20logo%2C%20professional%20stationery%2C%20high%20quality%20paper%2C%20academic%20supplies%2C%20clean%20and%20minimal%20design&width=400&height=300&seq=456&orientation=squarish" alt="دفتر جامعي" class="w-full h-full object-cover object-top">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex text-yellow-400 mb-2">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-half-fill"></i>
+                            <span class="text-gray-500 text-sm mr-1">(٤٨)</span>
+                        </div>
+                        <h3 class="text-gray-800 font-bold mb-1">دفتر جامعي سلك 200 ورقة</h3>
+                        <p class="text-gray-500 text-sm mb-3">دفتر بغلاف صلب مناسب للملاحظات والمحاضرات</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold">3.50 دينار</span>
+                            <button class="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition whitespace-nowrap">
+                                <i class="ri-shopping-cart-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden transition-transform hover:shadow-md hover:-translate-y-1">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://readdy.ai/api/search-image?query=set%20of%20premium%20blue%20pens%2C%20university%20stationery%2C%20high%20quality%20writing%20tools%2C%20academic%20supplies%2C%20clean%20and%20minimal%20design&width=400&height=300&seq=457&orientation=squarish" alt="أقلام جامعية" class="w-full h-full object-cover object-top">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex text-yellow-400 mb-2">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-line"></i>
+                            <span class="text-gray-500 text-sm mr-1">(٣٦)</span>
+                        </div>
+                        <h3 class="text-gray-800 font-bold mb-1">طقم أقلام جاف 10 ألوان</h3>
+                        <p class="text-gray-500 text-sm mb-3">أقلام متعددة الألوان بجودة عالية للكتابة</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold">2.75 دينار</span>
+                            <button class="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition whitespace-nowrap">
+                                <i class="ri-shopping-cart-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 3 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden transition-transform hover:shadow-md hover:-translate-y-1">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://readdy.ai/api/search-image?query=blue%20USB%20flash%20drive%2064GB%2C%20university%20stationery%2C%20high%20quality%20storage%20device%2C%20academic%20supplies%2C%20clean%20and%20minimal%20design&width=400&height=300&seq=458&orientation=squarish" alt="فلاش USB" class="w-full h-full object-cover object-top">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex text-yellow-400 mb-2">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <span class="text-gray-500 text-sm mr-1">(٦٤)</span>
+                        </div>
+                        <h3 class="text-gray-800 font-bold mb-1">فلاش USB سعة 64 جيجابايت</h3>
+                        <p class="text-gray-500 text-sm mb-3">ذاكرة تخزين محمولة عالية السرعة</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold">8.99 دينار</span>
+                            <button class="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition whitespace-nowrap">
+                                <i class="ri-shopping-cart-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Product 4 -->
+                <div class="bg-white rounded-lg shadow-sm overflow-hidden transition-transform hover:shadow-md hover:-translate-y-1">
+                    <div class="h-48 overflow-hidden">
+                        <img src="https://readdy.ai/api/search-image?query=scientific%20calculator%20for%20university%20students%2C%20academic%20supplies%2C%20high%20quality%20calculator%2C%20blue%20color%20theme%2C%20clean%20and%20minimal%20design&width=400&height=300&seq=459&orientation=squarish" alt="آلة حاسبة علمية" class="w-full h-full object-cover object-top">
+                    </div>
+                    <div class="p-4">
+                        <div class="flex text-yellow-400 mb-2">
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-fill"></i>
+                            <i class="ri-star-half-fill"></i>
+                            <span class="text-gray-500 text-sm mr-1">(٥٢)</span>
+                        </div>
+                        <h3 class="text-gray-800 font-bold mb-1">آلة حاسبة علمية متقدمة</h3>
+                        <p class="text-gray-500 text-sm mb-3">آلة حاسبة للمعادلات الرياضية والهندسية</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-primary font-bold">12.50 دينار</span>
+                            <button class="w-10 h-10 flex items-center justify-center bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition whitespace-nowrap">
+                                <i class="ri-shopping-cart-line"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-10">
+                <button class="bg-white border border-primary text-primary px-8 py-3 rounded-button font-medium hover:bg-primary/5 transition whitespace-nowrap">عرض المزيد من المنتجات</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">سلة المشتريات</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">راجع طلباتك وأكمل عملية الشراء</p>
+            </div>
+            
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+                    <div class="p-6">
+                        <div class="space-y-4">
+                            <!-- Cart Item 1 -->
+                            <div class="flex items-center py-4 border-b border-gray-100">
+                                <div class="w-20 h-20 rounded overflow-hidden ml-4">
+                                    <img src="https://readdy.ai/api/search-image?query=premium%20blue%20notebook%20with%20university%20logo%2C%20professional%20stationery%2C%20high%20quality%20paper%2C%20academic%20supplies%2C%20clean%20and%20minimal%20design&width=100&height=100&seq=460&orientation=squarish" alt="دفتر جامعي" class="w-full h-full object-cover object-top">
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-gray-800 font-medium">دفتر جامعي سلك 200 ورقة</h4>
+                                    <p class="text-gray-500 text-sm">عدد: 2</p>
+                                </div>
+                                <div class="text-primary font-bold ml-4">7.00 دينار</div>
+                                <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                            
+                            <!-- Cart Item 2 -->
+                            <div class="flex items-center py-4 border-b border-gray-100">
+                                <div class="w-20 h-20 rounded overflow-hidden ml-4">
+                                    <img src="https://readdy.ai/api/search-image?query=blue%20USB%20flash%20drive%2064GB%2C%20university%20stationery%2C%20high%20quality%20storage%20device%2C%20academic%20supplies%2C%20clean%20and%20minimal%20design&width=100&height=100&seq=461&orientation=squarish" alt="فلاش USB" class="w-full h-full object-cover object-top">
+                                </div>
+                                <div class="flex-1">
+                                    <h4 class="text-gray-800 font-medium">فلاش USB سعة 64 جيجابايت</h4>
+                                    <p class="text-gray-500 text-sm">عدد: 1</p>
+                                </div>
+                                <div class="text-primary font-bold ml-4">8.99 دينار</div>
+                                <button class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-500 transition">
+                                    <i class="ri-delete-bin-line"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <!-- Cart Summary -->
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">المجموع الفرعي:</span>
+                                <span class="text-gray-800 font-medium">15.99 دينار</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">رسوم التوصيل:</span>
+                                <span class="text-gray-800 font-medium">1.00 دينار</span>
+                            </div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-gray-600">الضريبة:</span>
+                                <span class="text-gray-800 font-medium">1.28 دينار</span>
+                            </div>
+                            <div class="flex justify-between text-lg font-bold mt-4 pt-4 border-t border-gray-200">
+                                <span class="text-gray-800">المجموع الكلي:</span>
+                                <span class="text-primary">18.27 دينار</span>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-8 flex flex-col sm:flex-row justify-between gap-4">
+                            <button class="border border-gray-300 text-gray-700 px-6 py-3 rounded-button font-medium hover:bg-gray-50 transition whitespace-nowrap">متابعة التسوق</button>
+                            <button class="bg-primary text-white px-8 py-3 rounded-button font-medium hover:bg-primary/90 transition whitespace-nowrap">إتمام الطلب</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white pt-16 pb-8">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- About -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">JO PRINT</h3>
+                    <p class="text-gray-400 mb-4">منصة طلابية أردنية تقدم خدمات طباعة ملفات عالية الجودة وتوصيل أدوات قرطاسية للطلبة، عبر واجهة سهلة وسريعة.</p>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+                            <i class="ri-facebook-fill"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+                            <i class="ri-instagram-line"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition">
+                            <i class="ri-whatsapp-line"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Quick Links -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">روابط سريعة</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">الرئيسية</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">خدمات الطباعة</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">المتجر</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">من نحن</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                
+                <!-- Contact -->
+                <div>
+                    <h3 class="text-xl font-bold mb-4">تواصل معنا</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start">
+                            <div class="w-5 h-5 flex items-center justify-center text-primary mt-1 ml-3">
+                                <i class="ri-map-pin-line"></i>
+                            </div>
+                            <span class="text-gray-400">عمان، الجامعة الأردنية، مجمع الكليات العلمية</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 flex items-center justify-center text-primary ml-3">
+                                <i class="ri-phone-line"></i>
+                            </div>
+                            <span class="text-gray-400">+962 7 9876 5432</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 flex items-center justify-center text-primary ml-3">
+                                <i class="ri-mail-line"></i>
+                            </div>
+                            <span class="text-gray-400">info@joprint.com</span>
+                        </li>
+                        <li class="flex items-center">
+                            <div class="w-5 h-5 flex items-center justify-center text-primary ml-3">
+                                <i class="ri-time-line"></i>
+                            </div>
+                            <span class="text-gray-400">السبت - الخميس: 9:00 صباحاً - 6:00 مساءً</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+                <p>© 2025 JO PRINT. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // File Upload
+            const fileDropArea = document.querySelector('.file-drop-area');
+            const fileInput = document.querySelector('.file-input');
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, highlight, false);
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                fileDropArea.addEventListener(eventName, unhighlight, false);
+            });
+            
+            function highlight() {
+                fileDropArea.classList.add('is-active');
+            }
+            
+            function unhighlight() {
+                fileDropArea.classList.remove('is-active');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Quantity Buttons
+            const minusBtn = document.querySelector('button:has(.ri-subtract-line)');
+            const plusBtn = document.querySelector('button:has(.ri-add-line)');
+            const quantityInput = document.querySelector('input[type="number"]');
+            
+            if (minusBtn && plusBtn && quantityInput) {
+                minusBtn.addEventListener('click', function() {
+                    const currentValue = parseInt(quantityInput.value);
+                    if (currentValue > 1) {
+                        quantityInput.value = currentValue - 1;
+                    }
+                });
+                
+                plusBtn.addEventListener('click', function() {
+                    const currentValue = parseInt(quantityInput.value);
+                    quantityInput.value = currentValue + 1;
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Radio buttons highlight
+            const radioInputs = document.querySelectorAll('input[type="radio"]');
+            
+            radioInputs.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    // Get all radio buttons with the same name
+                    const name = this.getAttribute('name');
+                    const siblings = document.querySelectorAll(`input[name="${name}"]`);
+                    
+                    // Remove highlight from all siblings
+                    siblings.forEach(sibling => {
+                        const parentDiv = sibling.closest('label').querySelector('div');
+                        if (parentDiv) {
+                            parentDiv.classList.remove('border-primary', 'bg-primary/5');
+                        }
+                    });
+                    
+                    // Add highlight to the checked one
+                    if (this.checked) {
+                        const parentDiv = this.closest('label').querySelector('div');
+                        if (parentDiv) {
+                            parentDiv.classList.add('border-primary', 'bg-primary/5');
+                        }
+                    }
+                });
+                
+                // Initialize state for pre-checked radios
+                if (radio.checked) {
+                    const parentDiv = radio.closest('label').querySelector('div');
+                    if (parentDiv) {
+                        parentDiv.classList.add('border-primary', 'bg-primary/5');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

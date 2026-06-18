@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تتبع طلبك - JO PRINT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#1E88E5',secondary:'#64B5F6'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+@media print {
+body * {
+visibility: hidden;
+}
+#printArea, #printArea * {
+visibility: visible;
+}
+#printArea {
+position: absolute;
+left: 0;
+top: 0;
+width: 100%;
+}
+.no-print {
+display: none !important;
+}
+}
+.print-only {
+display: none;
+}
+@media print {
+.print-only {
+display: block;
+}
+}
+.ltr {
+direction: ltr;
+}
+.rtl {
+direction: rtl;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-checkbox {
+position: relative;
+display: inline-block;
+width: 18px;
+height: 18px;
+margin-left: 8px;
+}
+.custom-checkbox input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.checkmark {
+position: absolute;
+top: 0;
+right: 0;
+height: 18px;
+width: 18px;
+background-color: #fff;
+border: 2px solid #ddd;
+border-radius: 4px;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #1E88E5;
+border-color: #1E88E5;
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.custom-checkbox .checkmark:after {
+right: 5px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.progress-line {
+height: 3px;
+background-color: #e5e7eb;
+position: relative;
+z-index: 1;
+}
+.progress-line-active {
+height: 3px;
+background-color: #1E88E5;
+position: absolute;
+top: 0;
+right: 0;
+z-index: 2;
+}
+.step-circle {
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background-color: #fff;
+border: 2px solid #e5e7eb;
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+z-index: 3;
+}
+.step-circle-active {
+border-color: #1E88E5;
+background-color: #1E88E5;
+color: white;
+}
+.step-circle-completed {
+border-color: #1E88E5;
+background-color: #1E88E5;
+color: white;
+}
+.language-switch {
+position: relative;
+display: inline-block;
+width: 60px;
+height: 30px;
+border-radius: 15px;
+background-color: #f0f0f0;
+overflow: hidden;
+}
+.language-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.language-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+right: 0;
+left: 0;
+bottom: 0;
+transition: .4s;
+}
+.language-slider:before {
+position: absolute;
+content: "EN";
+display: flex;
+align-items: center;
+justify-content: center;
+height: 24px;
+width: 24px;
+right: 3px;
+bottom: 3px;
+background-color: #1E88E5;
+color: white;
+font-size: 12px;
+font-weight: bold;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .language-slider:before {
+transform: translateX(-30px);
+content: "AR";
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Header -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4">
+<div class="flex items-center justify-between py-3">
+<!-- Logo -->
+<div class="flex items-center">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="text-2xl font-['Pacifico'] text-primary">JO PRINT</a>
+</div>
+<!-- Desktop Navigation -->
+<nav class="hidden md:flex items-center space-x-1 space-x-reverse">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="px-3 py-2 text-gray-600 hover:text-primary">الرئيسية</a>
+<a href="#" class="px-3 py-2 text-gray-600 hover:text-primary">خدمات الطباعة</a>
+<a href="#" class="px-3 py-2 text-gray-600 hover:text-primary">ملخصات الكتب</a>
+<a href="#" class="px-3 py-2 text-gray-600 hover:text-primary">المعلمين</a>
+<a href="#" class="px-3 py-2 text-gray-600 hover:text-primary">مكاتب الطباعة</a>
+<a href="#" class="px-3 py-2 text-gray-600 hover:text-primary">المتجر</a>
+<a href="#" class="px-3 py-2 text-primary font-medium border-b-2 border-primary">تتبع طلبك</a>
+</nav>
+<!-- Right Actions -->
+<div class="flex items-center space-x-4 space-x-reverse">
+<!-- Language Switcher -->
+<label class="language-switch">
+<input type="checkbox" id="languageToggle">
+<span class="language-slider"></span>
+</label>
+<!-- Search -->
+<div class="relative hidden md:block">
+<input type="text" placeholder="ابحث هنا..." class="w-40 lg:w-64 pr-8 pl-3 py-2 text-sm bg-gray-100 border-none rounded focus:outline-none focus:ring-2 focus:ring-primary">
+<div class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none w-8 h-full">
+<i class="ri-search-line text-gray-400"></i>
+</div>
+</div>
+<!-- Cart -->
+<div class="relative w-10 h-10 flex items-center justify-center">
+<i class="ri-shopping-cart-line text-gray-600 ri-lg"></i>
+<span class="absolute -top-1 -left-1 bg-primary text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+</div>
+<!-- User -->
+<div class="w-10 h-10 flex items-center justify-center">
+<i class="ri-user-line text-gray-600 ri-lg"></i>
+</div>
+<!-- Mobile Menu Button -->
+<button class="md:hidden w-10 h-10 flex items-center justify-center">
+<i class="ri-menu-line text-gray-600 ri-lg"></i>
+</button>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Title Section -->
+<section class="bg-primary text-white py-8">
+<div class="container mx-auto px-4">
+<div class="flex items-center">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="w-10 h-10 flex items-center justify-center bg-white/20 rounded-full mr-4">
+<i class="ri-arrow-right-s-line text-white ri-lg"></i>
+</a>
+<h1 class="text-2xl md:text-3xl font-bold">تتبع طلبك</h1>
+</div>
+</div>
+</section>
+<!-- Main Content -->
+<section class="py-8 md:py-12">
+<div class="container mx-auto px-4 max-w-5xl">
+<!-- Order Input Form -->
+<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+<h2 class="text-xl font-bold text-gray-800 mb-4">أدخل رقم الطلب أو رمز التتبع</h2>
+<div class="flex flex-col md:flex-row gap-4">
+<div class="flex-1 relative">
+<input type="text" id="orderNumber" placeholder="مثال: ORD-123456 أو TRK-789012" class="w-full px-4 py-3 pr-10 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-gray-700">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-file-list-3-line text-gray-400"></i>
+</div>
+</div>
+<button id="trackButton" class="bg-primary text-white px-6 py-3 font-medium !rounded-button hover:bg-primary/90 transition whitespace-nowrap">
+<i class="ri-search-line ml-2"></i>تتبع الطلب
+</button>
+</div>
+<div id="errorMessage" class="hidden mt-3 text-red-500 text-sm"></div>
+</div>
+<!-- Order Tracking Result (Initially Hidden) -->
+<div id="trackingResult" class="hidden">
+<!-- Order Status Timeline -->
+<div class="bg-white rounded-lg shadow-sm p-6 mb-8">
+<h2 class="text-xl font-bold text-gray-800 mb-6">حالة الطلب</h2>
+<div class="relative mb-12">
+<!-- Progress Line Background -->
+<div class="progress-line absolute top-[15px] right-[15px] left-[15px]"></div>
+<!-- Progress Line Active (Width will be set by JS) -->
+<div id="progressLineActive" class="progress-line-active absolute top-[15px] right-[15px] w-[75%]"></div>
+<!-- Steps -->
+<div class="flex justify-between relative">
+<!-- Step 1: Order Placed -->
+<div class="flex flex-col items-center">
+<div class="step-circle step-circle-completed">
+<i class="ri-check-line ri-sm"></i>
+</div>
+<p class="mt-2 text-sm font-medium text-gray-800">تم الطلب بنجاح</p>
+<p class="text-xs text-gray-500 mt-1">13 أبريل, 10:00 ص</p>
+</div>
+<!-- Step 2: Order Received -->
+<div class="flex flex-col items-center">
+<div class="step-circle step-circle-completed">
+<i class="ri-check-line ri-sm"></i>
+</div>
+<p class="mt-2 text-sm font-medium text-gray-800">تم استلام الطلب من مقدم الخدمة</p>
+<p class="text-xs text-gray-500 mt-1">13 أبريل, 10:30 ص</p>
+</div>
+<!-- Step 3: Processing -->
+<div class="flex flex-col items-center">
+<div class="step-circle step-circle-completed">
+<i class="ri-check-line ri-sm"></i>
+</div>
+<p class="mt-2 text-sm font-medium text-gray-800">قيد المعالجة</p>
+<p class="text-xs text-gray-500 mt-1">13 أبريل, 11:45 ص</p>
+</div>
+<!-- Step 4: Printed -->
+<div class="flex flex-col items-center">
+<div class="step-circle step-circle-completed">
+<i class="ri-check-line ri-sm"></i>
+</div>
+<p class="mt-2 text-sm font-medium text-gray-800">تمت الطباعة</p>
+<p class="text-xs text-gray-500 mt-1">13 أبريل, 1:20 م</p>
+</div>
+<!-- Step 5: Out for Delivery -->
+<div class="flex flex-col items-center">
+<div class="step-circle step-circle-active">
+<i class="ri-truck-line ri-sm"></i>
+</div>
+<p class="mt-2 text-sm font-medium text-primary">قيد التوصيل</p>
+<p class="text-xs text-gray-500 mt-1">13 أبريل, 2:30 م</p>
+</div>
+<!-- Step 6: Delivered -->
+<div class="flex flex-col items-center">
+<div class="step-circle">
+<i class="ri-check-double-line ri-sm text-gray-400"></i>
+</div>
+<p class="mt-2 text-sm font-medium text-gray-400">تم الاستلام</p>
+<p class="text-xs text-gray-400 mt-1">متوقع: 13 أبريل, 4:00 م</p>
+</div>
+</div>
+</div>
+<!-- Latest Status Update -->
+<div class="bg-blue-50 border-r-4 border-primary rounded p-4">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full flex-shrink-0">
+<i class="ri-truck-line text-primary"></i>
+</div>
+<div class="mr-3">
+<h3 class="font-bold text-gray-800">طلبك في الطريق إليك</h3>
+<p class="text-gray-600 text-sm">المندوب خالد يقوم بتوصيل طلبك حالياً. الوقت المتوقع للوصول: 30-45 دقيقة</p>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="flex flex-wrap gap-3 mt-6">
+<button id="refreshButton" class="flex items-center bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition !rounded-button whitespace-nowrap">
+<i id="refreshIcon" class="ri-refresh-line ml-2"></i>تحديث الحالة
+</button>
+<!-- Toast Notification -->
+<div id="toastNotification" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-full opacity-0 transition-all duration-300 z-50 flex items-center">
+<i class="ri-check-line ml-2"></i>
+<span>تم تحديث البيانات بنجاح</span>
+<div class="text-sm mr-2 opacity-75" id="lastUpdateTime"></div>
+</div>
+<button id="shareButton" class="flex items-center bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition !rounded-button whitespace-nowrap">
+<i class="ri-share-line ml-2"></i>مشاركة التتبع
+</button>
+<!-- Share Dialog -->
+<div id="shareDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div class="bg-white rounded-lg w-full max-w-md mx-4 overflow-hidden">
+<!-- Dialog Header -->
+<div class="flex items-center justify-between p-4 border-b">
+<h3 class="text-lg font-bold text-gray-800">مشاركة رابط التتبع</h3>
+<button id="closeShareDialog" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<!-- Dialog Content -->
+<div class="p-4">
+<!-- Tracking Link -->
+<div class="mb-4">
+<label class="block text-sm text-gray-600 mb-2">رابط التتبع</label>
+<div class="flex">
+<input id="trackingLink" type="text" value="https://joprint.com/track/ORD-258741" readonly class="flex-1 border border-gray-300 rounded-r px-3 py-2 bg-gray-50 text-gray-700 text-sm" dir="ltr">
+<button id="copyButton" class="bg-gray-100 border border-gray-300 border-r-0 rounded-l px-3 hover:bg-gray-200 transition">
+<i class="ri-file-copy-line"></i>
+</button>
+</div>
+</div>
+<!-- QR Code -->
+<div class="mb-6 flex justify-center">
+<div id="qrCode" class="bg-white p-4 rounded-lg border">
+<!-- QR Code will be inserted here -->
+</div>
+</div>
+<!-- Share Options -->
+<div class="grid grid-cols-2 gap-3">
+<button class="flex items-center justify-center bg-[#25D366] text-white px-4 py-3 rounded !rounded-button hover:bg-opacity-90 transition">
+<i class="ri-whatsapp-fill ml-2"></i>
+واتساب
+</button>
+<button class="flex items-center justify-center bg-[#1877F2] text-white px-4 py-3 rounded !rounded-button hover:bg-opacity-90 transition">
+<i class="ri-facebook-fill ml-2"></i>
+فيسبوك
+</button>
+<button class="flex items-center justify-center bg-black text-white px-4 py-3 rounded !rounded-button hover:bg-opacity-90 transition">
+<i class="ri-twitter-x-fill ml-2"></i>
+تويتر
+</button>
+<button class="flex items-center justify-center bg-[#EA4335] text-white px-4 py-3 rounded !rounded-button hover:bg-opacity-90 transition">
+<i class="ri-mail-fill ml-2"></i>
+البريد
+</button>
+</div>
+</div>
+</div>
+</div>
+<button id="printButton" class="flex items-center bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition !rounded-button whitespace-nowrap">
+<i class="ri-printer-line ml-2"></i>طباعة التفاصيل
+</button>
+<button id="supportButton" class="flex items-center bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-50 transition !rounded-button whitespace-nowrap">
+<i class="ri-customer-service-2-line ml-2"></i>اتصل بالدعم
+</button>
+<!-- Support Dialog -->
+<div id="supportDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div class="bg-white rounded-lg w-full max-w-md mx-4 overflow-hidden">
+<!-- Dialog Header -->
+<div class="flex items-center justify-between p-4 border-b">
+<h3 class="text-lg font-bold text-gray-800">اتصل بالدعم</h3>
+<button id="closeSupportDialog" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<!-- Dialog Content -->
+<div class="p-6">
+<div class="space-y-4">
+<!-- Direct Call -->
+<a href="tel:+96261234567" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-full">
+<i class="ri-phone-fill text-green-600"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">اتصل بنا مباشرة</h4>
+<p class="text-sm text-gray-600">+962 6 123 4567</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</a>
+<!-- Live Chat -->
+<button id="startChatButton" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full">
+<i class="ri-message-3-fill text-blue-600"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">محادثة مباشرة</h4>
+<p class="text-sm text-gray-600">متوفر الآن</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</button>
+<!-- Email Support -->
+<a href="mailto:support@joprint.com" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-red-100 rounded-full">
+<i class="ri-mail-fill text-red-600"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">البريد الإلكتروني</h4>
+<p class="text-sm text-gray-600">support@joprint.com</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</a>
+<!-- Callback Request -->
+<button id="callbackButton" class="w-full flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-purple-100 rounded-full">
+<i class="ri-phone-fill text-purple-600"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">طلب معاودة الاتصال</h4>
+<p class="text-sm text-gray-600">سنتصل بك في أقرب وقت</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Callback Form Dialog -->
+<div id="callbackFormDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div class="bg-white rounded-lg w-full max-w-md mx-4">
+<div class="flex items-center justify-between p-4 border-b">
+<h3 class="text-lg font-bold text-gray-800">طلب معاودة الاتصال</h3>
+<button id="closeCallbackForm" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<form id="callbackForm" class="p-6 space-y-4">
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">الاسم الكامل</label>
+<input type="text" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
+<input type="tel" required class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" dir="ltr">
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">الوقت المفضل للاتصال</label>
+<select class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent">
+<option>صباحاً (9:00 - 12:00)</option>
+<option>ظهراً (12:00 - 3:00)</option>
+<option>مساءً (3:00 - 8:00)</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-gray-700 mb-1">ملاحظات إضافية</label>
+<textarea class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent" rows="3"></textarea>
+</div>
+<button type="submit" class="w-full bg-primary text-white py-2 px-4 rounded hover:bg-primary/90 transition !rounded-button">
+إرسال الطلب
+</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Details & Map Section -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Order Details -->
+<div class="lg:col-span-1">
+<div class="bg-white rounded-lg shadow-sm p-6 mb-8 lg:mb-0">
+<h2 class="text-xl font-bold text-gray-800 mb-4">تفاصيل الطلب</h2>
+<div class="space-y-4">
+<div class="flex justify-between py-2 border-b border-gray-100">
+<span class="text-gray-600">رقم الطلب:</span>
+<span class="font-medium text-gray-800">ORD-258741</span>
+</div>
+<div class="flex justify-between py-2 border-b border-gray-100">
+<span class="text-gray-600">تاريخ الطلب:</span>
+<span class="font-medium text-gray-800">13 أبريل 2025</span>
+</div>
+<div class="flex justify-between py-2 border-b border-gray-100">
+<span class="text-gray-600">وقت التسليم المتوقع:</span>
+<span class="font-medium text-gray-800">اليوم، 4:00 م</span>
+</div>
+<div class="flex justify-between py-2 border-b border-gray-100">
+<span class="text-gray-600">عدد الصفحات:</span>
+<span class="font-medium text-gray-800">48 صفحة</span>
+</div>
+<div class="flex justify-between py-2 border-b border-gray-100">
+<span class="text-gray-600">عدد النسخ:</span>
+<span class="font-medium text-gray-800">2 نسخة</span>
+</div>
+<div class="flex justify-between py-2 border-b border-gray-100">
+<span class="text-gray-600">نوع التجليد:</span>
+<span class="font-medium text-gray-800">سلك حلزوني</span>
+</div>
+<div class="flex justify-between py-2">
+<span class="text-gray-600">المبلغ الإجمالي:</span>
+<span class="font-bold text-primary">12.50 دينار</span>
+</div>
+</div>
+<!-- Order Activity -->
+<div class="mt-6">
+<h3 class="font-bold text-gray-800 mb-3">نشاط الطلب</h3>
+<div class="space-y-3">
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center bg-blue-100 rounded-full flex-shrink-0 mt-1">
+<i class="ri-truck-line text-primary text-sm"></i>
+</div>
+<div class="mr-3">
+<p class="text-sm text-gray-800">تم خروج الطلب للتوصيل</p>
+<p class="text-xs text-gray-500">13 أبريل، 2:30 م</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center bg-green-100 rounded-full flex-shrink-0 mt-1">
+<i class="ri-printer-line text-green-600 text-sm"></i>
+</div>
+<div class="mr-3">
+<p class="text-sm text-gray-800">تمت طباعة الملفات</p>
+<p class="text-xs text-gray-500">13 أبريل، 1:20 م</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center bg-yellow-100 rounded-full flex-shrink-0 mt-1">
+<i class="ri-file-list-3-line text-yellow-600 text-sm"></i>
+</div>
+<div class="mr-3">
+<p class="text-sm text-gray-800">تمت معالجة الطلب</p>
+<p class="text-xs text-gray-500">13 أبريل، 11:45 ص</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 flex items-center justify-center bg-purple-100 rounded-full flex-shrink-0 mt-1">
+<i class="ri-shopping-cart-line text-purple-600 text-sm"></i>
+</div>
+<div class="mr-3">
+<p class="text-sm text-gray-800">تم استلام الطلب</p>
+<p class="text-xs text-gray-500">13 أبريل، 10:30 ص</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Delivery Map -->
+<div class="lg:col-span-2">
+<div class="bg-white rounded-lg shadow-sm p-6 h-full">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xl font-bold text-gray-800">تتبع التوصيل</h2>
+<div class="flex items-center bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm">
+<i class="ri-time-line ml-1"></i>
+<span>الوصول خلال 30-45 دقيقة</span>
+</div>
+</div>
+<!-- Map Container -->
+<div class="relative h-[350px] rounded-lg overflow-hidden mb-4">
+<div style="background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png');" class="absolute inset-0 bg-center bg-cover"></div>
+<!-- Delivery Person Marker -->
+<div class="absolute top-1/2 right-1/3 transform -translate-y-1/2 -translate-x-1/2">
+<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+<i class="ri-truck-line text-white ri-lg"></i>
+</div>
+<div class="mt-1 bg-white px-2 py-1 rounded shadow-md text-xs font-medium text-center">
+المندوب خالد
+</div>
+</div>
+<!-- Destination Marker -->
+<div class="absolute bottom-1/4 left-1/3 transform -translate-x-1/2">
+<div class="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center border-4 border-white shadow-lg">
+<i class="ri-map-pin-line text-white ri-lg"></i>
+</div>
+<div class="mt-1 bg-white px-2 py-1 rounded shadow-md text-xs font-medium text-center">
+موقع التسليم
+</div>
+</div>
+</div>
+<!-- Delivery Info -->
+<div class="bg-gray-50 rounded-lg p-4">
+<div class="flex items-start">
+<div class="w-10 h-10 flex items-center justify-center bg-primary/10 rounded-full flex-shrink-0">
+<i class="ri-user-line text-primary"></i>
+</div>
+<div class="mr-3 flex-1">
+<div class="flex justify-between">
+<h3 class="font-bold text-gray-800">المندوب خالد</h3>
+<button id="contactDriverButton" class="flex items-center text-primary text-sm hover:underline">
+<i class="ri-phone-line ml-1"></i>
+اتصل بالمندوب
+</button>
+<!-- Driver Contact Dialog -->
+<div id="driverDialog" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div class="bg-white rounded-lg w-full max-w-md mx-4">
+<div class="flex items-center justify-between p-4 border-b">
+<h3 class="text-lg font-bold text-gray-800">الاتصال بالمندوب</h3>
+<button id="closeDriverDialog" class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700">
+<i class="ri-close-line ri-lg"></i>
+</button>
+</div>
+<div class="p-6">
+<!-- Driver Info -->
+<div class="flex items-center mb-6">
+<div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
+<i class="ri-user-line text-gray-400 ri-2x"></i>
+</div>
+<div class="mr-4">
+<h4 class="font-bold text-gray-800">خالد محمد</h4>
+<p class="text-gray-600 text-sm">رقم السيارة: 12-34567</p>
+<div class="flex items-center mt-1 text-green-600 text-sm">
+<i class="ri-time-line ml-1"></i>
+<span>الوصول خلال 30-45 دقيقة</span>
+</div>
+</div>
+</div>
+<!-- Contact Options -->
+<div class="space-y-3">
+<a href="tel:+962791234567" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-green-100 rounded-full">
+<i class="ri-phone-fill text-green-600"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">اتصال مباشر</h4>
+<p class="text-sm text-gray-600">+962 79 123 4567</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</a>
+<a href="sms:+962791234567" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-blue-100 rounded-full">
+<i class="ri-message-2-fill text-blue-600"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">رسالة نصية</h4>
+<p class="text-sm text-gray-600">إرسال SMS</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</a>
+<a href="https://wa.me/962791234567" target="_blank" class="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition">
+<div class="flex items-center">
+<div class="w-10 h-10 flex items-center justify-center bg-[#25D366]/20 rounded-full">
+<i class="ri-whatsapp-fill text-[#25D366]"></i>
+</div>
+<div class="mr-3">
+<h4 class="font-medium text-gray-800">واتساب</h4>
+<p class="text-sm text-gray-600">مراسلة عبر واتساب</p>
+</div>
+</div>
+<i class="ri-arrow-left-line text-gray-400"></i>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p class="text-gray-600 text-sm">رقم السيارة: 12-34567</p>
+</div>
+</div>
+<div class="mt-4 flex items-center">
+<div class="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full flex-shrink-0">
+<i class="ri-map-pin-line text-gray-600"></i>
+</div>
+<div class="mr-2 flex-1">
+<p class="text-sm text-gray-800">موقع التسليم: شارع الجامعة، بجانب مكتبة الجامعة، عمان</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- No Results Found (Initially Hidden) -->
+<div id="noResults" class="hidden bg-white rounded-lg shadow-sm p-8 text-center">
+<div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+<i class="ri-search-line text-gray-400 ri-2x"></i>
+</div>
+<h2 class="text-xl font-bold text-gray-800 mb-2">لم يتم العثور على الطلب</h2>
+<p class="text-gray-600 mb-6">لم نتمكن من العثور على طلب بهذا الرقم. يرجى التأكد من إدخال رقم الطلب أو رمز التتبع بشكل صحيح.</p>
+<button class="bg-primary text-white px-6 py-3 font-medium !rounded-button hover:bg-primary/90 transition whitespace-nowrap">
+حاول مرة أخرى
+</button>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-gray-900 text-white pt-12 pb-6">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+<!-- About -->
+<div>
+<h3 class="text-xl font-bold mb-4">عن JO PRINT</h3>
+<p class="text-gray-400 mb-4">منصة متكاملة تقدم خدمات الطباعة والتوصيل وملخصات الكتب والمعلمين المختصين للطلاب في الأردن.</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition">
+<i class="ri-twitter-x-fill"></i>
+</a>
+<a href="#" class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition">
+<i class="ri-instagram-fill"></i>
+</a>
+<a href="#" class="w-8 h-8 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition">
+<i class="ri-whatsapp-fill"></i>
+</a>
+</div>
+</div>
+<!-- Quick Links -->
+<div>
+<h3 class="text-xl font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="text-gray-400 hover:text-white transition">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">المعلمين</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">مكاتب الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">المتجر</a></li>
+</ul>
+</div>
+<!-- Support -->
+<div>
+<h3 class="text-xl font-bold mb-4">الدعم</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition">الأسئلة الشائعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">سياسة الخصوصية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">شروط الاستخدام</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">سياسة الإرجاع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition">اتصل بنا</a></li>
+</ul>
+</div>
+<!-- Contact -->
+<div>
+<h3 class="text-xl font-bold mb-4">اتصل بنا</h3>
+<ul class="space-y-3">
+<li class="flex items-start">
+<i class="ri-map-pin-line ml-2 mt-1 text-primary"></i>
+<span class="text-gray-400">شارع الجامعة، عمان، الأردن</span>
+</li>
+<li class="flex items-center">
+<i class="ri-phone-line ml-2 text-primary"></i>
+<span class="text-gray-400">+962 6 123 4567</span>
+</li>
+<li class="flex items-center">
+<i class="ri-mail-line ml-2 text-primary"></i>
+<span class="text-gray-400">info@joprint.com</span>
+</li>
+<li class="flex items-center">
+<i class="ri-time-line ml-2 text-primary"></i>
+<span class="text-gray-400">السبت - الخميس: 9:00 ص - 8:00 م</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-6">
+<div class="flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 JO PRINT. جميع الحقوق محفوظة.</p>
+<div class="flex items-center space-x-4 space-x-reverse">
+<i class="ri-visa-fill text-2xl text-gray-400"></i>
+<i class="ri-mastercard-fill text-2xl text-gray-400"></i>
+<i class="ri-paypal-fill text-2xl text-gray-400"></i>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<!-- Mobile Navigation (Hidden on Desktop) -->
+<div class="fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t border-gray-200 md:hidden z-50">
+<div class="flex justify-around">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="flex flex-col items-center py-2 px-3 text-gray-600">
+<i class="ri-home-line ri-lg"></i>
+<span class="text-xs mt-1">الرئيسية</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-600">
+<i class="ri-printer-line ri-lg"></i>
+<span class="text-xs mt-1">الطباعة</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-600">
+<i class="ri-book-open-line ri-lg"></i>
+<span class="text-xs mt-1">الملخصات</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3 text-primary">
+<i class="ri-map-pin-line ri-lg"></i>
+<span class="text-xs mt-1">تتبع الطلب</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3 text-gray-600">
+<i class="ri-shopping-cart-line ri-lg"></i>
+<span class="text-xs mt-1">المتجر</span>
+</a>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Driver Contact Dialog Functionality
+const contactDriverButton = document.getElementById('contactDriverButton');
+const driverDialog = document.getElementById('driverDialog');
+const closeDriverDialog = document.getElementById('closeDriverDialog');
+// Show Driver Dialog
+contactDriverButton.addEventListener('click', () => {
+driverDialog.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+// Close Driver Dialog
+closeDriverDialog.addEventListener('click', () => {
+driverDialog.classList.add('hidden');
+document.body.style.overflow = '';
+});
+// Close dialog when clicking outside
+driverDialog.addEventListener('click', (e) => {
+if (e.target === driverDialog) {
+driverDialog.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+// Support Dialog Functionality
+const supportButton = document.getElementById('supportButton');
+const supportDialog = document.getElementById('supportDialog');
+const closeSupportDialog = document.getElementById('closeSupportDialog');
+const startChatButton = document.getElementById('startChatButton');
+const callbackButton = document.getElementById('callbackButton');
+const callbackFormDialog = document.getElementById('callbackFormDialog');
+const closeCallbackForm = document.getElementById('closeCallbackForm');
+const callbackForm = document.getElementById('callbackForm');
+// Show Support Dialog
+supportButton.addEventListener('click', () => {
+supportDialog.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+// Close Support Dialog
+closeSupportDialog.addEventListener('click', () => {
+supportDialog.classList.add('hidden');
+document.body.style.overflow = '';
+});
+// Close dialog when clicking outside
+supportDialog.addEventListener('click', (e) => {
+if (e.target === supportDialog) {
+supportDialog.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+// Live Chat Button Click
+startChatButton.addEventListener('click', () => {
+// Here you would typically initialize your chat widget
+supportDialog.classList.add('hidden');
+const notification = document.createElement('div');
+notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300';
+notification.textContent = 'جارٍ تحويلك إلى أحد ممثلي خدمة العملاء...';
+document.body.appendChild(notification);
+setTimeout(() => {
+notification.remove();
+}, 3000);
+});
+// Show Callback Form
+callbackButton.addEventListener('click', () => {
+supportDialog.classList.add('hidden');
+callbackFormDialog.classList.remove('hidden');
+});
+// Close Callback Form
+closeCallbackForm.addEventListener('click', () => {
+callbackFormDialog.classList.add('hidden');
+document.body.style.overflow = '';
+});
+// Close callback form when clicking outside
+callbackFormDialog.addEventListener('click', (e) => {
+if (e.target === callbackFormDialog) {
+callbackFormDialog.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+// Handle Callback Form Submit
+callbackForm.addEventListener('submit', (e) => {
+e.preventDefault();
+callbackFormDialog.classList.add('hidden');
+document.body.style.overflow = '';
+const notification = document.createElement('div');
+notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 transform transition-transform duration-300';
+notification.textContent = 'تم استلام طلبك بنجاح. سنتصل بك قريباً!';
+document.body.appendChild(notification);
+setTimeout(() => {
+notification.remove();
+}, 3000);
+callbackForm.reset();
+});
+const printButton = document.getElementById('printButton');
+function createPrintArea() {
+const printArea = document.createElement('div');
+printArea.id = 'printArea';
+printArea.className = 'p-8 mx-auto max-w-4xl';
+// Get current date and time
+const now = new Date();
+const dateStr = now.toLocaleDateString('ar-JO', { year: 'numeric', month: 'long', day: 'numeric' });
+const timeStr = now.toLocaleTimeString('ar-JO', { hour: '2-digit', minute: '2-digit' });
+printArea.innerHTML = `
+<div class="text-center mb-8">
+<h1 class="text-3xl font-['Pacifico'] text-primary mb-2">JO PRINT</h1>
+<p class="text-gray-600">شارع الجامعة، عمان، الأردن</p>
+<p class="text-gray-600">هاتف: 4567 123 6 962+</p>
+</div>
+<div class="border-b-2 border-gray-200 pb-6 mb-6">
+<h2 class="text-2xl font-bold mb-4">تفاصيل الطلب</h2>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<p class="text-gray-600">رقم الطلب:</p>
+<p class="font-bold">ORD-258741</p>
+</div>
+<div>
+<p class="text-gray-600">تاريخ الطباعة:</p>
+<p class="font-bold">${dateStr} ${timeStr}</p>
+</div>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="font-bold mb-3">تفاصيل المنتج</h3>
+<div class="space-y-2">
+<p><span class="text-gray-600">عدد الصفحات:</span> <span class="font-bold">48 صفحة</span></p>
+<p><span class="text-gray-600">عدد النسخ:</span> <span class="font-bold">2 نسخة</span></p>
+<p><span class="text-gray-600">نوع التجليد:</span> <span class="font-bold">سلك حلزوني</span></p>
+<p><span class="text-gray-600">المبلغ الإجمالي:</span> <span class="font-bold">12.50 دينار</span></p>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="font-bold mb-3">معلومات التوصيل</h3>
+<p class="text-gray-800">شارع الجامعة، بجانب مكتبة الجامعة، عمان</p>
+<p class="text-gray-800">وقت التسليم المتوقع: اليوم، 4:00 م</p>
+</div>
+<div class="text-center mt-8">
+<div id="printQrCode" class="inline-block mb-2"></div>
+<p class="text-sm text-gray-600">امسح الرمز لتتبع طلبك</p>
+</div>
+<div class="text-center text-sm text-gray-500 mt-8">
+<p>تمت الطباعة في ${dateStr} ${timeStr}</p>
+<p>www.joprint.com</p>
+</div>
+`;
+document.body.appendChild(printArea);
+// Generate QR Code for print area
+new QRCode(document.getElementById('printQrCode'), {
+text: 'https://joprint.com/track/ORD-258741',
+width: 100,
+height: 100
+});
+}
+printButton.addEventListener('click', () => {
+createPrintArea();
+window.print();
+// Remove print area after printing
+setTimeout(() => {
+const printArea = document.getElementById('printArea');
+if (printArea) {
+printArea.remove();
+}
+}, 1000);
+});
+// Share Dialog Functionality
+const shareButton = document.getElementById('shareButton');
+const shareDialog = document.getElementById('shareDialog');
+const closeShareDialog = document.getElementById('closeShareDialog');
+const copyButton = document.getElementById('copyButton');
+const trackingLink = document.getElementById('trackingLink');
+// Initialize QR Code
+new QRCode(document.getElementById('qrCode'), {
+text: 'https://joprint.com/track/ORD-258741',
+width: 128,
+height: 128
+});
+// Show Share Dialog
+shareButton.addEventListener('click', () => {
+shareDialog.classList.remove('hidden');
+document.body.style.overflow = 'hidden';
+});
+// Close Share Dialog
+closeShareDialog.addEventListener('click', () => {
+shareDialog.classList.add('hidden');
+document.body.style.overflow = '';
+});
+// Close dialog when clicking outside
+shareDialog.addEventListener('click', (e) => {
+if (e.target === shareDialog) {
+shareDialog.classList.add('hidden');
+document.body.style.overflow = '';
+}
+});
+// Copy Link Functionality
+copyButton.addEventListener('click', async () => {
+try {
+await navigator.clipboard.writeText(trackingLink.value);
+const originalIcon = copyButton.innerHTML;
+copyButton.innerHTML = '<i class="ri-check-line text-green-600"></i>';
+setTimeout(() => {
+copyButton.innerHTML = originalIcon;
+}, 2000);
+} catch (err) {
+console.error('Failed to copy text: ', err);
+}
+});
+// Share buttons functionality
+const shareButtons = shareDialog.querySelectorAll('.grid button');
+shareButtons.forEach(button => {
+button.addEventListener('click', () => {
+const text = 'تتبع طلبك على JO PRINT';
+const url = trackingLink.value;
+const type = button.textContent.trim();
+switch(type) {
+case 'واتساب':
+window.open(`https://wa.me/?text=${encodeURIComponent(text + '\n' + url)}`);
+break;
+case 'فيسبوك':
+window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`);
+break;
+case 'تويتر':
+window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`);
+break;
+case 'البريد':
+window.location.href = `mailto:?subject=${encodeURIComponent(text)}&body=${encodeURIComponent(url)}`;
+break;
+}
+});
+});
+const trackButton = document.getElementById('trackButton');
+const orderNumberInput = document.getElementById('orderNumber');
+const errorMessage = document.getElementById('errorMessage');
+const trackingResult = document.getElementById('trackingResult');
+const noResults = document.getElementById('noResults');
+const refreshButton = document.getElementById('refreshButton');
+const refreshIcon = document.getElementById('refreshIcon');
+const toastNotification = document.getElementById('toastNotification');
+const lastUpdateTime = document.getElementById('lastUpdateTime');
+function showToast() {
+const now = new Date();
+const timeString = now.toLocaleTimeString('ar-JO', { hour: '2-digit', minute: '2-digit' });
+lastUpdateTime.textContent = `آخر تحديث: ${timeString}`;
+toastNotification.classList.remove('translate-y-full', 'opacity-0');
+setTimeout(() => {
+toastNotification.classList.add('translate-y-full', 'opacity-0');
+}, 3000);
+}
+function simulateRefresh() {
+return new Promise(resolve => setTimeout(resolve, 1500));
+}
+refreshButton.addEventListener('click', async function() {
+refreshIcon.style.transition = 'transform 1s linear';
+refreshIcon.style.transform = 'rotate(360deg)';
+refreshButton.disabled = true;
+try {
+await simulateRefresh();
+showToast();
+} finally {
+refreshIcon.style.transform = 'rotate(0deg)';
+refreshButton.disabled = false;
+setTimeout(() => {
+refreshIcon.style.transition = 'none';
+}, 1000);
+}
+});
+// Track button click event
+trackButton.addEventListener('click', function() {
+const orderNumber = orderNumberInput.value.trim();
+if (orderNumber === '') {
+// Show error if input is empty
+errorMessage.textContent = 'يرجى إدخال رقم الطلب أو رمز التتبع';
+errorMessage.classList.remove('hidden');
+trackingResult.classList.add('hidden');
+noResults.classList.add('hidden');
+} else if (orderNumber === 'ORD-258741' || orderNumber === 'TRK-258741') {
+// Show tracking result for specific order number
+errorMessage.classList.add('hidden');
+trackingResult.classList.remove('hidden');
+noResults.classList.add('hidden');
+} else {
+// Show no results for invalid order number
+errorMessage.classList.add('hidden');
+trackingResult.classList.add('hidden');
+noResults.classList.remove('hidden');
+}
+});
+// Enter key press in input field
+orderNumberInput.addEventListener('keypress', function(e) {
+if (e.key === 'Enter') {
+trackButton.click();
+}
+});
+// Try again button in no results section
+const tryAgainButton = noResults.querySelector('button');
+tryAgainButton.addEventListener('click', function() {
+orderNumberInput.value = '';
+orderNumberInput.focus();
+noResults.classList.add('hidden');
+});
+// Language Toggle
+const languageToggle = document.getElementById('languageToggle');
+languageToggle.addEventListener('change', function() {
+const htmlElement = document.documentElement;
+const lang = this.checked ? 'en' : 'ar';
+const dir = this.checked ? 'ltr' : 'rtl';
+htmlElement.setAttribute('dir', dir);
+htmlElement.setAttribute('lang', lang);
+// Update text direction specific classes
+document.querySelectorAll('.space-x-reverse').forEach(element => {
+element.classList.toggle('space-x-reverse', lang === 'ar');
+});
+});
+// Show tracking result by default for demo purposes
+// Comment this out if you want to start with the empty form
+trackingResult.classList.remove('hidden');
+});
+</script>
+</body>
+</html>
