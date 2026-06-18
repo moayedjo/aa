@@ -1,0 +1,48 @@
+import type { Teacher } from '@/lib/types'
+
+export const teachers: Teacher[] = [
+  {
+    id: 't1',
+    name: 'أ. محمد العمري',
+    subjects: ['رياضيات', 'فيزياء'],
+    experience: 8,
+    rating: 4.9,
+    ratePerHour: 15.00,
+    location: 'عمان - الجبيهة',
+    available: true,
+    bio: 'معلم رياضيات وفيزياء خبرة 8 سنوات، متخصص في التوجيهي والجامعي',
+  },
+  {
+    id: 't2',
+    name: 'أ. سارة الخالدي',
+    subjects: ['لغة عربية', 'تربية إسلامية'],
+    experience: 5,
+    rating: 4.7,
+    ratePerHour: 12.00,
+    location: 'عمان - الصويفية',
+    available: true,
+    bio: 'معلمة لغة عربية متخصصة في النحو والأدب لجميع المراحل',
+  },
+  {
+    id: 't3',
+    name: 'أ. أحمد الزيدي',
+    subjects: ['لغة إنجليزية'],
+    experience: 10,
+    rating: 4.8,
+    ratePerHour: 18.00,
+    location: 'عمان - دابوق',
+    available: false,
+    bio: 'معلم لغة إنجليزية حاصل على شهادة TEFL مع خبرة 10 سنوات',
+  },
+  {
+    id: 't4',
+    name: 'أ. نور المصري',
+    subjects: ['كيمياء', 'علوم'],
+    experience: 6,
+    rating: 4.6,
+    ratePerHour: 14.00,
+    location: 'الزرقاء',
+    available: true,
+    bio: 'معلمة كيمياء وعلوم متخصصة في الفهم العميق وحل المسائل',
+  },
+]
