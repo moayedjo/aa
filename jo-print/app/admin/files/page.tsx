@@ -2,10 +2,12 @@
 export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { Download } from 'lucide-react'
 
 interface PrintFile {
   id: string
   file_name: string
+  file_path: string
   file_type: string
   file_size: number
   status: string
@@ -37,6 +39,13 @@ export default function AdminFiles() {
     setFiles(prev => prev.map(f => f.id === id ? { ...f, status } : f))
   }
 
+  const downloadFile = async (file: PrintFile) => {
+    const supabase = createClient()
+    const bucket = process.env.NEXT_PUBLIC_STORAGE_BUCKET ?? 'print-files'
+    const { data } = await supabase.storage.from(bucket).createSignedUrl(file.file_path, 60)
+    if (data?.signedUrl) window.open(data.signedUrl, '_blank')
+  }
+
   if (loading) return (
     <div className="flex items-center justify-center h-64">
       <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
@@ -59,6 +68,7 @@ export default function AdminFiles() {
                 <th className="text-right px-4 py-3 font-medium text-gray-600">الحجم</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-600">الحالة</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-600">تاريخ الرفع</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -84,6 +94,12 @@ export default function AdminFiles() {
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">
                     {new Date(file.created_at).toLocaleDateString('ar-JO')}
+                  </td>
+                  <td className="px-4 py-3">
+                    <button onClick={() => downloadFile(file)} title="تحميل الملف"
+                      className="p-1.5 text-gray-400 hover:text-primary hover:bg-primary/5 rounded transition-colors">
+                      <Download size={15} />
+                    </button>
                   </td>
                 </tr>
               ))}

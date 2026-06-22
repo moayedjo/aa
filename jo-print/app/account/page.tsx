@@ -8,6 +8,87 @@ import { Package, User, Settings, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/pricing'
 
+function SettingsTab() {
+  const router = useRouter()
+  const [pwForm, setPwForm] = useState({ current: '', newPw: '', confirm: '' })
+  const [pwMsg, setPwMsg] = useState('')
+  const [pwError, setPwError] = useState('')
+  const [pwLoading, setPwLoading] = useState(false)
+  const [deleteConfirm, setDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  const inputClass = 'w-full border border-border rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary'
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setPwError(''); setPwMsg('')
+    if (pwForm.newPw.length < 6) { setPwError('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return }
+    if (pwForm.newPw !== pwForm.confirm) { setPwError('كلمات المرور غير متطابقة'); return }
+    setPwLoading(true)
+    const supabase = createClient()
+    const { error } = await supabase.auth.updateUser({ password: pwForm.newPw })
+    if (error) { setPwError(error.message) } else {
+      setPwMsg('تم تغيير كلمة المرور بنجاح ✓')
+      setPwForm({ current: '', newPw: '', confirm: '' })
+      setTimeout(() => setPwMsg(''), 4000)
+    }
+    setPwLoading(false)
+  }
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true)
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/')
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Password Change */}
+      <div className="bg-white border border-border rounded-xl p-6">
+        <h2 className="font-bold text-xl text-gray-900 mb-5">تغيير كلمة المرور</h2>
+        {pwMsg && <div className="bg-green-50 border border-green-200 text-green-700 rounded-xl p-3 text-sm mb-4">{pwMsg}</div>}
+        {pwError && <div className="bg-red-50 border border-red-200 text-red-700 rounded-xl p-3 text-sm mb-4">{pwError}</div>}
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">كلمة المرور الجديدة</label>
+            <input type="password" value={pwForm.newPw} onChange={e => setPwForm(f => ({...f, newPw: e.target.value}))} className={inputClass} placeholder="••••••••" dir="ltr" />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1.5">تأكيد كلمة المرور</label>
+            <input type="password" value={pwForm.confirm} onChange={e => setPwForm(f => ({...f, confirm: e.target.value}))} className={inputClass} placeholder="••••••••" dir="ltr" />
+          </div>
+          <button type="submit" disabled={pwLoading || !pwForm.newPw}
+            className="bg-primary text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors disabled:opacity-60">
+            {pwLoading ? 'جارٍ الحفظ...' : 'تغيير كلمة المرور'}
+          </button>
+        </form>
+      </div>
+
+      {/* Delete Account */}
+      <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+        <h2 className="font-bold text-xl text-red-800 mb-2">حذف الحساب</h2>
+        <p className="text-sm text-red-600 mb-4">سيتم حذف جميع بياناتك وطلباتك بشكل نهائي. لا يمكن التراجع عن هذا الإجراء.</p>
+        {!deleteConfirm ? (
+          <button onClick={() => setDeleteConfirm(true)} className="bg-red-500 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-red-600 transition-colors">
+            حذف حسابي
+          </button>
+        ) : (
+          <div className="bg-white border border-red-200 rounded-xl p-4">
+            <p className="text-sm font-bold text-red-700 mb-3">هل أنت متأكد تماماً؟ لا يمكن التراجع.</p>
+            <div className="flex gap-3">
+              <button onClick={() => setDeleteConfirm(false)} className="flex-1 border border-gray-200 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50">إلغاء</button>
+              <button onClick={handleDeleteAccount} disabled={deleting} className="flex-1 bg-red-500 text-white py-2.5 rounded-xl text-sm font-bold hover:bg-red-600 disabled:opacity-60">
+                {deleting ? 'جارٍ الحذف...' : 'نعم، احذف حسابي'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
+
 interface Profile { id: string; full_name: string | null; phone: string | null; address: string | null; role: string }
 interface Order { id: string; order_number: string; status: string; total: number; created_at: string }
 
@@ -182,19 +263,7 @@ export default function AccountPage() {
             )}
 
             {tab === 'settings' && (
-              <div className="bg-white border border-border rounded-xl p-6">
-                <h2 className="font-bold text-xl text-gray-900 mb-5">الإعدادات</h2>
-                <div className="space-y-4 text-sm text-gray-600">
-                  <div className="flex items-center justify-between p-4 border border-border rounded-xl">
-                    <span>تغيير كلمة المرور</span>
-                    <button className="text-primary hover:underline text-sm">تغيير</button>
-                  </div>
-                  <div className="flex items-center justify-between p-4 border border-red-100 bg-red-50 rounded-xl">
-                    <span className="text-red-600">حذف الحساب</span>
-                    <button className="text-red-500 hover:underline text-sm">حذف</button>
-                  </div>
-                </div>
-              </div>
+              <SettingsTab />
             )}
           </div>
         </div>

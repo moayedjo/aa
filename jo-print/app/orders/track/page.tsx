@@ -50,6 +50,14 @@ function TrackContent() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  // Auto-refresh every 30 seconds when an order is displayed
+  useEffect(() => {
+    if (!order) return
+    const interval = setInterval(() => handleTrack(order.order_number), 30000)
+    return () => clearInterval(interval)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order?.order_number])
+
   const currentStepIndex = order ? statusSteps.findIndex(s => s.key === order.status) : -1
 
   return (

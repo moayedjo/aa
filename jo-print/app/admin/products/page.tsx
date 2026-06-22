@@ -1,8 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
-import { products as initialProducts } from '@/lib/data/products'
+import { useState, useEffect } from 'react'
 import type { Product } from '@/lib/types'
 import { X, Plus, Edit2, Trash2 } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
@@ -21,37 +20,53 @@ const emptyProduct: Omit<Product, 'id'> = {
 }
 
 export default function AdminProducts() {
-  const [products, setProducts] = useState<Product[]>(initialProducts)
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; editing: Product | null }>({ open: false, editing: null })
   const [form, setForm] = useState<Omit<Product, 'id'>>(emptyProduct)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
 
-  const openAdd = () => {
-    setForm(emptyProduct)
-    setModal({ open: true, editing: null })
-  }
+  useEffect(() => {
+    fetch('/api/admin/products').then(r => r.json()).then(data => {
+      // Map DB fields to Product interface
+      setProducts((data ?? []).map((p: Record<string, unknown>) => ({
+        id: p.id, name: p.name, nameEn: p.name_en ?? '', category: p.category,
+        price: Number(p.price), priceUnit: p.price_unit ?? 'للقطعة',
+        description: p.description ?? '', icon: p.icon ?? '📦', color: p.color ?? '#1E88E5',
+        popular: p.popular ?? false,
+      })))
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
 
-  const openEdit = (p: Product) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { id, ...rest } = p
-    setForm(rest)
-    setModal({ open: true, editing: p })
-  }
-
+  const openAdd = () => { setForm(emptyProduct); setModal({ open: true, editing: null }) }
+  const openEdit = (p: Product) => { const { id, ...rest } = p; void id; setForm(rest); setModal({ open: true, editing: p }) }
   const closeModal = () => setModal({ open: false, editing: null })
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!form.name.trim() || !form.price) return
+    setSaving(true)
     if (modal.editing) {
-      setProducts(prev => prev.map(p => p.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : p))
+      const res = await fetch(`/api/admin/products/${modal.editing.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+      })
+      if (res.ok) setProducts(prev => prev.map(p => p.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : p))
     } else {
-      const id = form.nameEn.toLowerCase().replace(/\s+/g, '-') || `product-${Date.now()}`
-      setProducts(prev => [...prev, { ...form, id }])
+      const res = await fetch('/api/admin/products', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+      })
+      if (res.ok) {
+        const created = await res.json()
+        setProducts(prev => [{ ...form, id: created.id }, ...prev])
+      }
     }
+    setSaving(false)
     closeModal()
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
+    await fetch(`/api/admin/products/${id}`, { method: 'DELETE' })
     setProducts(prev => prev.filter(p => p.id !== id))
     setDeleteConfirm(null)
   }
@@ -71,6 +86,7 @@ export default function AdminProducts() {
         </button>
       </div>
 
+      {loading && <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {products.map(product => (
           <div key={product.id} className="bg-white rounded-xl border border-gray-200 p-5 hover:shadow-sm transition-shadow">
@@ -174,9 +190,9 @@ export default function AdminProducts() {
             </div>
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={closeModal} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">إلغاء</button>
-              <button onClick={handleSave} disabled={!form.name.trim()}
+              <button onClick={handleSave} disabled={!form.name.trim() || saving}
                 className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50">
-                {modal.editing ? 'حفظ التغييرات' : 'إضافة المنتج'}
+                {saving ? 'جارٍ الحفظ...' : modal.editing ? 'حفظ التغييرات' : 'إضافة المنتج'}
               </button>
             </div>
           </div>

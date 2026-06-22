@@ -1,17 +1,26 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { books } from '@/lib/data/books'
 import { Search } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
+import { addToCart } from '@/lib/cart'
 
 const subjects = ['الكل', 'رياضيات', 'لغة عربية', 'لغة إنجليزية', 'علوم', 'فيزياء', 'كيمياء']
 const grades = ['الكل', 'الصف التاسع', 'الصف العاشر', 'الصف الحادي عشر', 'الصف الثاني عشر']
 
 export default function BooksPage() {
+  const router = useRouter()
   const [search, setSearch] = useState('')
   const [subject, setSubject] = useState('الكل')
   const [grade, setGrade] = useState('الكل')
+
+  const handleOrder = (book: typeof books[number]) => {
+    addToCart({ productId: book.id, name: book.title, price: book.price, quantity: 1, type: 'book' })
+    window.dispatchEvent(new Event('cart-updated'))
+    router.push('/cart')
+  }
 
   const filtered = books.filter(b => {
     const matchSearch = b.title.includes(search) || b.subject.includes(search)
@@ -71,7 +80,7 @@ export default function BooksPage() {
                   <span className="font-bold text-primary">{formatPrice(book.price)}</span>
                   <span className="text-xs text-gray-400 mr-1">({book.pages} صفحة)</span>
                 </div>
-                <button className="bg-primary text-white px-4 py-1.5 rounded-lg text-sm hover:bg-primary-dark transition-colors">
+                <button onClick={() => handleOrder(book)} className="bg-primary text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors">
                   اطلب الآن
                 </button>
               </div>

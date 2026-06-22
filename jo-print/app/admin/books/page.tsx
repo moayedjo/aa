@@ -1,8 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
-import { books as initialBooks } from '@/lib/data/books'
+import { useState, useEffect } from 'react'
 import type { Book } from '@/lib/types'
 import { Plus, Edit2, Trash2, X, BookOpen } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
@@ -13,27 +12,50 @@ const GRADES = ['الصف السابع', 'الصف الثامن', 'الصف ال
 const empty: Omit<Book, 'id'> = { title: '', subject: 'رياضيات', grade: 'الصف العاشر', price: 2.5, pages: 40, description: '' }
 
 export default function AdminBooks() {
-  const [books, setBooks] = useState<Book[]>(initialBooks)
+  const [books, setBooks] = useState<Book[]>([])
+  const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; editing: Book | null }>({ open: false, editing: null })
   const [form, setForm] = useState<Omit<Book, 'id'>>(empty)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/admin/books').then(r => r.json()).then(data => {
+      setBooks((data ?? []).map((b: Record<string, unknown>) => ({
+        id: b.id, title: b.title, subject: b.subject, grade: b.grade,
+        price: Number(b.price), pages: Number(b.pages ?? 0), description: b.description ?? '',
+      })))
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
 
   const openAdd = () => { setForm(empty); setModal({ open: true, editing: null }) }
   const openEdit = (b: Book) => { const { id, ...rest } = b; void id; setForm(rest); setModal({ open: true, editing: b }) }
   const close = () => setModal({ open: false, editing: null })
 
-  const save = () => {
+  const save = async () => {
     if (!form.title.trim()) return
+    setSaving(true)
     if (modal.editing) {
-      setBooks(prev => prev.map(b => b.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : b))
+      const res = await fetch(`/api/admin/books/${modal.editing.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+      })
+      if (res.ok) setBooks(prev => prev.map(b => b.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : b))
     } else {
-      setBooks(prev => [...prev, { ...form, id: `book-${Date.now()}` }])
+      const res = await fetch('/api/admin/books', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+      })
+      if (res.ok) { const created = await res.json(); setBooks(prev => [{ ...form, id: created.id }, ...prev]) }
     }
-    close()
+    setSaving(false); close()
   }
 
-  const del = (id: string) => { setBooks(prev => prev.filter(b => b.id !== id)); setDeleteConfirm(null) }
+  const del = async (id: string) => {
+    await fetch(`/api/admin/books/${id}`, { method: 'DELETE' })
+    setBooks(prev => prev.filter(b => b.id !== id))
+    setDeleteConfirm(null)
+  }
 
   const upd = (f: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [f]: ['price', 'pages'].includes(f) ? Number(e.target.value) : e.target.value }))
@@ -57,6 +79,7 @@ export default function AdminBooks() {
           placeholder="بحث بالعنوان أو المادة أو الصف..." className={inp} />
       </div>
 
+      {loading && <div className="flex justify-center py-16"><div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" /></div>}
       <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b border-gray-200">
@@ -145,8 +168,8 @@ export default function AdminBooks() {
             </div>
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={close} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50">إلغاء</button>
-              <button onClick={save} disabled={!form.title.trim()} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
-                {modal.editing ? 'حفظ' : 'إضافة'}
+              <button onClick={save} disabled={!form.title.trim() || saving} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                {saving ? 'جارٍ الحفظ...' : modal.editing ? 'حفظ' : 'إضافة'}
               </button>
             </div>
           </div>

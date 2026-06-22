@@ -1,8 +1,7 @@
 'use client'
 export const dynamic = 'force-dynamic'
 
-import { useState } from 'react'
-import { teachers as initialTeachers } from '@/lib/data/teachers'
+import { useState, useEffect } from 'react'
 import type { Teacher } from '@/lib/types'
 import { Plus, Edit2, Trash2, X, Star, GraduationCap } from 'lucide-react'
 
@@ -14,27 +13,51 @@ const empty: Omit<Teacher, 'id'> = {
 }
 
 export default function AdminTeachers() {
-  const [teachers, setTeachers] = useState<Teacher[]>(initialTeachers)
+  const [teachers, setTeachers] = useState<Teacher[]>([])
+  const [loading, setLoading] = useState(true)
   const [modal, setModal] = useState<{ open: boolean; editing: Teacher | null }>({ open: false, editing: null })
   const [form, setForm] = useState<Omit<Teacher, 'id'>>(empty)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/admin/teachers').then(r => r.json()).then(data => {
+      setTeachers((data ?? []).map((t: Record<string, unknown>) => ({
+        id: t.id, name: t.name, subjects: t.subjects as string[], experience: Number(t.experience),
+        rating: Number(t.rating), ratePerHour: Number(t.rate_per_hour),
+        location: t.location as string, available: Boolean(t.available), bio: t.bio as string ?? '',
+      })))
+      setLoading(false)
+    }).catch(() => setLoading(false))
+  }, [])
 
   const openAdd = () => { setForm(empty); setModal({ open: true, editing: null }) }
   const openEdit = (t: Teacher) => { const { id, ...rest } = t; void id; setForm(rest); setModal({ open: true, editing: t }) }
   const close = () => setModal({ open: false, editing: null })
 
-  const save = () => {
+  const save = async () => {
     if (!form.name.trim()) return
+    setSaving(true)
     if (modal.editing) {
-      setTeachers(prev => prev.map(t => t.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : t))
+      const res = await fetch(`/api/admin/teachers/${modal.editing.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+      })
+      if (res.ok) setTeachers(prev => prev.map(t => t.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : t))
     } else {
-      setTeachers(prev => [...prev, { ...form, id: `t-${Date.now()}` }])
+      const res = await fetch('/api/admin/teachers', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+      })
+      if (res.ok) { const created = await res.json(); setTeachers(prev => [{ ...form, id: created.id }, ...prev]) }
     }
-    close()
+    setSaving(false); close()
   }
 
-  const del = (id: string) => { setTeachers(prev => prev.filter(t => t.id !== id)); setDeleteConfirm(null) }
+  const del = async (id: string) => {
+    await fetch(`/api/admin/teachers/${id}`, { method: 'DELETE' })
+    setTeachers(prev => prev.filter(t => t.id !== id))
+    setDeleteConfirm(null)
+  }
 
   const upd = (f: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [f]: ['experience', 'rating', 'ratePerHour'].includes(f) ? Number(e.target.value) : e.target.value }))
@@ -173,8 +196,8 @@ export default function AdminTeachers() {
             </div>
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={close} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50">إلغاء</button>
-              <button onClick={save} disabled={!form.name.trim()} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
-                {modal.editing ? 'حفظ' : 'إضافة'}
+              <button onClick={save} disabled={!form.name.trim() || saving} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+                {saving ? 'جارٍ الحفظ...' : modal.editing ? 'حفظ' : 'إضافة'}
               </button>
             </div>
           </div>

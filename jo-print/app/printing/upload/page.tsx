@@ -5,18 +5,10 @@ import { useRouter } from 'next/navigation'
 import UploadZone from '@/components/printing/UploadZone'
 import PrintOptionsForm from '@/components/printing/PrintOptions'
 import type { PrintOptions } from '@/lib/types'
-import { formatPrice } from '@/lib/pricing'
+import { formatPrice, calculatePrintPrice } from '@/lib/pricing'
 import { addToCart } from '@/lib/cart'
 
 const steps = ['رفع الملف', 'خيارات الطباعة', 'مراجعة', 'تأكيد']
-
-function calcPrintPrice(opts: PrintOptions, pages: number): number {
-  let pricePerPage = opts.color === 'color' ? 0.15 : 0.05
-  if (opts.paperType === 'glossy') pricePerPage += 0.05
-  if (opts.paperType === 'matte') pricePerPage += 0.03
-  const sides = opts.sides === 'double' ? Math.ceil(pages / 2) : pages
-  return pricePerPage * sides * opts.copies
-}
 
 export default function UploadPage() {
   const router = useRouter()
@@ -30,7 +22,7 @@ export default function UploadPage() {
     paperType: 'standard', quantity: 1, copies: 1,
   })
   const estimatedPages = 10
-  const price = calcPrintPrice(opts, estimatedPages)
+  const price = calculatePrintPrice(opts, estimatedPages)
 
   const handleUploadFile = async () => {
     if (!file) return
@@ -68,17 +60,17 @@ export default function UploadPage() {
   }
 
   const colorOpts = [
-    { value: 'blackwhite', label: 'أبيض وأسود', desc: '0.05 د.أ/صفحة', icon: '⬛' },
-    { value: 'color',      label: 'ألوان',       desc: '0.15 د.أ/صفحة', icon: '🌈' },
+    { value: 'blackwhite', label: 'أبيض وأسود', desc: '0.05 د.أ/صفحة (A4)', icon: '⬛' },
+    { value: 'color',      label: 'ألوان',       desc: '0.15 د.أ/صفحة (A4)', icon: '🌈' },
   ] as const
   const sideOpts = [
     { value: 'single', label: 'وجه واحد',  icon: '📄' },
     { value: 'double', label: 'وجهين',      icon: '📋' },
   ] as const
   const paperOpts = [
-    { value: 'standard', label: 'ورق عادي', desc: '80 جرام' },
-    { value: 'glossy',   label: 'ورق لامع', desc: 'مثالي للصور' },
-    { value: 'matte',    label: 'ورق مطفي', desc: 'راقٍ واحترافي' },
+    { value: 'standard', label: 'ورق عادي', desc: '80 جرام — السعر الأساسي' },
+    { value: 'glossy',   label: 'ورق لامع', desc: '× 2.5 — مثالي للصور' },
+    { value: 'matte',    label: 'ورق مطفي', desc: '× 2.0 — راقٍ واحترافي' },
   ] as const
 
   const btnCls = (active: boolean) =>

@@ -7,9 +7,10 @@ import { ShoppingCart, Check } from 'lucide-react'
 
 interface AddToCartButtonProps {
   product: Product
+  selectedOptions?: Record<string, string>
 }
 
-export default function AddToCartButton({ product }: AddToCartButtonProps) {
+export default function AddToCartButton({ product, selectedOptions }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false)
   const [quantity, setQuantity] = useState(1)
 
@@ -20,6 +21,7 @@ export default function AddToCartButton({ product }: AddToCartButtonProps) {
       price: product.price,
       quantity,
       type: 'product',
+      options: selectedOptions && Object.keys(selectedOptions).length > 0 ? selectedOptions : undefined,
     })
     window.dispatchEvent(new Event('cart-updated'))
     setAdded(true)
