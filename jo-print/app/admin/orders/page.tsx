@@ -2,6 +2,7 @@
 export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { MessageCircle } from 'lucide-react'
 
 interface Order {
   id: string
@@ -45,7 +46,23 @@ export default function AdminOrders() {
       body: JSON.stringify({ status }),
     })
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
+    // Auto-notify on key status changes
+    if (['approved', 'ready', 'shipped'].includes(status)) {
+      await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, type: status === 'approved' ? 'confirmed' : status }),
+      })
+    }
     setUpdating(null)
+  }
+
+  const sendNotify = async (orderId: string, type: string) => {
+    await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId, type }),
+    })
   }
 
   const filtered = filterStatus === 'all' ? orders : orders.filter(o => o.status === filterStatus)
@@ -86,6 +103,7 @@ export default function AdminOrders() {
                 <th className="text-right px-4 py-3 font-medium text-gray-600">الدفع</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-600">الحالة</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-600">التاريخ</th>
+                <th className="px-4 py-3"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -110,6 +128,15 @@ export default function AdminOrders() {
                     </select>
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">{new Date(order.created_at).toLocaleDateString('ar-JO')}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => sendNotify(order.id, 'status_update')}
+                      title="إرسال إشعار واتساب"
+                      className="p-1.5 text-green-500 hover:text-green-700 hover:bg-green-50 rounded transition-colors"
+                    >
+                      <MessageCircle size={15} />
+                    </button>
+                  </td>
                 </tr>
               ))}
               {filtered.length === 0 && (

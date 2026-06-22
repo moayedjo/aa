@@ -210,3 +210,24 @@ $$;
 create or replace trigger on_order_status_change
   after update on public.orders
   for each row execute procedure public.log_order_status_change();
+
+-- Notifications log table
+create table if not exists public.notifications (
+  id uuid primary key default uuid_generate_v4(),
+  order_id uuid references public.orders(id) on delete cascade,
+  type text not null,
+  phone text not null,
+  message text not null,
+  sent boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+alter table public.notifications enable row level security;
+create policy "Admins can manage notifications"
+  on public.notifications for all
+  using (
+    exists (
+      select 1 from public.profiles
+      where id = auth.uid() and role in ('admin','order_manager')
+    )
+  );
