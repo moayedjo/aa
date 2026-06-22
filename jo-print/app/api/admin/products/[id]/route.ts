@@ -16,6 +16,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     name: body.name, name_en: body.nameEn, category: body.category,
     price: body.price, price_unit: body.priceUnit, description: body.description,
     icon: body.icon, color: body.color, popular: body.popular,
+    options: body.options ?? [],
   }).eq('id', params.id).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data)

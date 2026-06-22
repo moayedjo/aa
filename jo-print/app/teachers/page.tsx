@@ -57,7 +57,7 @@ export default function TeachersPage() {
       `المادة: ${form.subject}\nالوقت المفضل: ${form.preferredTime}\n` +
       (form.notes ? `ملاحظات: ${form.notes}` : '')
     )
-    const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '96279123456'
+    const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '962781141113'
     window.open(`https://wa.me/${waNumber}?text=${msg}`, '_blank')
     setSubmitted(true)
   }

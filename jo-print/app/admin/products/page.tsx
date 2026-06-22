@@ -2,7 +2,7 @@
 export const dynamic = 'force-dynamic'
 
 import { useState, useEffect } from 'react'
-import type { Product } from '@/lib/types'
+import type { Product, ProductOption } from '@/lib/types'
 import { X, Plus, Edit2, Trash2 } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
 
@@ -16,8 +16,10 @@ const ICONS = ['📄', '💼', '🏷️', '🎌', '📓', '👕', '☕', '📢',
 
 const emptyProduct: Omit<Product, 'id'> = {
   name: '', nameEn: '', category: 'printing', price: 0,
-  priceUnit: 'للقطعة', description: '', icon: '📄', color: '#1E88E5', popular: false,
+  priceUnit: 'للقطعة', description: '', icon: '📄', color: '#1E88E5', popular: false, options: [],
 }
+
+const emptyOption: ProductOption = { name: '', label: '', values: [] }
 
 export default function AdminProducts() {
   const [products, setProducts] = useState<Product[]>([])
@@ -26,22 +28,27 @@ export default function AdminProducts() {
   const [form, setForm] = useState<Omit<Product, 'id'>>(emptyProduct)
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [newOptionValue, setNewOptionValue] = useState<Record<number, string>>({})
 
   useEffect(() => {
     fetch('/api/admin/products').then(r => r.json()).then(data => {
-      // Map DB fields to Product interface
       setProducts((data ?? []).map((p: Record<string, unknown>) => ({
         id: p.id, name: p.name, nameEn: p.name_en ?? '', category: p.category,
         price: Number(p.price), priceUnit: p.price_unit ?? 'للقطعة',
         description: p.description ?? '', icon: p.icon ?? '📦', color: p.color ?? '#1E88E5',
-        popular: p.popular ?? false,
+        popular: p.popular ?? false, options: (p.options as ProductOption[]) ?? [],
       })))
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [])
 
-  const openAdd = () => { setForm(emptyProduct); setModal({ open: true, editing: null }) }
-  const openEdit = (p: Product) => { const { id, ...rest } = p; void id; setForm(rest); setModal({ open: true, editing: p }) }
+  const openAdd = () => { setForm(emptyProduct); setNewOptionValue({}); setModal({ open: true, editing: null }) }
+  const openEdit = (p: Product) => {
+    const { id, ...rest } = p; void id
+    setForm({ ...rest, options: rest.options ?? [] })
+    setNewOptionValue({})
+    setModal({ open: true, editing: p })
+  }
   const closeModal = () => setModal({ open: false, editing: null })
 
   const handleSave = async () => {
@@ -74,6 +81,38 @@ export default function AdminProducts() {
   const upd = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [field]: field === 'price' ? Number(e.target.value) : e.target.value }))
 
+  // Options management
+  const addOption = () =>
+    setForm(prev => ({ ...prev, options: [...(prev.options ?? []), { ...emptyOption }] }))
+
+  const removeOption = (i: number) =>
+    setForm(prev => ({ ...prev, options: (prev.options ?? []).filter((_, idx) => idx !== i) }))
+
+  const updateOption = (i: number, field: keyof ProductOption, val: string) =>
+    setForm(prev => {
+      const opts = [...(prev.options ?? [])]
+      opts[i] = { ...opts[i], [field]: val }
+      return { ...prev, options: opts }
+    })
+
+  const addOptionValue = (i: number) => {
+    const val = (newOptionValue[i] ?? '').trim()
+    if (!val) return
+    setForm(prev => {
+      const opts = [...(prev.options ?? [])]
+      opts[i] = { ...opts[i], values: [...opts[i].values, val] }
+      return { ...prev, options: opts }
+    })
+    setNewOptionValue(prev => ({ ...prev, [i]: '' }))
+  }
+
+  const removeOptionValue = (optIdx: number, valIdx: number) =>
+    setForm(prev => {
+      const opts = [...(prev.options ?? [])]
+      opts[optIdx] = { ...opts[optIdx], values: opts[optIdx].values.filter((_, i) => i !== valIdx) }
+      return { ...prev, options: opts }
+    })
+
   const inputClass = 'w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary'
   const labelClass = 'block text-sm font-medium text-gray-700 mb-1'
 
@@ -98,7 +137,10 @@ export default function AdminProducts() {
               {product.popular && <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">شائع</span>}
             </div>
             <p className="text-xs text-gray-500 mb-1">{CATEGORIES.find(c => c.value === product.category)?.label}</p>
-            <p className="text-xs text-gray-400 mb-3 line-clamp-2">{product.description}</p>
+            <p className="text-xs text-gray-400 mb-2 line-clamp-2">{product.description}</p>
+            {(product.options ?? []).length > 0 && (
+              <p className="text-xs text-blue-500 mb-2">{product.options!.length} خيارات</p>
+            )}
             <div className="flex items-center justify-between">
               <span className="text-primary font-bold text-sm">من {formatPrice(product.price)} {product.priceUnit}</span>
               <div className="flex gap-2">
@@ -114,7 +156,6 @@ export default function AdminProducts() {
         ))}
       </div>
 
-      {/* Add/Edit Modal */}
       {modal.open && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
@@ -187,7 +228,64 @@ export default function AdminProducts() {
                   </label>
                 </div>
               </div>
+
+              {/* Product Options */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <label className={labelClass + ' mb-0'}>خيارات المنتج</label>
+                  <button type="button" onClick={addOption}
+                    className="flex items-center gap-1 text-xs text-primary hover:text-blue-700 font-medium">
+                    <Plus size={13} />إضافة خيار
+                  </button>
+                </div>
+                <div className="space-y-3">
+                  {(form.options ?? []).map((opt, i) => (
+                    <div key={i} className="border border-gray-200 rounded-xl p-3 space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text" value={opt.name} onChange={e => updateOption(i, 'name', e.target.value)}
+                          className={inputClass} placeholder="اسم الخيار (key) مثال: size" dir="ltr"
+                        />
+                        <input
+                          type="text" value={opt.label} onChange={e => updateOption(i, 'label', e.target.value)}
+                          className={inputClass} placeholder="العنوان مثال: المقاس"
+                        />
+                        <button type="button" onClick={() => removeOption(i)} className="text-red-400 hover:text-red-600 flex-shrink-0">
+                          <X size={16} />
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {opt.values.map((val, vi) => (
+                          <span key={vi} className="flex items-center gap-1 bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
+                            {val}
+                            <button type="button" onClick={() => removeOptionValue(i, vi)} className="text-gray-400 hover:text-red-500">
+                              <X size={10} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={newOptionValue[i] ?? ''}
+                          onChange={e => setNewOptionValue(prev => ({ ...prev, [i]: e.target.value }))}
+                          onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addOptionValue(i))}
+                          className={inputClass} placeholder="أضف قيمة..."
+                        />
+                        <button type="button" onClick={() => addOptionValue(i)}
+                          className="px-3 py-2 bg-primary text-white rounded-lg text-sm hover:bg-blue-700">
+                          +
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                  {(form.options ?? []).length === 0 && (
+                    <p className="text-xs text-gray-400 text-center py-2">لا توجد خيارات — اضغط "إضافة خيار" لإضافة خيار مثل المقاس أو اللون</p>
+                  )}
+                </div>
+              </div>
             </div>
+
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={closeModal} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">إلغاء</button>
               <button onClick={handleSave} disabled={!form.name.trim() || saving}
@@ -199,7 +297,6 @@ export default function AdminProducts() {
         </div>
       )}
 
-      {/* Delete Confirm */}
       {deleteConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm text-center">

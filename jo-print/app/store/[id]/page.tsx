@@ -32,7 +32,7 @@ export default function ProductPage() {
           icon: found.icon as string ?? '🖨️',
           color: found.color as string ?? '#1E88E5',
           popular: Boolean(found.popular),
-          options: found.options as Product['options'] ?? [],
+          options: Array.isArray(found.options) ? found.options as Product['options'] : [],
         }
         const defaults: Record<string, string> = {}
         ;(p.options ?? []).forEach(opt => { if (opt.values[0]) defaults[opt.label] = opt.values[0] })

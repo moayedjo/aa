@@ -23,7 +23,7 @@ export default function StorePage() {
           price: Number(p.price),
           priceUnit: p.price_unit as string ?? '',
           description: p.description as string ?? '',
-          options: p.options as Product['options'] ?? [],
+          options: Array.isArray(p.options) ? p.options as Product['options'] : [],
           popular: Boolean(p.popular),
           icon: p.icon as string ?? '🖨️',
           color: p.color as string ?? '#1E88E5',

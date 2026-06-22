@@ -23,6 +23,7 @@ export async function POST(request: NextRequest) {
     name: body.name, name_en: body.nameEn, category: body.category,
     price: body.price, price_unit: body.priceUnit, description: body.description,
     icon: body.icon, color: body.color, popular: body.popular ?? false,
+    options: body.options ?? [],
   }).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data, { status: 201 })

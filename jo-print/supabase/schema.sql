@@ -24,6 +24,7 @@ create table if not exists public.products (
   icon text,
   color text,
   popular boolean default false,
+  options jsonb default '[]'::jsonb,
   active boolean default true,
   created_at timestamptz not null default now()
 );

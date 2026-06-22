@@ -33,7 +33,7 @@ function ConfirmationContent() {
         </div>
 
         <div className="mt-8 text-sm text-gray-400 space-y-1">
-          <p>📞 للاستفسار: <span dir="ltr">+962-XX-XXXXXXX</span></p>
+          <p>📞 للاستفسار: <span dir="ltr">{process.env.NEXT_PUBLIC_CONTACT_PHONE ?? '+962781141113'}</span></p>
           <p>⏱️ وقت التجهيز: 24-48 ساعة</p>
         </div>
       </div>
