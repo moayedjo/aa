@@ -38,8 +38,8 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               <li><Link href="/privacy" className="hover:text-white transition-colors">سياسة الخصوصية</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">الشروط والأحكام</Link></li>
-              <li><a href="tel:+96200000000" className="hover:text-white transition-colors" dir="ltr">+962-XX-XXXXXXX</a></li>
-              <li><a href="mailto:info@jo-print.jo" className="hover:text-white transition-colors" dir="ltr">info@jo-print.jo</a></li>
+              <li><a href={`tel:${process.env.NEXT_PUBLIC_CONTACT_PHONE ?? '+96279123456'}`} className="hover:text-white transition-colors" dir="ltr">{process.env.NEXT_PUBLIC_CONTACT_PHONE ?? '+962-79-123456'}</a></li>
+              <li><a href={`mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'info@jo-print.jo'}`} className="hover:text-white transition-colors" dir="ltr">{process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? 'info@jo-print.jo'}</a></li>
             </ul>
           </div>
         </div>

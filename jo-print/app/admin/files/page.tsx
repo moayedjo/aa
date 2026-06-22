@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { Download } from 'lucide-react'
+import { FILE_STATUS_LABELS as statusLabels } from '@/lib/constants'
 
 interface PrintFile {
   id: string
@@ -15,9 +16,6 @@ interface PrintFile {
   created_at: string
 }
 
-const statusLabels: Record<string, string> = {
-  uploaded: 'مرفوع', reviewing: 'قيد المراجعة', approved: 'موافق عليه', rejected: 'مرفوض',
-}
 
 export default function AdminFiles() {
   const [files, setFiles] = useState<PrintFile[]>([])

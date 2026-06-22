@@ -1,6 +1,24 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
+async function sendWhatsApp(to: string, message: string): Promise<boolean> {
+  const sid = process.env.TWILIO_ACCOUNT_SID
+  const token = process.env.TWILIO_AUTH_TOKEN
+  const from = process.env.TWILIO_WHATSAPP_FROM
+  if (!sid || !token || !from) return false
+
+  const phone = to.startsWith('+') ? to : `+962${to.replace(/^0/, '')}`
+  const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString('base64')}`,
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({ From: from, To: `whatsapp:${phone}`, Body: message }),
+  })
+  return res.ok
+}
+
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient()
@@ -24,6 +42,7 @@ export async function POST(request: NextRequest) {
         delivery_fee: body.deliveryFee,
         total: body.total,
         notes: body.notes ?? null,
+        status: 'received',
       })
       .select()
       .single()
@@ -41,6 +60,32 @@ export async function POST(request: NextRequest) {
       }))
       const { error: itemsError } = await supabase.from('order_items').insert(items)
       if (itemsError) throw itemsError
+    }
+
+    // Log initial status in history
+    await supabase.from('order_status_history').insert({
+      order_id: order.id,
+      status: 'received',
+      note: 'تم استلام الطلب',
+    })
+
+    // Auto-notify customer via WhatsApp
+    if (body.customerPhone) {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
+      const message =
+        `مرحباً ${body.customerName} 👋\n` +
+        `تم استلام طلبك في JO-PRINT بنجاح!\n` +
+        `رقم الطلب: ${orderNumber}\n` +
+        `يمكنك متابعة طلبك من:\n${appUrl}/orders/track?q=${orderNumber}`
+      const sent = await sendWhatsApp(body.customerPhone, message)
+
+      await supabase.from('notifications').insert({
+        order_id: order.id,
+        type: 'confirmed',
+        phone: body.customerPhone,
+        message,
+        sent,
+      })
     }
 
     return NextResponse.json({ success: true, order })

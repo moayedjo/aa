@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { MessageCircle } from 'lucide-react'
+import { ORDER_STATUS_LABELS as statusLabels } from '@/lib/constants'
 
 interface Order {
   id: string
@@ -17,10 +18,6 @@ interface Order {
   created_at: string
 }
 
-const statusLabels: Record<string, string> = {
-  received: 'استُلم', reviewing: 'قيد المراجعة', approved: 'موافق عليه',
-  production: 'في الإنتاج', ready: 'جاهز للاستلام', delivered: 'تم التوصيل', cancelled: 'ملغي',
-}
 
 export default function AdminOrders() {
   const [orders, setOrders] = useState<Order[]>([])

@@ -40,7 +40,7 @@ export default function FAQPage() {
         <div className="mt-10 bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
           <p className="font-semibold text-gray-900 mb-2">لم تجد إجابة لسؤالك؟</p>
           <p className="text-sm text-gray-500 mb-4">تواصل معنا مباشرة وسنساعدك في أقرب وقت</p>
-          <a href="tel:+96200000000" className="bg-primary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors inline-block">
+          <a href={`tel:${process.env.NEXT_PUBLIC_CONTACT_PHONE ?? '+96279123456'}`} className="bg-primary text-white px-6 py-2.5 rounded-xl font-medium hover:bg-blue-700 transition-colors inline-block">
             اتصل بنا
           </a>
         </div>

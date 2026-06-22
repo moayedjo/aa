@@ -3,6 +3,7 @@ export const dynamic = 'force-dynamic'
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
+import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/lib/constants'
 
 interface Order {
   id: string
@@ -20,16 +21,8 @@ interface Stats {
   totalRevenue: number
 }
 
-const statusLabels: Record<string, string> = {
-  received: 'استُلم', reviewing: 'قيد المراجعة', approved: 'موافق عليه',
-  production: 'في الإنتاج', ready: 'جاهز', delivered: 'تم التوصيل', cancelled: 'ملغي',
-}
-const statusColors: Record<string, string> = {
-  received: 'bg-blue-100 text-blue-700', reviewing: 'bg-yellow-100 text-yellow-700',
-  approved: 'bg-green-100 text-green-700', production: 'bg-purple-100 text-purple-700',
-  ready: 'bg-teal-100 text-teal-700', delivered: 'bg-gray-100 text-gray-700',
-  cancelled: 'bg-red-100 text-red-700',
-}
+const statusLabels = ORDER_STATUS_LABELS
+const statusColors = ORDER_STATUS_COLORS
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<Stats>({ totalOrders: 0, pendingOrders: 0, completedOrders: 0, totalRevenue: 0 })

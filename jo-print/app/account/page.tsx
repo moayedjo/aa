@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { Package, User, Settings, LogOut } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/pricing'
+import { ORDER_STATUS_LABELS, ORDER_STATUS_COLORS } from '@/lib/constants'
 
 function SettingsTab() {
   const router = useRouter()
@@ -92,16 +93,8 @@ function SettingsTab() {
 interface Profile { id: string; full_name: string | null; phone: string | null; address: string | null; role: string }
 interface Order { id: string; order_number: string; status: string; total: number; created_at: string }
 
-const statusLabels: Record<string, string> = {
-  received: 'استُلم', reviewing: 'قيد المراجعة', approved: 'موافق عليه',
-  production: 'في الإنتاج', ready: 'جاهز', delivered: 'تم التوصيل', cancelled: 'ملغي',
-}
-const statusColors: Record<string, string> = {
-  received: 'bg-blue-100 text-blue-700', reviewing: 'bg-yellow-100 text-yellow-700',
-  approved: 'bg-green-100 text-green-700', production: 'bg-purple-100 text-purple-700',
-  ready: 'bg-teal-100 text-teal-700', delivered: 'bg-gray-100 text-gray-600',
-  cancelled: 'bg-red-100 text-red-700',
-}
+const statusLabels = ORDER_STATUS_LABELS
+const statusColors = ORDER_STATUS_COLORS
 
 export default function AccountPage() {
   const router = useRouter()
