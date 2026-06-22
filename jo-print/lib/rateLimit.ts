@@ -1,13 +1,21 @@
-const store = new Map<string, { count: number; reset: number }>()
+import { createClient } from '@/lib/supabase/server'
 
-export function rateLimit(key: string, limit: number, windowMs: number): boolean {
-  const now = Date.now()
-  const entry = store.get(key)
-  if (!entry || now > entry.reset) {
-    store.set(key, { count: 1, reset: now + windowMs })
+export async function rateLimit(key: string, limit: number, windowMs: number): Promise<boolean> {
+  try {
+    const supabase = createClient()
+    const cutoff = new Date(Date.now() - windowMs).toISOString()
+    
+    const { count } = await supabase
+      .from('rate_limit_events')
+      .select('*', { count: 'exact', head: true })
+      .eq('key', key)
+      .gt('created_at', cutoff)
+    
+    if ((count ?? 0) >= limit) return false
+    
+    await supabase.from('rate_limit_events').insert({ key })
     return true
+  } catch {
+    return true // fail open
   }
-  if (entry.count >= limit) return false
-  entry.count++
-  return true
 }

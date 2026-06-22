@@ -16,7 +16,7 @@ export default function ProductPage() {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
 
   useEffect(() => {
-    fetch('/api/admin/products')
+    fetch('/api/products')
       .then(r => r.json())
       .then((data: Record<string, unknown>[]) => {
         const found = data.find(p => p.id === id)
@@ -35,7 +35,7 @@ export default function ProductPage() {
           options: Array.isArray(found.options) ? found.options as Product['options'] : [],
         }
         const defaults: Record<string, string> = {}
-        ;(p.options ?? []).forEach(opt => { if (opt.values[0]) defaults[opt.label] = opt.values[0] })
+        ;(p.options ?? []).forEach(opt => { if (opt.values?.[0]) defaults[opt.name] = opt.values[0] })
         setSelectedOptions(defaults)
         setProduct(p)
         setLoading(false)
@@ -82,8 +82,8 @@ export default function ProductPage() {
               <div key={option.name} className="mb-4">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   {option.label}
-                  {selectedOptions[option.label] && (
-                    <span className="mr-2 text-primary font-normal">: {selectedOptions[option.label]}</span>
+                  {selectedOptions[option.name] && (
+                    <span className="mr-2 text-primary font-normal">: {selectedOptions[option.name]}</span>
                   )}
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -91,9 +91,9 @@ export default function ProductPage() {
                     <button
                       key={value}
                       type="button"
-                      onClick={() => setSelectedOptions(prev => ({ ...prev, [option.label]: value }))}
+                      onClick={() => setSelectedOptions(prev => ({ ...prev, [option.name]: value }))}
                       className={`px-3 py-1.5 border-2 rounded-lg text-sm transition-colors ${
-                        selectedOptions[option.label] === value
+                        selectedOptions[option.name] === value
                           ? 'border-primary bg-primary/5 text-primary font-medium'
                           : 'border-gray-200 text-gray-600 hover:border-gray-300'
                       }`}
@@ -112,3 +112,6 @@ export default function ProductPage() {
     </div>
   )
 }
+
+
+

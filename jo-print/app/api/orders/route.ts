@@ -22,7 +22,7 @@ async function sendWhatsApp(to: string, message: string): Promise<boolean> {
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
-  if (!rateLimit(`orders:${ip}`, 5, 60_000))
+  if (!await rateLimit(`orders:${ip}`, 5, 60_000))
     return NextResponse.json({ error: 'طلبات كثيرة، انتظر دقيقة' }, { status: 429 })
 
   try {
@@ -119,3 +119,4 @@ export async function GET() {
     return NextResponse.json({ error: 'فشل في جلب الطلبات' }, { status: 500 })
   }
 }
+

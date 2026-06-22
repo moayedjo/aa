@@ -232,3 +232,31 @@ create policy "Admins can manage notifications"
       where id = auth.uid() and role in ('admin','order_manager')
     )
   );
+
+create policy "Service can insert notifications"
+  on public.notifications for insert
+  with check (true);
+
+-- Rate limiting table
+create table if not exists public.rate_limit_events (
+  id bigserial primary key,
+  key text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists rate_limit_events_key_created_at on public.rate_limit_events(key, created_at);
+alter table public.rate_limit_events enable row level security;
+create policy "No public access to rate_limit_events"
+  on public.rate_limit_events for all
+  using (false);
+
+
+create table if not exists public.rate_limit_events (
+  id bigserial primary key,
+  key text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists rate_limit_events_key_created_at on public.rate_limit_events(key, created_at);
+alter table public.rate_limit_events enable row level security;
+create policy "No public access to rate_limit_events"
+  on public.rate_limit_events for all
+  using (false);

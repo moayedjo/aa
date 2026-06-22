@@ -25,7 +25,7 @@ export default function BooksPage() {
   const [grade, setGrade] = useState('الكل')
 
   useEffect(() => {
-    fetch('/api/admin/books')
+    fetch('/api/books')
       .then(r => r.json())
       .then((data: Record<string, unknown>[]) => {
         setBooks((data ?? []).map(b => ({
@@ -129,3 +129,4 @@ export default function BooksPage() {
     </div>
   )
 }
+

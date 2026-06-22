@@ -17,7 +17,7 @@ export default function TeachersPage() {
   const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
-    fetch('/api/admin/teachers')
+    fetch('/api/teachers')
       .then(r => r.json())
       .then((data: Record<string, unknown>[]) => {
         setTeachers((data ?? []).map(t => ({
@@ -192,3 +192,4 @@ export default function TeachersPage() {
     </div>
   )
 }
+

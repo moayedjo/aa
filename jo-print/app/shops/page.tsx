@@ -11,7 +11,7 @@ export default function ShopsPage() {
   const [selectedArea, setSelectedArea] = useState('الكل')
 
   useEffect(() => {
-    fetch('/api/admin/shops')
+    fetch('/api/shops')
       .then(r => r.json())
       .then((data: Record<string, unknown>[]) => {
         setShops((data ?? []).map(s => ({
@@ -118,3 +118,4 @@ export default function ShopsPage() {
     </div>
   )
 }
+

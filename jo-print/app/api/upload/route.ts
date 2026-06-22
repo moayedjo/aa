@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import pdfParse from 'pdf-parse'
 import { rateLimit } from '@/lib/rateLimit'
 
 const ALLOWED_TYPES = [
@@ -16,7 +15,7 @@ const MAX_SIZE = 50 * 1024 * 1024
 
 export async function POST(request: NextRequest) {
   const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
-  if (!rateLimit(`upload:${ip}`, 10, 60_000))
+  if (!await rateLimit(`upload:${ip}`, 10, 60_000))
     return NextResponse.json({ error: 'طلبات كثيرة، انتظر دقيقة' }, { status: 429 })
 
   try {
@@ -42,8 +41,9 @@ export async function POST(request: NextRequest) {
     let pageCount: number | null = null
     if (file.type === 'application/pdf') {
       try {
-        const parsed = await pdfParse(Buffer.from(bytes))
-        pageCount = parsed.numpages
+        const text = Buffer.from(bytes).toString('binary')
+        const matches = text.match(/\/Type\s*\/Page[^s]/g)
+        pageCount = matches ? matches.length : null
       } catch { pageCount = null }
     }
 
@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
         file_path: path,
         file_size: file.size,
         file_type: file.type,
-        print_options: printOptionsRaw ? JSON.parse(printOptionsRaw) : null,
+        print_options: printOptionsRaw ? (() => { try { return JSON.parse(printOptionsRaw) } catch { return null } })() : null,
       })
       .select()
       .single()
@@ -77,3 +77,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'فشل في رفع الملف' }, { status: 500 })
   }
 }
+
+
+

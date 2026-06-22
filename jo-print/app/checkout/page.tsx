@@ -28,7 +28,7 @@ export default function CheckoutPage() {
     setForm(prev => ({ ...prev, [f]: e.target.value }))
 
   const { subtotal, total } = getCartTotal(cart)
-  const deliveryFee = delivery === 'delivery' ? 2.0 : 0
+  const deliveryFee = (delivery === 'delivery' && subtotal < 20) ? 2.0 : 0
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -129,7 +129,7 @@ export default function CheckoutPage() {
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {[
                     { key: 'pickup' as const, label: 'استلام من المكتب', icon: '🏪', desc: 'مجاناً — عمان' },
-                    { key: 'delivery' as const, label: 'توصيل للمنزل', icon: '🚚', desc: `${formatPrice(2.0)} — 24-48 ساعة` },
+                    { key: 'delivery' as const, label: 'توصيل للمنزل', icon: '🚚', desc: 'مجاناً للطلبات فوق 20 د.أ — 24-48 ساعة' },
                   ].map(opt => (
                     <button type="button" key={opt.key} onClick={() => setDelivery(opt.key)}
                       className={`p-4 rounded-xl border-2 text-right transition-colors ${delivery === opt.key ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
@@ -229,3 +229,4 @@ export default function CheckoutPage() {
     </div>
   )
 }
+

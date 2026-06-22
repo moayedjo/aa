@@ -30,6 +30,14 @@ export async function PATCH(
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'غير مصرح' }, { status: 401 })
 
+    const [{ data: orderData }, { data: profile }] = await Promise.all([
+      supabase.from('orders').select('user_id').eq('id', params.id).single(),
+      supabase.from('profiles').select('role').eq('id', user.id).single(),
+    ])
+    const isAdmin = ['admin', 'order_manager'].includes(profile?.role ?? '')
+    const isOwner = orderData?.user_id === user.id
+    if (!isAdmin && !isOwner) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
+
     const body = await request.json()
     const { data, error } = await supabase
       .from('orders')
@@ -53,3 +61,4 @@ export async function PATCH(
     return NextResponse.json({ error: 'فشل في تحديث الطلب' }, { status: 500 })
   }
 }
+

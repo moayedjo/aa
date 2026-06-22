@@ -12,7 +12,7 @@ export default function StorePage() {
   const [sortBy, setSortBy] = useState('popular')
 
   useEffect(() => {
-    fetch('/api/admin/products')
+    fetch('/api/products')
       .then(r => r.json())
       .then((data: Record<string, unknown>[]) => {
         setProducts((data ?? []).map(p => ({
@@ -97,3 +97,4 @@ export default function StorePage() {
     </div>
   )
 }
+
