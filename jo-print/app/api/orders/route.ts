@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { rateLimit } from '@/lib/rateLimit'
 
 async function sendWhatsApp(to: string, message: string): Promise<boolean> {
   const sid = process.env.TWILIO_ACCOUNT_SID
@@ -20,6 +21,10 @@ async function sendWhatsApp(to: string, message: string): Promise<boolean> {
 }
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
+  if (!rateLimit(`orders:${ip}`, 5, 60_000))
+    return NextResponse.json({ error: 'طلبات كثيرة، انتظر دقيقة' }, { status: 429 })
+
   try {
     const supabase = createClient()
     const body = await request.json()

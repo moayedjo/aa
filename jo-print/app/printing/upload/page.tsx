@@ -17,11 +17,12 @@ export default function UploadPage() {
   const [uploading, setUploading] = useState(false)
   const [uploadedFileId, setUploadedFileId] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState('')
+  const [pageCount, setPageCount] = useState<number | null>(null)
   const [opts, setOpts] = useState<PrintOptions>({
     size: 'A4', color: 'blackwhite', sides: 'single',
     paperType: 'standard', quantity: 1, copies: 1,
   })
-  const estimatedPages = 10
+  const estimatedPages = pageCount ?? 10
   const price = calculatePrintPrice(opts, estimatedPages)
 
   const handleUploadFile = async () => {
@@ -35,6 +36,7 @@ export default function UploadPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error ?? 'فشل رفع الملف')
       setUploadedFileId(data.fileId)
+      if (data.pageCount) setPageCount(data.pageCount)
       setStep(1)
     } catch (err) {
       setUploadError(err instanceof Error ? err.message : 'حدث خطأ في رفع الملف')
@@ -217,7 +219,7 @@ export default function UploadPage() {
                   <span className="text-primary">{formatPrice(price)}</span>
                 </div>
               </div>
-              <p className="text-xs text-gray-400 mb-5">* السعر تقديري بناءً على {estimatedPages} صفحة. السعر النهائي بعد مراجعة الملف.</p>
+              <p className="text-xs text-gray-400 mb-5">* السعر {pageCount ? `بناءً على ${pageCount} صفحة (مكتشف تلقائياً)` : `تقديري بناءً على ${estimatedPages} صفحة`}. السعر النهائي بعد مراجعة الملف.</p>
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 py-3 rounded-xl font-medium text-gray-600">السابق</button>
                 <button onClick={() => { setStep(3); handleAddToCart() }} className="flex-[2] bg-primary text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">

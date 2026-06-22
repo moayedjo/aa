@@ -1,5 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import pdfParse from 'pdf-parse'
+import { rateLimit } from '@/lib/rateLimit'
 
 const ALLOWED_TYPES = [
   'application/pdf',
@@ -13,6 +15,10 @@ const ALLOWED_TYPES = [
 const MAX_SIZE = 50 * 1024 * 1024
 
 export async function POST(request: NextRequest) {
+  const ip = request.headers.get('x-forwarded-for') ?? 'unknown'
+  if (!rateLimit(`upload:${ip}`, 10, 60_000))
+    return NextResponse.json({ error: 'طلبات كثيرة، انتظر دقيقة' }, { status: 429 })
+
   try {
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -32,6 +38,15 @@ export async function POST(request: NextRequest) {
     const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
 
     const bytes = await file.arrayBuffer()
+
+    let pageCount: number | null = null
+    if (file.type === 'application/pdf') {
+      try {
+        const parsed = await pdfParse(Buffer.from(bytes))
+        pageCount = parsed.numpages
+      } catch { pageCount = null }
+    }
+
     const { error: uploadError } = await supabase.storage
       .from('print-files')
       .upload(path, bytes, { contentType: file.type, upsert: false })
@@ -56,7 +71,7 @@ export async function POST(request: NextRequest) {
 
     if (dbError) throw dbError
 
-    return NextResponse.json({ success: true, fileId: record.id, path })
+    return NextResponse.json({ success: true, fileId: record.id, path, pageCount })
   } catch (error) {
     console.error('POST /api/upload error:', error)
     return NextResponse.json({ error: 'فشل في رفع الملف' }, { status: 500 })
