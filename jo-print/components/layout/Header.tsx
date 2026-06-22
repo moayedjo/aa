@@ -1,12 +1,40 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { ShoppingCart, Menu, X, User, Phone } from 'lucide-react'
+import { getCart } from '@/lib/cart'
+import { createClient } from '@/lib/supabase/client'
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
-  const [cartCount] = useState(0)
+  const [cartCount, setCartCount] = useState(0)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+  useEffect(() => {
+    const updateCart = () => {
+      const cart = getCart()
+      setCartCount(cart.reduce((sum, item) => sum + item.quantity, 0))
+    }
+    updateCart()
+    window.addEventListener('storage', updateCart)
+    window.addEventListener('cart-updated', updateCart)
+    return () => {
+      window.removeEventListener('storage', updateCart)
+      window.removeEventListener('cart-updated', updateCart)
+    }
+  }, [])
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user)
+    })
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsLoggedIn(!!session?.user)
+    })
+    return () => subscription.unsubscribe()
+  }, [])
 
   const navLinks = [
     { href: '/', label: 'الرئيسية' },
@@ -60,11 +88,11 @@ export default function Header() {
               )}
             </Link>
             <Link
-              href="/auth"
+              href={isLoggedIn ? '/account' : '/auth'}
               className="hidden md:flex items-center gap-1 bg-primary text-white px-4 py-2 rounded-lg text-sm hover:bg-primary-dark transition-colors"
             >
               <User size={15} />
-              <span>دخول</span>
+              <span>{isLoggedIn ? 'حسابي' : 'دخول'}</span>
             </Link>
             <button
               className="lg:hidden p-2 text-gray-600"
@@ -90,11 +118,11 @@ export default function Header() {
                 </Link>
               ))}
               <Link
-                href="/auth"
+                href={isLoggedIn ? '/account' : '/auth'}
                 className="mx-3 mt-2 text-center bg-primary text-white py-2 rounded-lg text-sm"
                 onClick={() => setMenuOpen(false)}
               >
-                تسجيل الدخول
+                {isLoggedIn ? 'حسابي' : 'تسجيل الدخول'}
               </Link>
             </nav>
           </div>

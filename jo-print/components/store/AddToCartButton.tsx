@@ -2,17 +2,26 @@
 
 import { useState } from 'react'
 import type { Product } from '@/lib/types'
+import { addToCart } from '@/lib/cart'
 import { ShoppingCart, Check } from 'lucide-react'
 
 interface AddToCartButtonProps {
   product: Product
 }
 
-export default function AddToCartButton({ product: _product }: AddToCartButtonProps) {
+export default function AddToCartButton({ product }: AddToCartButtonProps) {
   const [added, setAdded] = useState(false)
   const [quantity, setQuantity] = useState(1)
 
   const handleAdd = () => {
+    addToCart({
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      quantity,
+      type: 'product',
+    })
+    window.dispatchEvent(new Event('cart-updated'))
     setAdded(true)
     setTimeout(() => setAdded(false), 2000)
   }
