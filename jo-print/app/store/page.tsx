@@ -25,7 +25,8 @@ export default function StorePage() {
           description: p.description as string ?? '',
           options: p.options as Product['options'] ?? [],
           popular: Boolean(p.popular),
-          emoji: p.emoji as string ?? '🖨️',
+          icon: p.icon as string ?? '🖨️',
+          color: p.color as string ?? '#1E88E5',
         })))
         setLoading(false)
       })
@@ -51,6 +52,7 @@ export default function StorePage() {
         <div className="flex flex-col lg:flex-row gap-6">
           <div className="lg:w-56 shrink-0">
             <ProductFilters
+              products={products}
               selectedCategory={selectedCategory}
               onCategoryChange={setSelectedCategory}
               minPrice={0}

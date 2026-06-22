@@ -29,8 +29,8 @@ export default function ProductPage() {
           price: Number(found.price),
           priceUnit: found.price_unit as string ?? '',
           description: found.description as string ?? '',
-          icon: found.emoji as string ?? '🖨️',
-          color: '#1E88E5',
+          icon: found.icon as string ?? '🖨️',
+          color: found.color as string ?? '#1E88E5',
           popular: Boolean(found.popular),
           options: found.options as Product['options'] ?? [],
         }

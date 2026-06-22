@@ -1,10 +1,18 @@
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { getFeaturedProducts } from '@/lib/data/products'
+import { createClient } from '@/lib/supabase/server'
 import { formatPrice } from '@/lib/pricing'
 
-export default function FeaturedProducts() {
-  const products = getFeaturedProducts()
+export default async function FeaturedProducts() {
+  const supabase = createClient()
+  const { data: products } = await supabase
+    .from('products')
+    .select('id, name, description, price, price_unit, icon, color')
+    .eq('popular', true)
+    .eq('active', true)
+    .limit(8)
+
+  if (!products || products.length === 0) return null
 
   return (
     <section className="py-16 px-4 bg-surface">
@@ -24,14 +32,15 @@ export default function FeaturedProducts() {
               <div className="bg-white rounded-[12px] border border-border hover:shadow-md transition-shadow p-4">
                 <div
                   className="w-full h-32 rounded-lg flex items-center justify-center text-5xl mb-3"
-                  style={{ backgroundColor: product.color + '15' }}
+                  style={{ backgroundColor: (product.color ?? '#1E88E5') + '15' }}
                 >
-                  {product.icon}
+                  {product.icon ?? '🖨️'}
                 </div>
                 <h3 className="font-semibold text-gray-900 text-sm mb-1">{product.name}</h3>
                 <p className="text-xs text-gray-500 mb-2 line-clamp-1">{product.description}</p>
                 <div className="text-primary font-bold text-sm">
-                  من {formatPrice(product.price)} <span className="text-gray-400 font-normal">{product.priceUnit}</span>
+                  من {formatPrice(product.price)}{' '}
+                  <span className="text-gray-400 font-normal">{product.price_unit}</span>
                 </div>
               </div>
             </Link>

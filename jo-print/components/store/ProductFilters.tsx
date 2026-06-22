@@ -1,8 +1,18 @@
 'use client'
 
-import { categories } from '@/lib/data/categories'
+import type { Product } from '@/lib/types'
+
+const CATEGORY_META: Record<string, { name: string; icon: string }> = {
+  all:          { name: 'الكل',          icon: '🗂️' },
+  printing:     { name: 'طباعة',          icon: '🖨️' },
+  'large-format': { name: 'طباعة كبيرة', icon: '🎌' },
+  store:        { name: 'المتجر',         icon: '🛍️' },
+  design:       { name: 'تصميم',          icon: '🎨' },
+  binding:      { name: 'تجليد',          icon: '📚' },
+}
 
 interface ProductFiltersProps {
+  products: Product[]
   selectedCategory: string
   onCategoryChange: (category: string) => void
   minPrice: number
@@ -10,10 +20,22 @@ interface ProductFiltersProps {
   onPriceChange: (min: number, max: number) => void
 }
 
-export default function ProductFilters({
-  selectedCategory,
-  onCategoryChange,
-}: ProductFiltersProps) {
+export default function ProductFilters({ products, selectedCategory, onCategoryChange }: ProductFiltersProps) {
+  const categoryCounts = products.reduce<Record<string, number>>((acc, p) => {
+    acc[p.category] = (acc[p.category] ?? 0) + 1
+    return acc
+  }, {})
+
+  const categories = [
+    { id: 'all', name: 'الكل', icon: '🗂️', count: products.length },
+    ...Object.entries(categoryCounts).map(([id, count]) => ({
+      id,
+      name: CATEGORY_META[id]?.name ?? id,
+      icon: CATEGORY_META[id]?.icon ?? '📦',
+      count,
+    })),
+  ]
+
   return (
     <div className="bg-white rounded-[12px] border border-border p-4">
       <h3 className="font-bold text-gray-900 mb-4">الفئات</h3>
