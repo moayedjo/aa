@@ -1,21 +1,42 @@
 'use client'
 
-import { useState } from 'react'
-import { teachers } from '@/lib/data/teachers'
+import { useState, useEffect } from 'react'
 import type { Teacher } from '@/lib/types'
 import { Star, MapPin, X, Phone } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
-
-const subjects = ['الكل', 'رياضيات', 'فيزياء', 'لغة عربية', 'لغة إنجليزية', 'كيمياء', 'علوم']
 
 interface BookingForm { name: string; phone: string; subject: string; preferredTime: string; notes: string }
 const emptyForm: BookingForm = { name: '', phone: '', subject: '', preferredTime: '', notes: '' }
 
 export default function TeachersPage() {
+  const [teachers, setTeachers] = useState<Teacher[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedSubject, setSelectedSubject] = useState('الكل')
   const [bookingTeacher, setBookingTeacher] = useState<Teacher | null>(null)
   const [form, setForm] = useState<BookingForm>(emptyForm)
   const [submitted, setSubmitted] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/admin/teachers')
+      .then(r => r.json())
+      .then((data: Record<string, unknown>[]) => {
+        setTeachers((data ?? []).map(t => ({
+          id: t.id as string,
+          name: t.name as string,
+          subjects: t.subjects as string[],
+          experience: Number(t.experience),
+          rating: Number(t.rating),
+          ratePerHour: Number(t.rate_per_hour),
+          location: t.location as string,
+          available: Boolean(t.available),
+          bio: t.bio as string ?? '',
+        })))
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
+
+  const allSubjects = ['الكل', ...Array.from(new Set(teachers.flatMap(t => t.subjects)))]
 
   const filtered = teachers.filter(t =>
     selectedSubject === 'الكل' || t.subjects.includes(selectedSubject)
@@ -30,14 +51,14 @@ export default function TeachersPage() {
   const handleBook = (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name.trim() || !form.phone.trim()) return
-    // Send WhatsApp message to teacher/admin
     const msg = encodeURIComponent(
       `مرحباً، أريد حجز جلسة مع ${bookingTeacher?.name}\n` +
       `الاسم: ${form.name}\nالهاتف: ${form.phone}\n` +
       `المادة: ${form.subject}\nالوقت المفضل: ${form.preferredTime}\n` +
       (form.notes ? `ملاحظات: ${form.notes}` : '')
     )
-    window.open(`https://wa.me/96279123456?text=${msg}`, '_blank')
+    const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '96279123456'
+    window.open(`https://wa.me/${waNumber}?text=${msg}`, '_blank')
     setSubmitted(true)
   }
 
@@ -52,9 +73,8 @@ export default function TeachersPage() {
           <p className="text-gray-500">تواصل مع أفضل المعلمين الخصوصيين في الأردن</p>
         </div>
 
-        {/* Subject Filter */}
         <div className="flex flex-wrap gap-2 mb-8 justify-center">
-          {subjects.map(s => (
+          {allSubjects.map(s => (
             <button key={s} onClick={() => setSelectedSubject(s)}
               className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${selectedSubject === s ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
               {s}
@@ -62,50 +82,59 @@ export default function TeachersPage() {
           ))}
         </div>
 
-        {/* Teachers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {filtered.map(teacher => (
-            <div key={teacher.id} className="bg-white border border-border rounded-[12px] p-5 hover:shadow-md transition-shadow">
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-2xl shrink-0">👨‍🏫</div>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h3 className="font-bold text-gray-900">{teacher.name}</h3>
-                      <div className="flex items-center gap-1 text-yellow-500 text-sm">
-                        <Star size={14} fill="currentColor" />
-                        <span>{teacher.rating}</span>
-                        <span className="text-gray-400">({teacher.experience} سنوات خبرة)</span>
+        {loading ? (
+          <div className="flex justify-center py-20">
+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="text-center py-20 text-gray-400">
+            <div className="text-4xl mb-3">👨‍🏫</div>
+            <p>{teachers.length === 0 ? 'لا يوجد معلمون متاحون حالياً' : 'لا توجد نتائج'}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            {filtered.map(teacher => (
+              <div key={teacher.id} className="bg-white border border-border rounded-[12px] p-5 hover:shadow-md transition-shadow">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center text-2xl shrink-0">👨‍🏫</div>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-bold text-gray-900">{teacher.name}</h3>
+                        <div className="flex items-center gap-1 text-yellow-500 text-sm">
+                          <Star size={14} fill="currentColor" />
+                          <span>{teacher.rating}</span>
+                          <span className="text-gray-400">({teacher.experience} سنوات خبرة)</span>
+                        </div>
                       </div>
+                      <span className={`text-xs px-2 py-1 rounded-full ${teacher.available ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+                        {teacher.available ? 'متاح' : 'غير متاح'}
+                      </span>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${teacher.available ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
-                      {teacher.available ? 'متاح' : 'غير متاح'}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 my-2">
-                    {teacher.subjects.map(s => (
-                      <span key={s} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{s}</span>
-                    ))}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                    <MapPin size={12} /><span>{teacher.location}</span>
-                  </div>
-                  <p className="text-sm text-gray-500 mb-3">{teacher.bio}</p>
-                  <div className="flex items-center justify-between">
-                    <span className="font-bold text-primary">{formatPrice(teacher.ratePerHour)} / ساعة</span>
-                    <button onClick={() => openBooking(teacher)} disabled={!teacher.available}
-                      className="bg-primary text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                      احجز جلسة
-                    </button>
+                    <div className="flex flex-wrap gap-1 my-2">
+                      {teacher.subjects.map(s => (
+                        <span key={s} className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">{s}</span>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
+                      <MapPin size={12} /><span>{teacher.location}</span>
+                    </div>
+                    <p className="text-sm text-gray-500 mb-3">{teacher.bio}</p>
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold text-primary">{formatPrice(teacher.ratePerHour)} / ساعة</span>
+                      <button onClick={() => openBooking(teacher)} disabled={!teacher.available}
+                        className="bg-primary text-white px-4 py-1.5 rounded-lg text-sm hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                        احجز جلسة
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Booking Modal */}
       {bookingTeacher && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl w-full max-w-md">

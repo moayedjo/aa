@@ -1,13 +1,36 @@
 'use client'
 
-import { useState } from 'react'
-import { products } from '@/lib/data/products'
+import { useState, useEffect } from 'react'
+import type { Product } from '@/lib/types'
 import ProductCard from '@/components/store/ProductCard'
 import ProductFilters from '@/components/store/ProductFilters'
 
 export default function StorePage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('popular')
+
+  useEffect(() => {
+    fetch('/api/admin/products')
+      .then(r => r.json())
+      .then((data: Record<string, unknown>[]) => {
+        setProducts((data ?? []).map(p => ({
+          id: p.id as string,
+          name: p.name as string,
+          nameEn: p.name_en as string ?? '',
+          category: p.category as string,
+          price: Number(p.price),
+          priceUnit: p.price_unit as string ?? '',
+          description: p.description as string ?? '',
+          options: p.options as Product['options'] ?? [],
+          popular: Boolean(p.popular),
+          emoji: p.emoji as string ?? '🖨️',
+        })))
+        setLoading(false)
+      })
+      .catch(() => setLoading(false))
+  }, [])
 
   const filtered = products
     .filter(p => selectedCategory === 'all' || p.category === selectedCategory)
@@ -26,7 +49,6 @@ export default function StorePage() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
-          {/* Sidebar */}
           <div className="lg:w-56 shrink-0">
             <ProductFilters
               selectedCategory={selectedCategory}
@@ -37,10 +59,9 @@ export default function StorePage() {
             />
           </div>
 
-          {/* Products */}
           <div className="flex-1">
             <div className="flex items-center justify-between mb-4">
-              <p className="text-sm text-gray-500">{filtered.length} منتج</p>
+              <p className="text-sm text-gray-500">{loading ? '...' : `${filtered.length} منتج`}</p>
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
@@ -51,11 +72,23 @@ export default function StorePage() {
                 <option value="price-desc">السعر: الأعلى أولاً</option>
               </select>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
-              {filtered.map(product => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+
+            {loading ? (
+              <div className="flex justify-center py-20">
+                <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+              </div>
+            ) : filtered.length === 0 ? (
+              <div className="text-center py-20 text-gray-400">
+                <div className="text-4xl mb-3">🔍</div>
+                <p>لا توجد منتجات في هذه الفئة</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
+                {filtered.map(product => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
