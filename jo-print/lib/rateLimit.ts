@@ -16,6 +16,6 @@ export async function rateLimit(key: string, limit: number, windowMs: number): P
     await supabase.from('rate_limit_events').insert({ key })
     return true
   } catch {
-    return true // fail open
+    return false // fail closed — DB error = deny request
   }
 }

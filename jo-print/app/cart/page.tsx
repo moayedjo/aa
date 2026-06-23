@@ -18,9 +18,17 @@ export default function CartPage() {
   }, [])
 
   const updateQty = (id: string, qty: number) => {
-    const updated = qty <= 0 ? cart.filter(i => i.id !== id) : cart.map(i => i.id === id ? { ...i, quantity: qty } : i)
+    const updated = cart.map(i => i.id === id ? { ...i, quantity: qty } : i).filter(i => i.quantity > 0)
     setCart(updated)
     saveCart(updated)
+  }
+
+  const removeItem = (id: string, name: string) => {
+    if (!confirm(`هل تريد حذف "${name}" من السلة؟`)) return
+    const updated = cart.filter(i => i.id !== id)
+    setCart(updated)
+    saveCart(updated)
+    window.dispatchEvent(new Event('cart-updated'))
   }
 
   const { subtotal, delivery, total } = getCartTotal(cart)
@@ -66,7 +74,7 @@ export default function CartPage() {
                 <div className="text-right flex-shrink-0 mr-2">
                   <p className="font-bold text-gray-900 text-sm">{formatPrice(item.price * item.quantity)}</p>
                 </div>
-                <button onClick={() => updateQty(item.id, 0)} className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0">
+                <button onClick={() => removeItem(item.id, item.name)} className="text-gray-300 hover:text-red-500 transition-colors flex-shrink-0" aria-label="حذف المنتج">
                   <Trash2 size={18} />
                 </button>
               </div>

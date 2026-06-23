@@ -13,7 +13,7 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [delivery, setDelivery] = useState<'delivery' | 'pickup'>('pickup')
-  const [payment, setPayment] = useState<'cash' | 'card'>('cash')
+  const payment = 'cash' as const
   const [form, setForm] = useState({
     fullName: '', phone: '', email: '',
     address: '', city: 'عمان', notes: '',
@@ -34,6 +34,7 @@ export default function CheckoutPage() {
     e.preventDefault()
     if (!form.fullName.trim()) { setError('الرجاء إدخال الاسم الكامل'); return }
     if (!form.phone.trim()) { setError('الرجاء إدخال رقم الهاتف'); return }
+    if (!/^07[789]\d{7}$/.test(form.phone.trim())) { setError('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 07 ويتكون من 10 أرقام'); return }
     if (delivery === 'delivery' && !form.address.trim()) { setError('الرجاء إدخال عنوان التوصيل'); return }
 
     setLoading(true)
@@ -157,23 +158,21 @@ export default function CheckoutPage() {
               <div className="bg-white border border-border rounded-xl p-5">
                 <h2 className="font-bold text-gray-900 mb-4">طريقة الدفع</h2>
                 <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { key: 'cash' as const, label: 'دفع عند الاستلام', icon: '💵', desc: 'ادفع نقداً عند استلام الطلب' },
-                    { key: 'card' as const, label: 'بطاقة ائتمان', icon: '💳', desc: 'Visa / Mastercard' },
-                  ].map(opt => (
-                    <button type="button" key={opt.key} onClick={() => setPayment(opt.key)}
-                      className={`p-4 rounded-xl border-2 text-right transition-colors ${payment === opt.key ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
-                      <div className="text-2xl mb-1">{opt.icon}</div>
-                      <div className="font-semibold text-sm text-gray-900">{opt.label}</div>
-                      <div className="text-xs text-gray-500 mt-0.5">{opt.desc}</div>
-                    </button>
-                  ))}
-                </div>
-                {payment === 'card' && (
-                  <div className="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-700">
-                    💳 سيتم تفعيل الدفع بالبطاقة قريباً. حالياً الدفع عند الاستلام فقط.
+                  {/* Cash — active */}
+                  <button type="button" onClick={() => setPayment('cash')}
+                    className={`p-4 rounded-xl border-2 text-right transition-colors ${payment === 'cash' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
+                    <div className="text-2xl mb-1">💵</div>
+                    <div className="font-semibold text-sm text-gray-900">دفع عند الاستلام</div>
+                    <div className="text-xs text-gray-500 mt-0.5">ادفع نقداً عند استلام الطلب</div>
+                  </button>
+                  {/* Card — disabled (coming soon) */}
+                  <div className="relative p-4 rounded-xl border-2 border-dashed border-gray-200 text-right opacity-50 cursor-not-allowed select-none">
+                    <div className="text-2xl mb-1">💳</div>
+                    <div className="font-semibold text-sm text-gray-900">بطاقة ائتمان</div>
+                    <div className="text-xs text-gray-500 mt-0.5">Visa / Mastercard</div>
+                    <span className="absolute top-2 left-2 bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">قريباً</span>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Notes */}

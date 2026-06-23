@@ -57,7 +57,8 @@ export default function BooksPage() {
   }
 
   const filtered = books.filter(b => {
-    const matchSearch = b.title.includes(search) || b.subject.includes(search)
+    const q = search.toLowerCase()
+    const matchSearch = !q || b.title.toLowerCase().includes(q) || b.subject.toLowerCase().includes(q)
     const matchSubject = subject === 'الكل' || b.subject === subject
     const matchGrade = grade === 'الكل' || b.grade === grade
     return matchSearch && matchSubject && matchGrade

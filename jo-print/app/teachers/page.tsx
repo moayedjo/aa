@@ -48,13 +48,34 @@ export default function TeachersPage() {
     setBookingTeacher(t)
   }
 
-  const handleBook = (e: React.FormEvent) => {
+  const handleBook = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!form.name.trim() || !form.phone.trim()) return
+    if (!/^07[789]\d{7}$/.test(form.phone.trim())) {
+      alert('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 07 ويتكون من 10 أرقام')
+      return
+    }
+
+    // Save booking via API (keeps personal data server-side, not in URL)
+    try {
+      await fetch('/api/bookings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          teacherId: bookingTeacher?.id,
+          teacherName: bookingTeacher?.name,
+          ...form,
+        }),
+      })
+    } catch {
+      // Non-blocking — still show success and open WhatsApp
+    }
+
+    // Open WhatsApp with minimal info (no phone number in URL)
     const msg = encodeURIComponent(
       `مرحباً، أريد حجز جلسة مع ${bookingTeacher?.name}\n` +
-      `الاسم: ${form.name}\nالهاتف: ${form.phone}\n` +
-      `المادة: ${form.subject}\nالوقت المفضل: ${form.preferredTime}\n` +
+      `المادة: ${form.subject}\n` +
+      `الوقت المفضل: ${form.preferredTime || 'غير محدد'}\n` +
       (form.notes ? `ملاحظات: ${form.notes}` : '')
     )
     const waNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? '962781141113'

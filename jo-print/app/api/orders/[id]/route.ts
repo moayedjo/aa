@@ -3,17 +3,43 @@ import { NextRequest, NextResponse } from 'next/server'
 import { ORDER_STATUS_LABELS } from '@/lib/constants'
 
 export async function GET(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const supabase = createClient()
+
     const { data, error } = await supabase
       .from('orders')
       .select('*, order_items(*), order_status_history(*)')
       .or(`id.eq.${params.id},order_number.eq.${params.id}`)
       .single()
-    if (error) throw error
+    if (error || !data) return NextResponse.json({ error: 'الطلب غير موجود' }, { status: 404 })
+
+    // Allow logged-in owner or any admin; otherwise allow guest access
+    // to their own order only if order has no user_id (guest order)
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles').select('role').eq('id', user.id).single()
+      const isAdmin = ['admin', 'order_manager', 'production', 'support'].includes(profile?.role ?? '')
+      const isOwner = data.user_id === user.id
+      if (!isAdmin && !isOwner) {
+        return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
+      }
+    } else {
+      // Unauthenticated: only allow guest orders (user_id = null)
+      // and only return limited fields (no address/phone)
+      if (data.user_id !== null) {
+        return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
+      }
+      // Strip sensitive fields for unauthenticated guest access
+      const { customer_phone, customer_email, delivery_address, ...safeData } = data
+      void customer_phone; void customer_email; void delivery_address
+      return NextResponse.json(safeData)
+    }
+
     return NextResponse.json(data)
   } catch (error) {
     console.error('GET /api/orders/[id] error:', error)

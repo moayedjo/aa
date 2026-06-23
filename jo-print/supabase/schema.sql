@@ -259,6 +259,26 @@ create index if not exists order_items_order_id_idx on public.order_items(order_
 create index if not exists print_files_user_id_idx on public.print_files(user_id);
 create index if not exists print_files_order_id_idx on public.print_files(order_id);
 
+-- Teacher bookings (personal data stored server-side, not exposed in WhatsApp URLs)
+create table if not exists public.teacher_bookings (
+  id uuid primary key default gen_random_uuid(),
+  teacher_id uuid references public.teachers(id) on delete set null,
+  teacher_name text not null,
+  customer_name text not null,
+  customer_phone text not null,
+  subject text,
+  preferred_time text,
+  notes text,
+  user_id uuid references auth.users(id) on delete set null,
+  created_at timestamptz not null default now()
+);
+alter table public.teacher_bookings enable row level security;
+create policy "Admins manage teacher_bookings" on public.teacher_bookings for all using (
+  exists (select 1 from public.profiles where id = auth.uid() and role in ('admin','support'))
+);
+create policy "Service insert teacher_bookings" on public.teacher_bookings for insert with check (true);
+create index if not exists teacher_bookings_teacher_id_idx on public.teacher_bookings(teacher_id);
+
 -- Auto-cleanup rate_limit_events older than 1 hour to prevent unbounded growth
 create or replace function public.cleanup_rate_limit_events()
 returns void language plpgsql security definer as $$
