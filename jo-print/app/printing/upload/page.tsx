@@ -1,9 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import UploadZone from '@/components/printing/UploadZone'
-import PrintOptionsForm from '@/components/printing/PrintOptions'
 import type { PrintOptions } from '@/lib/types'
 import { formatPrice, calculatePrintPrice } from '@/lib/pricing'
 import { addToCart } from '@/lib/cart'
@@ -11,7 +9,6 @@ import { addToCart } from '@/lib/cart'
 const steps = ['رفع الملف', 'خيارات الطباعة', 'مراجعة', 'تأكيد']
 
 export default function UploadPage() {
-  const router = useRouter()
   const [step, setStep] = useState(0)
   const [file, setFile] = useState<File | null>(null)
   const [uploading, setUploading] = useState(false)
@@ -59,7 +56,6 @@ export default function UploadPage() {
         النسخ: String(opts.copies),
       },
     })
-    router.push('/cart')
   }
 
   const colorOpts = [

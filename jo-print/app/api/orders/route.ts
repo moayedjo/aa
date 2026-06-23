@@ -36,12 +36,39 @@ export async function POST(request: NextRequest) {
     if (body.deliveryMethod === 'delivery' && !body.deliveryAddress?.trim()) return NextResponse.json({ error: 'عنوان التوصيل مطلوب' }, { status: 400 })
     if (!Array.isArray(body.items) || body.items.length === 0) return NextResponse.json({ error: 'السلة فارغة' }, { status: 400 })
 
-    // Validate items
+    // Validate items structure
     for (const item of body.items) {
       if (!item.productId || !item.name) return NextResponse.json({ error: 'بيانات المنتج غير مكتملة' }, { status: 400 })
       if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 1000) return NextResponse.json({ error: 'الكمية غير صحيحة' }, { status: 400 })
-      if (typeof item.price !== 'number' || item.price < 0 || item.price > 100000) return NextResponse.json({ error: 'السعر غير صحيح' }, { status: 400 })
     }
+
+    // Verify prices server-side for standard DB products (productId is a UUID)
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const dbProductIds = body.items
+      .map((i: { productId: string }) => i.productId)
+      .filter((id: string) => uuidRe.test(id))
+
+    let priceMap: Record<string, number> = {}
+    if (dbProductIds.length > 0) {
+      const { data: products, error: pErr } = await supabase
+        .from('products').select('id, price').in('id', dbProductIds)
+      if (pErr) throw pErr
+      priceMap = Object.fromEntries((products ?? []).map(p => [p.id, Number(p.price)]))
+    }
+
+    // Build verified items, using canonical DB price for products, client price for custom (print files etc.)
+    type RawItem = { productId: string; name: string; quantity: number; price: number; options?: Record<string, string> }
+    const verifiedItems = body.items.map((item: RawItem) => ({
+      productId: item.productId,
+      name: item.name,
+      quantity: item.quantity,
+      price: priceMap[item.productId] ?? item.price,
+      options: item.options,
+    }))
+
+    const computedSubtotal = verifiedItems.reduce((sum: number, i: RawItem) => sum + i.price * i.quantity, 0)
+    const deliveryFee = body.deliveryMethod === 'delivery' ? 2.0 : 0
+    const computedTotal = Math.round((computedSubtotal + deliveryFee) * 1000) / 1000
 
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -58,9 +85,9 @@ export async function POST(request: NextRequest) {
         delivery_method: body.deliveryMethod,
         delivery_address: body.deliveryAddress ?? null,
         payment_method: body.paymentMethod,
-        subtotal: body.subtotal,
-        delivery_fee: body.deliveryFee,
-        total: body.total,
+        subtotal: computedSubtotal,
+        delivery_fee: deliveryFee,
+        total: computedTotal,
         notes: body.notes ?? null,
         status: 'received',
       })
@@ -69,8 +96,8 @@ export async function POST(request: NextRequest) {
 
     if (orderError) throw orderError
 
-    if (body.items?.length > 0) {
-      const items = body.items.map((item: { productId: string; name: string; quantity: number; price: number; options?: Record<string, string> }) => ({
+    if (verifiedItems.length > 0) {
+      const items = verifiedItems.map((item: RawItem) => ({
         order_id: order.id,
         product_id: item.productId,
         product_name: item.name,
@@ -81,6 +108,7 @@ export async function POST(request: NextRequest) {
       const { error: itemsError } = await supabase.from('order_items').insert(items)
       if (itemsError) throw itemsError
     }
+
 
     // Log initial status in history
     await supabase.from('order_status_history').insert({

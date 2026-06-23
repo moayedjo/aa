@@ -66,6 +66,15 @@ export async function PATCH(
     if (!isAdmin && !isOwner) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
 
     const body = await request.json()
+
+    const VALID_STATUSES = ['received','reviewing','approved','production','ready','delivered','cancelled']
+    if (!VALID_STATUSES.includes(body.status))
+      return NextResponse.json({ error: 'حالة غير صحيحة' }, { status: 400 })
+
+    // Non-admin owners may only cancel their own order
+    if (!isAdmin && body.status !== 'cancelled')
+      return NextResponse.json({ error: 'غير مصرح بتغيير الحالة' }, { status: 403 })
+
     const { data, error } = await supabase
       .from('orders')
       .update({ status: body.status, updated_at: new Date().toISOString() })
