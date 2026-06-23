@@ -37,6 +37,7 @@ export default function ProductFilters({
   useEffect(() => {
     setLocalMin(String(priceRange[0]))
     setLocalMax(String(priceRange[1]))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [priceRange[0], priceRange[1]])
 
   const categoryCounts = products.reduce<Record<string, number>>((acc, p) => {

@@ -291,7 +291,7 @@ export default function AdminProducts() {
                     </div>
                   ))}
                   {(form.options ?? []).length === 0 && (
-                    <p className="text-xs text-gray-400 text-center py-2">لا توجد خيارات — اضغط "إضافة خيار" لإضافة خيار مثل المقاس أو اللون</p>
+                    <p className="text-xs text-gray-400 text-center py-2">لا توجد خيارات — اضغط &quot;إضافة خيار&quot; لإضافة خيار مثل المقاس أو اللون</p>
                   )}
                 </div>
               </div>

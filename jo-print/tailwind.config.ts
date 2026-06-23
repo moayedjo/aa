@@ -18,7 +18,7 @@ const config: Config = {
         border: '#E2E8F0',
       },
       fontFamily: {
-        sans: ['Tajawal', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-tajawal)', 'Tajawal', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         card: '12px',
