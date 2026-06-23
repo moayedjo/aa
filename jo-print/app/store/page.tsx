@@ -10,6 +10,7 @@ export default function StorePage() {
   const [loading, setLoading] = useState(true)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [sortBy, setSortBy] = useState('popular')
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 100])
 
   useEffect(() => {
     fetch('/api/products')
@@ -33,8 +34,13 @@ export default function StorePage() {
       .catch(() => setLoading(false))
   }, [])
 
+  const allPrices = products.map(p => p.price)
+  const globalMin = allPrices.length ? Math.floor(Math.min(...allPrices)) : 0
+  const globalMax = allPrices.length ? Math.ceil(Math.max(...allPrices)) : 100
+
   const filtered = products
     .filter(p => selectedCategory === 'all' || p.category === selectedCategory)
+    .filter(p => p.price >= priceRange[0] && p.price <= priceRange[1])
     .sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price
       if (sortBy === 'price-desc') return b.price - a.price
@@ -55,9 +61,10 @@ export default function StorePage() {
               products={products}
               selectedCategory={selectedCategory}
               onCategoryChange={setSelectedCategory}
-              minPrice={0}
-              maxPrice={100}
-              onPriceChange={() => {}}
+              minPrice={globalMin}
+              maxPrice={globalMax}
+              priceRange={priceRange}
+              onPriceChange={(min, max) => setPriceRange([min, max])}
             />
           </div>
 

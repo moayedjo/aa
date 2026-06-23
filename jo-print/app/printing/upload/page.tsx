@@ -18,11 +18,12 @@ export default function UploadPage() {
   const [uploadedFileId, setUploadedFileId] = useState<string | null>(null)
   const [uploadError, setUploadError] = useState('')
   const [pageCount, setPageCount] = useState<number | null>(null)
+  const [manualPages, setManualPages] = useState<number>(10)
   const [opts, setOpts] = useState<PrintOptions>({
     size: 'A4', color: 'blackwhite', sides: 'single',
     paperType: 'standard', quantity: 1, copies: 1,
   })
-  const estimatedPages = pageCount ?? 10
+  const estimatedPages = pageCount ?? manualPages
   const price = calculatePrintPrice(opts, estimatedPages)
 
   const handleUploadFile = async () => {
@@ -219,6 +220,19 @@ export default function UploadPage() {
                   <span className="text-primary">{formatPrice(price)}</span>
                 </div>
               </div>
+              {!pageCount && (
+                <div className="flex items-center gap-3 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2.5 mb-3">
+                  <span className="text-amber-600 text-xs flex-1">عدد الصفحات تقديري — أدخل العدد الفعلي لحساب السعر بدقة:</span>
+                  <input
+                    type="number"
+                    min={1}
+                    value={manualPages}
+                    onChange={e => setManualPages(Math.max(1, Number(e.target.value) || 1))}
+                    className="w-16 border border-amber-300 rounded px-2 py-1 text-sm text-center focus:outline-none focus:ring-1 focus:ring-amber-400"
+                  />
+                  <span className="text-xs text-amber-600">صفحة</span>
+                </div>
+              )}
               <p className="text-xs text-gray-400 mb-5">* السعر {pageCount ? `بناءً على ${pageCount} صفحة (مكتشف تلقائياً)` : `تقديري بناءً على ${estimatedPages} صفحة`}. السعر النهائي بعد مراجعة الملف.</p>
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 py-3 rounded-xl font-medium text-gray-600">السابق</button>

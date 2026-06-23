@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
-import { Search } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import Link from 'next/link'
+import { Search, CheckCircle, X } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
 import { addToCart } from '@/lib/cart'
 
@@ -17,12 +17,17 @@ interface Book {
 }
 
 export default function BooksPage() {
-  const router = useRouter()
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [subject, setSubject] = useState('الكل')
   const [grade, setGrade] = useState('الكل')
+  const [toast, setToast] = useState<string | null>(null)
+
+  const showToast = useCallback((msg: string) => {
+    setToast(msg)
+    setTimeout(() => setToast(null), 3000)
+  }, [])
 
   useEffect(() => {
     fetch('/api/books')
@@ -48,7 +53,7 @@ export default function BooksPage() {
   const handleOrder = (book: Book) => {
     addToCart({ productId: book.id, name: book.title, price: book.price, quantity: 1, type: 'book' })
     window.dispatchEvent(new Event('cart-updated'))
-    router.push('/cart')
+    showToast(book.title)
   }
 
   const filtered = books.filter(b => {
@@ -60,6 +65,22 @@ export default function BooksPage() {
 
   return (
     <div className="py-10 px-4">
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 bg-gray-900 text-white px-4 py-3 rounded-xl shadow-lg animate-in slide-in-from-bottom-4 duration-200">
+          <CheckCircle size={18} className="text-green-400 shrink-0" />
+          <div className="text-sm">
+            <span className="font-medium">تمت الإضافة للسلة</span>
+            <span className="text-gray-400 mx-1">·</span>
+            <span className="text-gray-300 truncate max-w-[150px] inline-block align-bottom">{toast}</span>
+          </div>
+          <Link href="/cart" className="text-xs bg-white/10 hover:bg-white/20 px-2.5 py-1 rounded-lg transition-colors whitespace-nowrap">
+            عرض السلة
+          </Link>
+          <button onClick={() => setToast(null)} className="text-gray-400 hover:text-white">
+            <X size={14} />
+          </button>
+        </div>
+      )}
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold text-gray-900 mb-3">ملخصات الكتب</h1>
