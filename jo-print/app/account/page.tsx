@@ -38,9 +38,16 @@ function SettingsTab() {
 
   const handleDeleteAccount = async () => {
     setDeleting(true)
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
+    try {
+      const res = await fetch('/api/auth/delete-account', { method: 'DELETE' })
+      if (!res.ok) throw new Error('فشل الحذف')
+      const supabase = createClient()
+      await supabase.auth.signOut()
+      router.push('/?deleted=1')
+    } catch {
+      setDeleting(false)
+      alert('حدث خطأ أثناء حذف الحساب. يرجى المحاولة مجدداً أو التواصل مع الدعم.')
+    }
   }
 
   return (

@@ -145,7 +145,9 @@ create policy "Admins all profiles" on public.profiles for all using (
   exists (select 1 from public.profiles p where p.id = auth.uid() and p.role in ('admin','order_manager'))
 );
 create policy "Users view own orders" on public.orders for select using (user_id = auth.uid());
-create policy "Anyone insert orders" on public.orders for insert with check (true);
+create policy "Anyone insert orders" on public.orders for insert with check (
+  customer_name is not null and customer_phone is not null and total > 0
+);
 create policy "Admins all orders" on public.orders for all using (
   exists (select 1 from public.profiles where id = auth.uid() and role in ('admin','order_manager','production'))
 );
@@ -249,14 +251,18 @@ create policy "No public access to rate_limit_events"
   on public.rate_limit_events for all
   using (false);
 
+-- Performance indexes
+create index if not exists orders_user_id_idx on public.orders(user_id);
+create index if not exists orders_status_idx on public.orders(status);
+create index if not exists orders_created_at_idx on public.orders(created_at desc);
+create index if not exists order_items_order_id_idx on public.order_items(order_id);
+create index if not exists print_files_user_id_idx on public.print_files(user_id);
+create index if not exists print_files_order_id_idx on public.print_files(order_id);
 
-create table if not exists public.rate_limit_events (
-  id bigserial primary key,
-  key text not null,
-  created_at timestamptz not null default now()
-);
-create index if not exists rate_limit_events_key_created_at on public.rate_limit_events(key, created_at);
-alter table public.rate_limit_events enable row level security;
-create policy "No public access to rate_limit_events"
-  on public.rate_limit_events for all
-  using (false);
+-- Auto-cleanup rate_limit_events older than 1 hour to prevent unbounded growth
+create or replace function public.cleanup_rate_limit_events()
+returns void language plpgsql security definer as $$
+begin
+  delete from public.rate_limit_events where created_at < now() - interval '1 hour';
+end;
+$$;

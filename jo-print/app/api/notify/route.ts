@@ -52,13 +52,13 @@ export async function POST(request: NextRequest) {
 
     let message = ''
     if (type === 'confirmed') {
-      message = `مرحباً ${order.customer_name} 👋\nتم استلام طلبك في JO-PRINT بنجاح!\nرقم الطلب: ${order.order_number}\nيمكنك متابعة طلبك من: ${process.env.NEXT_PUBLIC_APP_URL}/orders/track?id=${order.order_number}`
+      message = `مرحباً ${order.customer_name} 👋\nتم استلام طلبك في JO-PRINT بنجاح!\nرقم الطلب: ${order.order_number}\nيمكنك متابعة طلبك من: ${process.env.NEXT_PUBLIC_APP_URL}/orders/track?q=${order.order_number}`
     } else if (type === 'ready') {
       message = `مرحباً ${order.customer_name} 🎉\nطلبك رقم ${order.order_number} جاهز للاستلام!\nالعنوان: عمان، الأردن`
     } else if (type === 'shipped') {
       message = `مرحباً ${order.customer_name} 🚚\nطلبك رقم ${order.order_number} في طريقه إليك!\nوقت التوصيل المتوقع: 24-48 ساعة`
     } else if (type === 'status_update') {
-      message = `مرحباً ${order.customer_name}\nتم تحديث حالة طلبك رقم ${order.order_number}\nتابع طلبك: ${process.env.NEXT_PUBLIC_APP_URL}/orders/track?id=${order.order_number}`
+      message = `مرحباً ${order.customer_name}\nتم تحديث حالة طلبك رقم ${order.order_number}\nتابع طلبك: ${process.env.NEXT_PUBLIC_APP_URL}/orders/track?q=${order.order_number}`
     } else {
       return NextResponse.json({ error: 'نوع الإشعار غير صحيح' }, { status: 400 })
     }

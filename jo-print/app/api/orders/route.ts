@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const orderNumber = `JP-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${Math.floor(1000+Math.random()*9000)}`
+    const orderNumber = `JP-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${crypto.randomUUID().slice(0,8).toUpperCase()}`
 
     const { data: order, error: orderError } = await supabase
       .from('orders')

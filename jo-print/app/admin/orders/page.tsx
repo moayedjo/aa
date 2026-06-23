@@ -37,19 +37,22 @@ export default function AdminOrders() {
 
   const updateStatus = async (orderId: string, status: string) => {
     setUpdating(orderId)
-    await fetch(`/api/orders/${orderId}`, {
+    const res = await fetch(`/api/orders/${orderId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
     })
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
-    // Auto-notify on key status changes
-    if (['approved', 'ready', 'shipped'].includes(status)) {
-      await fetch('/api/notify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, type: status === 'approved' ? 'confirmed' : status }),
-      })
+    if (res.ok) {
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o))
+      if (['approved', 'ready', 'shipped'].includes(status)) {
+        await fetch('/api/notify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ orderId, type: status === 'approved' ? 'confirmed' : status }),
+        })
+      }
+    } else {
+      alert('فشل تحديث حالة الطلب. يرجى المحاولة مجدداً.')
     }
     setUpdating(null)
   }
