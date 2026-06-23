@@ -29,6 +29,7 @@ export default function AdminProducts() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [newOptionValue, setNewOptionValue] = useState<Record<number, string>>({})
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
     fetch('/api/admin/products').then(r => r.json()).then(data => {
@@ -44,7 +45,7 @@ export default function AdminProducts() {
 
   const openAdd = () => { setForm(emptyProduct); setNewOptionValue({}); setModal({ open: true, editing: null }) }
   const openEdit = (p: Product) => {
-    const { id, ...rest } = p; void id
+    const { id: _id, ...rest } = p
     setForm({ ...rest, options: rest.options ?? [] })
     setNewOptionValue({})
     setModal({ open: true, editing: p })
@@ -54,27 +55,37 @@ export default function AdminProducts() {
   const handleSave = async () => {
     if (!form.name.trim() || !form.price) return
     setSaving(true)
-    if (modal.editing) {
-      const res = await fetch(`/api/admin/products/${modal.editing.id}`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
-      })
-      if (res.ok) setProducts(prev => prev.map(p => p.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : p))
-    } else {
-      const res = await fetch('/api/admin/products', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
-      })
-      if (res.ok) {
+    setSaveError('')
+    try {
+      if (modal.editing) {
+        const res = await fetch(`/api/admin/products/${modal.editing.id}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        })
+        if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'فشل الحفظ') }
+        setProducts(prev => prev.map(p => p.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : p))
+      } else {
+        const res = await fetch('/api/admin/products', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        })
+        if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'فشل الإضافة') }
         const created = await res.json()
         setProducts(prev => [{ ...form, id: created.id }, ...prev])
       }
+      closeModal()
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع')
+    } finally {
+      setSaving(false)
     }
-    setSaving(false)
-    closeModal()
   }
 
   const handleDelete = async (id: string) => {
-    await fetch(`/api/admin/products/${id}`, { method: 'DELETE' })
-    setProducts(prev => prev.filter(p => p.id !== id))
+    const res = await fetch(`/api/admin/products/${id}`, { method: 'DELETE' })
+    if (res.ok) {
+      setProducts(prev => prev.filter(p => p.id !== id))
+    } else {
+      alert('فشل حذف المنتج — يرجى المحاولة مجدداً')
+    }
     setDeleteConfirm(null)
   }
 
@@ -286,6 +297,9 @@ export default function AdminProducts() {
               </div>
             </div>
 
+            {saveError && (
+              <div className="mx-5 mb-1 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{saveError}</div>
+            )}
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={closeModal} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50 transition-colors">إلغاء</button>
               <button onClick={handleSave} disabled={!form.name.trim() || saving}

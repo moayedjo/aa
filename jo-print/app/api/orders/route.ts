@@ -28,6 +28,21 @@ export async function POST(request: NextRequest) {
   try {
     const supabase = createClient()
     const body = await request.json()
+
+    // Validate required fields
+    if (!body.customerName?.trim()) return NextResponse.json({ error: 'الاسم مطلوب' }, { status: 400 })
+    if (!body.customerPhone?.trim()) return NextResponse.json({ error: 'رقم الهاتف مطلوب' }, { status: 400 })
+    if (!['pickup', 'delivery'].includes(body.deliveryMethod)) return NextResponse.json({ error: 'طريقة التسليم غير صحيحة' }, { status: 400 })
+    if (body.deliveryMethod === 'delivery' && !body.deliveryAddress?.trim()) return NextResponse.json({ error: 'عنوان التوصيل مطلوب' }, { status: 400 })
+    if (!Array.isArray(body.items) || body.items.length === 0) return NextResponse.json({ error: 'السلة فارغة' }, { status: 400 })
+
+    // Validate items
+    for (const item of body.items) {
+      if (!item.productId || !item.name) return NextResponse.json({ error: 'بيانات المنتج غير مكتملة' }, { status: 400 })
+      if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 1000) return NextResponse.json({ error: 'الكمية غير صحيحة' }, { status: 400 })
+      if (typeof item.price !== 'number' || item.price < 0 || item.price > 100000) return NextResponse.json({ error: 'السعر غير صحيح' }, { status: 400 })
+    }
+
     const { data: { user } } = await supabase.auth.getUser()
 
     const orderNumber = `JP-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${crypto.randomUUID().slice(0,8).toUpperCase()}`

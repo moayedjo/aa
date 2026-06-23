@@ -37,8 +37,7 @@ export async function GET(
         return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
       }
       // Strip sensitive fields for unauthenticated guest access
-      const { customer_phone, customer_email, delivery_address, ...safeData } = data
-      void customer_phone; void customer_email; void delivery_address
+      const { customer_phone: _p, customer_email: _e, delivery_address: _a, ...safeData } = data
       return NextResponse.json(safeData)
     }
 

@@ -20,6 +20,7 @@ export default function AdminShops() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
     fetch('/api/admin/shops').then(r => r.json()).then(data => {
@@ -33,29 +34,38 @@ export default function AdminShops() {
   }, [])
 
   const openAdd = () => { setForm(empty); setModal({ open: true, editing: null }) }
-  const openEdit = (s: PrintShop) => { const { id, ...rest } = s; void id; setForm(rest); setModal({ open: true, editing: s }) }
-  const close = () => setModal({ open: false, editing: null })
+  const openEdit = (s: PrintShop) => { const { id: _id, ...rest } = s; setForm(rest); setModal({ open: true, editing: s }) }
+  const close = () => { setModal({ open: false, editing: null }); setSaveError('') }
 
   const save = async () => {
     if (!form.name.trim()) return
-    setSaving(true)
-    if (modal.editing) {
-      const res = await fetch(`/api/admin/shops/${modal.editing.id}`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
-      })
-      if (res.ok) setShops(prev => prev.map(s => s.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : s))
-    } else {
-      const res = await fetch('/api/admin/shops', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
-      })
-      if (res.ok) { const created = await res.json(); setShops(prev => [{ ...form, id: created.id }, ...prev]) }
+    setSaving(true); setSaveError('')
+    try {
+      if (modal.editing) {
+        const res = await fetch(`/api/admin/shops/${modal.editing.id}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        })
+        if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'فشل الحفظ') }
+        setShops(prev => prev.map(s => s.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : s))
+      } else {
+        const res = await fetch('/api/admin/shops', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        })
+        if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'فشل الإضافة') }
+        const created = await res.json(); setShops(prev => [{ ...form, id: created.id }, ...prev])
+      }
+      close()
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع')
+    } finally {
+      setSaving(false)
     }
-    setSaving(false); close()
   }
 
   const del = async (id: string) => {
-    await fetch(`/api/admin/shops/${id}`, { method: 'DELETE' })
-    setShops(prev => prev.filter(s => s.id !== id))
+    const res = await fetch(`/api/admin/shops/${id}`, { method: 'DELETE' })
+    if (res.ok) setShops(prev => prev.filter(s => s.id !== id))
+    else alert('فشل الحذف — يرجى المحاولة مجدداً')
     setDeleteConfirm(null)
   }
 
@@ -193,6 +203,7 @@ export default function AdminShops() {
                 </div>
               </div>
             </div>
+            {saveError && <div className="mx-5 mb-1 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{saveError}</div>}
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={close} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50">إلغاء</button>
               <button onClick={save} disabled={!form.name.trim() || saving} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">

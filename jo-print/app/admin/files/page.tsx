@@ -73,6 +73,12 @@ export default function AdminFilesPage() {
   const [updating, setUpdating] = useState<string | null>(null)
   const [fileUrl, setFileUrl] = useState<string | null>(null)
   const [loadingUrl, setLoadingUrl] = useState(false)
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null)
+
+  const showToast = (msg: string, ok = true) => {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   useEffect(() => { load() }, [])
 
@@ -89,13 +95,20 @@ export default function AdminFilesPage() {
 
   const updateStatus = async (fileId: string, status: string, note?: string) => {
     setUpdating(fileId)
-    const supabase = createClient()
-    await supabase.from('print_files')
-      .update({ status, ...(note !== undefined ? { notes: note } : {}) })
-      .eq('id', fileId)
-    setFiles(prev => prev.map(f => f.id === fileId ? { ...f, status, notes: note ?? f.notes } : f))
-    if (selected?.id === fileId) setSelected(p => p ? { ...p, status, notes: note ?? p.notes } : null)
-    setUpdating(null)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.from('print_files')
+        .update({ status, ...(note !== undefined ? { notes: note } : {}) })
+        .eq('id', fileId)
+      if (error) throw error
+      setFiles(prev => prev.map(f => f.id === fileId ? { ...f, status, notes: note ?? f.notes } : f))
+      if (selected?.id === fileId) setSelected(p => p ? { ...p, status, notes: note ?? p.notes } : null)
+      showToast('تم تحديث حالة الملف بنجاح')
+    } catch {
+      showToast('فشل تحديث الحالة — يرجى المحاولة مجدداً', false)
+    } finally {
+      setUpdating(null)
+    }
   }
 
   const openDetail = async (file: PrintFile) => {
@@ -141,6 +154,12 @@ export default function AdminFilesPage() {
 
   return (
     <div>
+      {toast && (
+        <div className={`fixed bottom-6 left-6 z-[100] flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-white text-sm ${toast.ok ? 'bg-green-600' : 'bg-red-600'}`}>
+          <span>{toast.ok ? '✓' : '✗'}</span>
+          <span>{toast.msg}</span>
+        </div>
+      )}
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>

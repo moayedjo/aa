@@ -19,6 +19,7 @@ export default function AdminBooks() {
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState('')
 
   useEffect(() => {
     fetch('/api/admin/books').then(r => r.json()).then(data => {
@@ -31,29 +32,38 @@ export default function AdminBooks() {
   }, [])
 
   const openAdd = () => { setForm(empty); setModal({ open: true, editing: null }) }
-  const openEdit = (b: Book) => { const { id, ...rest } = b; void id; setForm(rest); setModal({ open: true, editing: b }) }
-  const close = () => setModal({ open: false, editing: null })
+  const openEdit = (b: Book) => { const { id: _id, ...rest } = b; setForm(rest); setModal({ open: true, editing: b }) }
+  const close = () => { setModal({ open: false, editing: null }); setSaveError('') }
 
   const save = async () => {
     if (!form.title.trim()) return
-    setSaving(true)
-    if (modal.editing) {
-      const res = await fetch(`/api/admin/books/${modal.editing.id}`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
-      })
-      if (res.ok) setBooks(prev => prev.map(b => b.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : b))
-    } else {
-      const res = await fetch('/api/admin/books', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
-      })
-      if (res.ok) { const created = await res.json(); setBooks(prev => [{ ...form, id: created.id }, ...prev]) }
+    setSaving(true); setSaveError('')
+    try {
+      if (modal.editing) {
+        const res = await fetch(`/api/admin/books/${modal.editing.id}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        })
+        if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'فشل الحفظ') }
+        setBooks(prev => prev.map(b => b.id === modal.editing!.id ? { ...form, id: modal.editing!.id } : b))
+      } else {
+        const res = await fetch('/api/admin/books', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(form),
+        })
+        if (!res.ok) { const d = await res.json(); throw new Error(d.error ?? 'فشل الإضافة') }
+        const created = await res.json(); setBooks(prev => [{ ...form, id: created.id }, ...prev])
+      }
+      close()
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع')
+    } finally {
+      setSaving(false)
     }
-    setSaving(false); close()
   }
 
   const del = async (id: string) => {
-    await fetch(`/api/admin/books/${id}`, { method: 'DELETE' })
-    setBooks(prev => prev.filter(b => b.id !== id))
+    const res = await fetch(`/api/admin/books/${id}`, { method: 'DELETE' })
+    if (res.ok) setBooks(prev => prev.filter(b => b.id !== id))
+    else alert('فشل الحذف — يرجى المحاولة مجدداً')
     setDeleteConfirm(null)
   }
 
@@ -166,6 +176,7 @@ export default function AdminBooks() {
                 <textarea value={form.description} onChange={upd('description')} rows={3} className={inp + ' resize-none'} placeholder="وصف مختصر للملخص..." />
               </div>
             </div>
+            {saveError && <div className="mx-5 mb-1 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">{saveError}</div>}
             <div className="flex gap-3 p-5 border-t border-gray-100">
               <button onClick={close} className="flex-1 border border-gray-200 text-gray-700 py-2.5 rounded-xl text-sm font-medium hover:bg-gray-50">إلغاء</button>
               <button onClick={save} disabled={!form.title.trim() || saving} className="flex-1 bg-primary text-white py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 disabled:opacity-50">

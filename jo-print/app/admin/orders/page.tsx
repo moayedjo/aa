@@ -24,6 +24,12 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true)
   const [updating, setUpdating] = useState<string | null>(null)
   const [filterStatus, setFilterStatus] = useState('all')
+  const [toast, setToast] = useState<{ msg: string; ok: boolean } | null>(null)
+
+  const showToast = (msg: string, ok = true) => {
+    setToast({ msg, ok })
+    setTimeout(() => setToast(null), 3000)
+  }
 
   useEffect(() => {
     const load = async () => {
@@ -58,11 +64,17 @@ export default function AdminOrders() {
   }
 
   const sendNotify = async (orderId: string, type: string) => {
-    await fetch('/api/notify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId, type }),
-    })
+    try {
+      const res = await fetch('/api/notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, type }),
+      })
+      if (res.ok) showToast('تم إرسال إشعار واتساب بنجاح')
+      else showToast('فشل إرسال الإشعار', false)
+    } catch {
+      showToast('فشل إرسال الإشعار', false)
+    }
   }
 
   const filtered = filterStatus === 'all' ? orders : orders.filter(o => o.status === filterStatus)
@@ -75,6 +87,12 @@ export default function AdminOrders() {
 
   return (
     <div>
+      {toast && (
+        <div className={`fixed bottom-6 left-6 z-[100] flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-white text-sm ${toast.ok ? 'bg-green-600' : 'bg-red-600'}`}>
+          <span>{toast.ok ? '✓' : '✗'}</span>
+          <span>{toast.msg}</span>
+        </div>
+      )}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">إدارة الطلبات</h1>
         <span className="text-sm text-gray-500">{orders.length} طلب إجمالي</span>
