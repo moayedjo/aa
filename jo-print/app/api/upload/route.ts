@@ -41,9 +41,17 @@ export async function POST(request: NextRequest) {
     let pageCount: number | null = null
     if (file.type === 'application/pdf') {
       try {
-        const text = Buffer.from(bytes).toString('binary')
-        const matches = text.match(/\/Type\s*\/Page[^s]/g)
-        pageCount = matches ? matches.length : null
+        const buf = Buffer.from(bytes)
+        // Try /Count in page tree first (reliable for most PDFs)
+        const countMatch = buf.toString('latin1').match(/\/Count\s+(\d+)/)
+        if (countMatch) {
+          pageCount = parseInt(countMatch[1], 10) || null
+        } else {
+          // Fallback: count /Type /Page entries (works for uncompressed PDFs)
+          const text = buf.toString('binary')
+          const matches = text.match(/\/Type\s*\/Page[^s]/g)
+          pageCount = matches ? matches.length : null
+        }
       } catch { pageCount = null }
     }
 

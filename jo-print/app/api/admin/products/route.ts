@@ -20,11 +20,14 @@ export async function POST(request: NextRequest) {
   const supabase = createClient()
   if (!await requireAdmin(supabase)) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   const body = await request.json()
+  if (!body.name?.trim()) return NextResponse.json({ error: 'اسم المنتج مطلوب' }, { status: 400 })
+  if (!body.category?.trim()) return NextResponse.json({ error: 'الفئة مطلوبة' }, { status: 400 })
+  if (typeof body.price !== 'number' || body.price < 0) return NextResponse.json({ error: 'السعر غير صحيح' }, { status: 400 })
   const { data, error } = await supabase.from('products').insert({
-    name: body.name, name_en: body.nameEn, category: body.category,
-    price: body.price, price_unit: body.priceUnit, description: body.description,
-    icon: body.icon, color: body.color, popular: body.popular ?? false,
-    options: body.options ?? [],
+    name: body.name.trim(), name_en: body.nameEn?.trim() ?? null, category: body.category.trim(),
+    price: body.price, price_unit: body.priceUnit?.trim() ?? 'لكل قطعة', description: body.description?.trim() ?? null,
+    icon: body.icon ?? null, color: body.color ?? null, popular: body.popular ?? false,
+    options: Array.isArray(body.options) ? body.options : [],
   }).select().single()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json(data, { status: 201 })

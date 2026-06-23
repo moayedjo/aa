@@ -1,6 +1,6 @@
 'use client'
 export const dynamic = 'force-dynamic'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -13,6 +13,7 @@ export default function AuthPage() {
   const [success, setSuccess] = useState('')
   const [form, setForm] = useState({ email: '', password: '', fullName: '', phone: '' })
   const router = useRouter()
+  const lastResetRef = useRef<number>(0)
 
   const upd = (f: string) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm(prev => ({ ...prev, [f]: e.target.value }))
@@ -43,6 +44,12 @@ export default function AuthPage() {
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault()
+    const now = Date.now()
+    if (now - lastResetRef.current < 60_000) {
+      setError('انتظر دقيقة قبل طلب رابط جديد')
+      return
+    }
+    lastResetRef.current = now
     setLoading(true); setError('')
     const supabase = createClient()
     const { error } = await supabase.auth.resetPasswordForEmail(form.email, {

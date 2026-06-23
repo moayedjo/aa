@@ -32,9 +32,10 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (loading) return
     if (!form.fullName.trim()) { setError('الرجاء إدخال الاسم الكامل'); return }
     if (!form.phone.trim()) { setError('الرجاء إدخال رقم الهاتف'); return }
-    if (!/^07[789]\d{7}$/.test(form.phone.trim())) { setError('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 07 ويتكون من 10 أرقام'); return }
+    if (!/^(?:\+?962|0)7[0-9]{8}$/.test(form.phone.trim().replace(/\s/g, ''))) { setError('رقم الهاتف غير صحيح — يجب أن يبدأ بـ 07 ويتكون من 10 أرقام'); return }
     if (delivery === 'delivery' && !form.address.trim()) { setError('الرجاء إدخال عنوان التوصيل'); return }
 
     setLoading(true)
@@ -159,8 +160,8 @@ export default function CheckoutPage() {
                 <h2 className="font-bold text-gray-900 mb-4">طريقة الدفع</h2>
                 <div className="grid grid-cols-2 gap-3">
                   {/* Cash — active */}
-                  <button type="button" onClick={() => setPayment('cash')}
-                    className={`p-4 rounded-xl border-2 text-right transition-colors ${payment === 'cash' ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'}`}>
+                  <button type="button"
+                    className="p-4 rounded-xl border-2 border-primary bg-primary/5 text-right transition-colors">
                     <div className="text-2xl mb-1">💵</div>
                     <div className="font-semibold text-sm text-gray-900">دفع عند الاستلام</div>
                     <div className="text-xs text-gray-500 mt-0.5">ادفع نقداً عند استلام الطلب</div>

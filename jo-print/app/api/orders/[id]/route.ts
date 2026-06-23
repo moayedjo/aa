@@ -9,11 +9,13 @@ export async function GET(
   try {
     const supabase = createClient()
 
-    const { data, error } = await supabase
-      .from('orders')
-      .select('*, order_items(*), order_status_history(*)')
-      .or(`id.eq.${params.id},order_number.eq.${params.id}`)
-      .single()
+    // Use separate queries to avoid filter injection via params.id
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id)
+    const query = supabase.from('orders').select('*, order_items(*), order_status_history(*)')
+    const { data, error } = await (isUuid
+      ? query.eq('id', params.id)
+      : query.eq('order_number', params.id)
+    ).single()
     if (error || !data) return NextResponse.json({ error: 'الطلب غير موجود' }, { status: 404 })
 
     // Allow logged-in owner or any admin; otherwise allow guest access
