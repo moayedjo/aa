@@ -21,7 +21,7 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
   const [sizeError, setSizeError] = useState('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const acceptedFormats = ['PDF', 'DOC', 'DOCX', 'JPG', 'PNG', 'PPT', 'PPTX']
+  const acceptedFormats = ['PDF', 'DOC', 'DOCX', 'XLS', 'XLSX', 'JPG', 'PNG', 'PPT', 'PPTX']
 
   const processFile = (file: File) => {
     if (file.size > MAX_SIZE) {
@@ -73,7 +73,7 @@ export default function UploadZone({ onFileSelect }: UploadZoneProps) {
             <input
               ref={fileInputRef}
               type="file"
-              accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.ppt,.pptx"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.ppt,.pptx"
               onChange={handleFileChange}
               className="hidden"
             />

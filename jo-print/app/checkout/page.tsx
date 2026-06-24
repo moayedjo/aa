@@ -13,7 +13,36 @@ export default function CheckoutPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [delivery, setDelivery] = useState<'delivery' | 'pickup'>('pickup')
-  const payment = 'cash' as const
+  const [payment, setPayment] = useState<string>('cash')
+  const [promoCode, setPromoCode] = useState('')
+  const [promoDiscount, setPromoDiscount] = useState(0)
+  const [promoError, setPromoError] = useState('')
+  const [promoApplied, setPromoApplied] = useState(false)
+
+  const PROMO_CODES: Record<string, number> = {
+    'GRAD15': 0.15,
+    'JOPRINT10': 0.10,
+    'WELCOME5': 0.05,
+  }
+
+  const applyPromo = () => {
+    const code = promoCode.trim().toUpperCase()
+    if (!code) return
+    const discount = PROMO_CODES[code]
+    if (!discount) { setPromoError('كود الخصم غير صحيح'); setPromoDiscount(0); return }
+    setPromoDiscount(discount)
+    setPromoApplied(true)
+    setPromoError('')
+  }
+
+  const PAYMENT_METHODS = [
+    { id: 'cash',         label: 'الدفع عند الاستلام',  icon: '💵', desc: 'ادفع نقداً عند استلام الطلب' },
+    { id: 'card',         label: 'بطاقة Visa / Mastercard', icon: '💳', desc: 'ادفع بالبطاقة البنكية بأمان' },
+    { id: 'zain_cash',    label: 'Zain Cash',             icon: '📱', desc: 'محفظة زين كاش' },
+    { id: 'orange_money', label: 'Orange Money',          icon: '🟠', desc: 'محفظة أورنج موني' },
+    { id: 'efawateer',    label: 'eFawateercom',           icon: '🏦', desc: 'الفواتير الإلكترونية' },
+    { id: 'cliq',         label: 'CliQ',                  icon: '⚡', desc: 'الدفع الفوري' },
+  ]
   const [form, setForm] = useState({
     fullName: '', phone: '', email: '',
     address: '', city: 'عمان', notes: '',
@@ -29,6 +58,8 @@ export default function CheckoutPage() {
 
   const { subtotal, total } = getCartTotal(cart)
   const deliveryFee = (delivery === 'delivery' && subtotal < 20) ? 2.0 : 0
+  const discountAmount = promoDiscount > 0 ? (subtotal * promoDiscount) : 0
+  const finalTotal = subtotal + deliveryFee - discountAmount
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -54,7 +85,9 @@ export default function CheckoutPage() {
           paymentMethod: payment,
           subtotal,
           deliveryFee,
-          total: subtotal + deliveryFee,
+          total: finalTotal,
+          promoCode: promoApplied ? promoCode.trim().toUpperCase() : null,
+          discountAmount: discountAmount > 0 ? discountAmount : null,
           notes: form.notes || null,
           items: cart.map(item => ({
             productId: item.productId,
@@ -157,22 +190,42 @@ export default function CheckoutPage() {
 
               {/* Payment */}
               <div className="bg-white border border-border rounded-xl p-5">
-                <h2 className="font-bold text-gray-900 mb-4">طريقة الدفع</h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {/* Cash — active */}
-                  <button type="button"
-                    className="p-4 rounded-xl border-2 border-primary bg-primary/5 text-right transition-colors">
-                    <div className="text-2xl mb-1">💵</div>
-                    <div className="font-semibold text-sm text-gray-900">دفع عند الاستلام</div>
-                    <div className="text-xs text-gray-500 mt-0.5">ادفع نقداً عند استلام الطلب</div>
-                  </button>
-                  {/* Card — disabled (coming soon) */}
-                  <div className="relative p-4 rounded-xl border-2 border-dashed border-gray-200 text-right opacity-50 cursor-not-allowed select-none">
-                    <div className="text-2xl mb-1">💳</div>
-                    <div className="font-semibold text-sm text-gray-900">بطاقة ائتمان</div>
-                    <div className="text-xs text-gray-500 mt-0.5">Visa / Mastercard</div>
-                    <span className="absolute top-2 left-2 bg-amber-100 text-amber-700 text-[10px] font-bold px-1.5 py-0.5 rounded-full">قريباً</span>
-                  </div>
+                <h3 className="font-bold text-gray-900 mb-3">طريقة الدفع</h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {PAYMENT_METHODS.map(m => (
+                    <button key={m.id} type="button"
+                      onClick={() => setPayment(m.id)}
+                      className={`p-3 rounded-xl border-2 text-right transition-colors ${
+                        payment === m.id ? 'border-primary bg-primary/5' : 'border-gray-200 hover:border-gray-300'
+                      }`}>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="text-lg">{m.icon}</span>
+                        <span className="font-semibold text-sm">{m.label}</span>
+                      </div>
+                      <div className="text-xs text-gray-400">{m.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Promo Code */}
+              <div className="bg-white border border-border rounded-xl p-5">
+                <div className="border-t border-gray-100 pt-4">
+                  <h3 className="font-bold text-gray-900 mb-3">كود الخصم</h3>
+                  {promoApplied ? (
+                    <div className="flex items-center gap-2 bg-green-50 border border-green-200 rounded-xl px-3 py-2">
+                      <span className="text-green-600 font-bold text-sm">✓ تم تطبيق خصم {Math.round(promoDiscount * 100)}%</span>
+                      <button onClick={() => { setPromoApplied(false); setPromoDiscount(0); setPromoCode('') }} className="text-xs text-gray-400 hover:text-red-500 mr-auto">إزالة</button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2">
+                      <input type="text" value={promoCode} onChange={e => { setPromoCode(e.target.value); setPromoError('') }}
+                        placeholder="أدخل كود الخصم" dir="ltr"
+                        className="flex-1 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary" />
+                      <button onClick={applyPromo} className="bg-primary text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors">تطبيق</button>
+                    </div>
+                  )}
+                  {promoError && <p className="text-xs text-red-500 mt-1">{promoError}</p>}
                 </div>
               </div>
 
@@ -206,9 +259,15 @@ export default function CheckoutPage() {
                     <span>التوصيل</span>
                     <span className={deliveryFee === 0 ? 'text-green-600 font-medium' : ''}>{deliveryFee === 0 ? 'مجاناً' : formatPrice(deliveryFee)}</span>
                   </div>
+                  {discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>خصم ({Math.round(promoDiscount * 100)}%)</span>
+                      <span>- {formatPrice(discountAmount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-100">
                     <span>الإجمالي</span>
-                    <span className="text-primary">{formatPrice(subtotal + deliveryFee)}</span>
+                    <span className="text-primary">{formatPrice(finalTotal)}</span>
                   </div>
                 </div>
                 <button type="submit" disabled={loading}

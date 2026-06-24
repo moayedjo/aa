@@ -90,6 +90,10 @@ export interface PrintOptions {
   color: 'color' | 'blackwhite'
   sides: 'single' | 'double'
   paperType: 'standard' | 'glossy' | 'matte'
+  binding: 'none' | 'staple' | 'spiral' | 'luxury'
+  addCover: boolean
+  addPageNumbers: boolean
+  addTOC: boolean
   quantity: number
   copies: number
 }

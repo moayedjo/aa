@@ -39,7 +39,7 @@ create table if not exists public.orders (
   customer_email text,
   delivery_method text not null default 'pickup' check (delivery_method in ('pickup','delivery')),
   delivery_address text,
-  payment_method text not null default 'cash' check (payment_method in ('cash','card')),
+  payment_method text not null default 'cash' check (payment_method in ('cash','card','zain_cash','orange_money','efawateer','cliq')),
   payment_status text not null default 'pending' check (payment_status in ('pending','paid','failed','refunded')),
   status text not null default 'received' check (status in ('received','reviewing','approved','production','ready','delivered','cancelled')),
   subtotal numeric(10,3) not null,
@@ -121,12 +121,19 @@ create table if not exists public.print_shops (
   address text not null,
   area text not null,
   phone text not null,
+  email text,
+  owner_name text,
   hours text,
   rating numeric(3,1) default 5.0,
   services text[],
+  notes text,
   active boolean default true,
+  status text not null default 'active' check (status in ('pending','active','suspended')),
   created_at timestamptz not null default now()
 );
+
+-- RLS note for print_shops: admins see all rows (any status); public policy below
+-- restricts to status = 'active' only so pending/suspended shops are hidden from customers.
 
 -- RLS
 alter table public.profiles enable row level security;
@@ -179,7 +186,9 @@ create policy "Public read teachers" on public.teachers for select using (availa
 create policy "Admins manage teachers" on public.teachers for all using (
   exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
 );
-create policy "Public read shops" on public.print_shops for select using (active = true);
+-- Public sees only active shops; admins see all statuses; anyone can register (insert pending).
+create policy "Public read shops" on public.print_shops for select using (status = 'active');
+create policy "Anyone register shop" on public.print_shops for insert with check (status = 'pending');
 create policy "Admins manage shops" on public.print_shops for all using (
   exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
 );

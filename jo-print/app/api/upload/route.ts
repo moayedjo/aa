@@ -10,7 +10,21 @@ const ALLOWED_TYPES = [
   'image/png',
   'application/vnd.ms-powerpoint',
   'application/vnd.openxmlformats-officedocument.presentationml.presentation',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ]
+
+const MIME_TO_EXT: Record<string, string> = {
+  'application/pdf': 'pdf',
+  'application/msword': 'doc',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'application/vnd.ms-powerpoint': 'ppt',
+  'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+  'application/vnd.ms-excel': 'xls',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': 'xlsx',
+}
 const MAX_SIZE = 50 * 1024 * 1024
 
 export async function POST(request: NextRequest) {

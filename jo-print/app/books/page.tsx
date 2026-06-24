@@ -14,7 +14,11 @@ interface Book {
   description: string
   price: number
   pages: number
+  ministry_approved?: boolean
 }
+
+const SCHOOL_SUBJECTS = ['رياضيات', 'علوم', 'عربي', 'إنجليزي', 'تربية', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا']
+const isSchoolSubject = (subject: string) => SCHOOL_SUBJECTS.some(s => subject.includes(s))
 
 export default function BooksPage() {
   const [books, setBooks] = useState<Book[]>([])
@@ -133,6 +137,11 @@ export default function BooksPage() {
                     </div>
                   </div>
                 </div>
+                {(book.ministry_approved || isSchoolSubject(book.subject)) && (
+                  <span className="inline-flex items-center gap-1 text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-full">
+                    <span>✓</span> معتمد وزارة التربية
+                  </span>
+                )}
                 <p className="text-sm text-gray-500 mb-3">{book.description}</p>
                 <div className="flex items-center justify-between pt-3 border-t border-gray-100">
                   <div>

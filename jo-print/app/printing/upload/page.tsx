@@ -18,7 +18,9 @@ export default function UploadPage() {
   const [manualPages, setManualPages] = useState<number>(10)
   const [opts, setOpts] = useState<PrintOptions>({
     size: 'A4', color: 'blackwhite', sides: 'single',
-    paperType: 'standard', quantity: 1, copies: 1,
+    paperType: 'standard', binding: 'none',
+    addCover: false, addPageNumbers: false, addTOC: false,
+    quantity: 1, copies: 1,
   })
   const estimatedPages = pageCount ?? manualPages
   const price = calculatePrintPrice(opts, estimatedPages)

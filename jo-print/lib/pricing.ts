@@ -22,7 +22,7 @@ const SIDES_MULTIPLIER = {
   double: 1.8,
 }
 
-export function calculatePrintPrice(options: PrintOptions, pageCount: number): number {
+export function calculatePrintPrice(options: PrintOptions & { binding?: string; addCover?: boolean; addPageNumbers?: boolean; addTOC?: boolean }, pageCount: number): number {
   const basePricePerPage = BASE_PRICES[options.size]
   const colorMult = COLOR_MULTIPLIER[options.color]
   const paperMult = PAPER_MULTIPLIER[options.paperType]
@@ -31,7 +31,18 @@ export function calculatePrintPrice(options: PrintOptions, pageCount: number): n
   const pricePerPage = basePricePerPage * colorMult * paperMult * sidesMult
   const totalPages = options.sides === 'double' ? Math.ceil(pageCount / 2) : pageCount
 
-  return pricePerPage * totalPages * options.copies
+  const basePrice = pricePerPage * totalPages * options.copies
+
+  // Binding cost
+  const BINDING_COST: Record<string, number> = { none: 0, staple: 0.15, spiral: 0.75, luxury: 2.5 }
+  const bindingCost = BINDING_COST[options.binding ?? 'none'] ?? 0
+
+  // Extras cost
+  const coverCost = options.addCover ? 0.25 : 0
+  const pageNumCost = options.addPageNumbers ? 0.10 : 0
+  const tocCost = options.addTOC ? 0.20 : 0
+
+  return Math.round((basePrice + bindingCost + coverCost + pageNumCost + tocCost) * 1000) / 1000
 }
 
 export function formatPrice(price: number): string {
