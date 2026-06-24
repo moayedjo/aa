@@ -232,7 +232,7 @@ export default function UploadPage() {
               <p className="text-xs text-gray-400 mb-5">* السعر {pageCount ? `بناءً على ${pageCount} صفحة (مكتشف تلقائياً)` : `تقديري بناءً على ${estimatedPages} صفحة`}. السعر النهائي بعد مراجعة الملف.</p>
               <div className="flex gap-3">
                 <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 py-3 rounded-xl font-medium text-gray-600">السابق</button>
-                <button onClick={() => { setStep(3); handleAddToCart() }} className="flex-[2] bg-primary text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
+                <button onClick={() => { handleAddToCart(); setStep(3) }} className="flex-[2] bg-primary text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
                   إضافة للسلة ←
                 </button>
               </div>

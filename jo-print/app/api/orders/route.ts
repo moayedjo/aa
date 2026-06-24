@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
     for (const item of body.items) {
       if (!item.productId || !item.name) return NextResponse.json({ error: 'بيانات المنتج غير مكتملة' }, { status: 400 })
       if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 1000) return NextResponse.json({ error: 'الكمية غير صحيحة' }, { status: 400 })
+      if (typeof item.price !== 'number' || item.price < 0 || item.price > 10000) return NextResponse.json({ error: 'السعر غير صحيح' }, { status: 400 })
     }
 
     // Verify prices server-side for standard DB products (productId is a UUID)
