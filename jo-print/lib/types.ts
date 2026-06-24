@@ -86,14 +86,40 @@ export type OrderStatus =
   | 'delivered'
 
 export interface PrintOptions {
+  // نوع المنتج
+  productType: 'paper' | 'poster' | 'rollup' | 'gradalbum'
+
+  // طباعة ورق
   size: 'A4' | 'A3' | 'Letter'
   color: 'color' | 'blackwhite'
   sides: 'single' | 'double'
   paperType: 'standard' | 'glossy' | 'matte'
-  binding: 'none' | 'staple' | 'spiral' | 'luxury'
+  binding: 'none' | 'staple' | 'wire'
+  copies: number
+  pageRange: 'all' | 'custom'
+  pageRangeValue: string
+
+  // إضافات الورق
+  customCut: boolean
+  coverFront: 'none' | 'transparent' | 'cardboard'
+  coverBack: 'none' | 'transparent' | 'cardboard'
+
+  // إضافات البوستر
+  posterFoamBoard: boolean
+
+  // دفتر التخرج
+  gradName: string
+  gradSpecialization: string
+  gradUniversity: string
+  gradYear: string
+  gradText: string
+
+  // ملاحظات العميل
+  notes: string
+
+  // legacy
+  quantity: number
   addCover: boolean
   addPageNumbers: boolean
   addTOC: boolean
-  quantity: number
-  copies: number
 }

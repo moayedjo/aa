@@ -134,10 +134,9 @@ export default function PrintOptionsForm({ options, onChange, pageCount }: Print
         <label className="block text-sm font-medium text-gray-700 mb-2">التجليد</label>
         <div className="grid grid-cols-2 gap-2">
           {([
-            { value: 'none',    label: 'بدون تجليد',  desc: 'مجاني',           icon: '📄' },
-            { value: 'staple',  label: 'تدبيس',        desc: '+0.15 د.أ',       icon: '📌' },
-            { value: 'spiral',  label: 'سبيرال',        desc: '+0.75 د.أ',       icon: '🗒️' },
-            { value: 'luxury',  label: 'تجليد فاخر',   desc: '+2.50 د.أ',       icon: '📚' },
+            { value: 'none',   label: 'بدون تجليد', desc: 'مجاني',      icon: '📄' },
+            { value: 'staple', label: 'تدبيس',       desc: '+0.15 د.أ', icon: '📌' },
+            { value: 'wire',   label: 'سلك (سبيرال)', desc: '+0.75 د.أ', icon: '🗒️' },
           ] as const).map(opt => (
             <button key={opt.value} type="button"
               onClick={() => onChange({ ...options, binding: opt.value })}
