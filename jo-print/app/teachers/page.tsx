@@ -385,10 +385,10 @@ export default function TeachersPage() {
                         </div>
 
                         <div className="flex gap-2">
-                          <button onClick={() => openProfile(teacher)}
-                            className="flex-1 border border-primary text-primary py-2 rounded-lg text-sm font-medium hover:bg-primary/5 transition-colors">
-                            عرض الملف
-                          </button>
+                          <a href={`/teachers/${teacher.id}`}
+                            className="flex-1 border border-primary text-primary py-2 rounded-lg text-sm font-medium hover:bg-primary/5 transition-colors text-center">
+                            عرض التفاصيل
+                          </a>
                           <button onClick={() => openBooking(teacher)} disabled={!teacher.available}
                             className="flex-1 bg-primary text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                             تواصل الآن
