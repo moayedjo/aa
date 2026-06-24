@@ -4,6 +4,14 @@ import { useState, useEffect } from 'react'
 import type { Product } from '@/lib/types'
 import ProductCard from '@/components/store/ProductCard'
 import ProductFilters from '@/components/store/ProductFilters'
+import Link from 'next/link'
+
+const CUSTOM_PRODUCTS = [
+  { type: 'mug',     icon: '☕', name: 'طباعة على مج',       price: '5.000 د.أ', desc: 'اسمك أو صورتك على مج سيراميك', badge: 'هدية مميزة' },
+  { type: 'poster',  icon: '🖼️', name: 'بوستر مخصص',         price: 'من 3.000 د.أ', desc: 'A4 حتى A1 — ارفع تصميمك', badge: '' },
+  { type: 'shield',  icon: '🏆', name: 'درع تذكاري',          price: '15.000 د.أ', desc: 'تكريم وتقدير باسمك وشعارك', badge: 'للمؤسسات' },
+  { type: 'tshirt',  icon: '👕', name: 'طباعة على تيشيرت',   price: '8.000 د.أ', desc: 'اسم أو تصميم على قطن 100%', badge: '' },
+]
 
 export default function StorePage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -53,6 +61,28 @@ export default function StorePage() {
         <div className="mb-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">المتجر</h1>
           <p className="text-gray-500">منتجات مطبوعة مخصصة بجودة عالية</p>
+        </div>
+
+        {/* Custom / personalizable products */}
+        <div className="mb-10">
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-xl font-bold text-gray-900">🎨 منتجات مخصصة</h2>
+            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full font-medium">أضف اسمك أو صورتك</span>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {CUSTOM_PRODUCTS.map(p => (
+              <Link key={p.type} href={`/store/custom/${p.type}`}
+                className="bg-white border border-border rounded-2xl p-4 hover:shadow-md hover:border-primary/30 transition-all group">
+                <div className="text-4xl mb-3">{p.icon}</div>
+                <h3 className="font-bold text-gray-900 text-sm mb-1">{p.name}</h3>
+                <p className="text-xs text-gray-500 mb-2 leading-relaxed">{p.desc}</p>
+                <div className="flex items-center justify-between mt-auto">
+                  <span className="text-primary font-semibold text-sm">{p.price}</span>
+                  {p.badge && <span className="text-xs bg-amber-50 text-amber-700 border border-amber-200 px-1.5 py-0.5 rounded-full">{p.badge}</span>}
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-6">
