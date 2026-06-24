@@ -72,13 +72,15 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <a
-              href="tel:+96279123456"
-              className="hidden md:flex items-center gap-1 text-sm text-gray-600 hover:text-primary"
-            >
-              <Phone size={15} />
-              <span>0791234567</span>
-            </a>
+            {process.env.NEXT_PUBLIC_CONTACT_PHONE && (
+              <a
+                href={`tel:${process.env.NEXT_PUBLIC_CONTACT_PHONE}`}
+                className="hidden md:flex items-center gap-1 text-sm text-gray-600 hover:text-primary"
+              >
+                <Phone size={15} />
+                <span>{process.env.NEXT_PUBLIC_CONTACT_PHONE}</span>
+              </a>
+            )}
             <Link href="/cart" className="relative p-2 text-gray-600 hover:text-primary">
               <ShoppingCart size={22} />
               {cartCount > 0 && (

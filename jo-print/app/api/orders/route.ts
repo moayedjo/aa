@@ -1,11 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from '@/lib/rateLimit'
+import { computeOrderPricing } from '@/lib/serverPricing'
+import type { CartItemInput } from '@/lib/serverPricing'
 
 async function sendWhatsApp(to: string, message: string): Promise<boolean> {
-  const sid = process.env.TWILIO_ACCOUNT_SID
+  const sid   = process.env.TWILIO_ACCOUNT_SID
   const token = process.env.TWILIO_AUTH_TOKEN
-  const from = process.env.TWILIO_WHATSAPP_FROM
+  const from  = process.env.TWILIO_WHATSAPP_FROM
   if (!sid || !token || !from) return false
 
   const phone = to.startsWith('+') ? to : `+962${to.replace(/^0/, '')}`
@@ -27,117 +29,202 @@ export async function POST(request: NextRequest) {
 
   try {
     const supabase = createClient()
-    const body = await request.json()
+    const body: unknown = await request.json()
 
-    // Validate required fields
-    if (!body.customerName?.trim()) return NextResponse.json({ error: 'الاسم مطلوب' }, { status: 400 })
-    if (!body.customerPhone?.trim()) return NextResponse.json({ error: 'رقم الهاتف مطلوب' }, { status: 400 })
-    if (!['pickup', 'delivery'].includes(body.deliveryMethod)) return NextResponse.json({ error: 'طريقة التسليم غير صحيحة' }, { status: 400 })
-    if (body.deliveryMethod === 'delivery' && !body.deliveryAddress?.trim()) return NextResponse.json({ error: 'عنوان التوصيل مطلوب' }, { status: 400 })
-    if (!Array.isArray(body.items) || body.items.length === 0) return NextResponse.json({ error: 'السلة فارغة' }, { status: 400 })
-
-    // Validate items structure
-    for (const item of body.items) {
-      if (!item.productId || !item.name) return NextResponse.json({ error: 'بيانات المنتج غير مكتملة' }, { status: 400 })
-      if (!Number.isInteger(item.quantity) || item.quantity < 1 || item.quantity > 1000) return NextResponse.json({ error: 'الكمية غير صحيحة' }, { status: 400 })
-      if (typeof item.price !== 'number' || item.price < 0 || item.price > 10000) return NextResponse.json({ error: 'السعر غير صحيح' }, { status: 400 })
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ error: 'بيانات غير صالحة' }, { status: 400 })
     }
 
-    // Verify prices server-side for standard DB products (productId is a UUID)
-    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
-    const dbProductIds = body.items
-      .map((i: { productId: string }) => i.productId)
-      .filter((id: string) => uuidRe.test(id))
+    const b = body as Record<string, unknown>
 
-    let priceMap: Record<string, number> = {}
+    // ── Required field validation ─────────────────────────────────────────────
+    if (typeof b.customerName !== 'string' || !b.customerName.trim())
+      return NextResponse.json({ error: 'الاسم مطلوب' }, { status: 400 })
+
+    if (typeof b.customerPhone !== 'string' || !b.customerPhone.trim())
+      return NextResponse.json({ error: 'رقم الهاتف مطلوب' }, { status: 400 })
+
+    if (b.deliveryMethod !== 'pickup' && b.deliveryMethod !== 'delivery')
+      return NextResponse.json({ error: 'طريقة التسليم غير صحيحة' }, { status: 400 })
+
+    if (b.deliveryMethod === 'delivery' && (typeof b.deliveryAddress !== 'string' || !b.deliveryAddress.trim()))
+      return NextResponse.json({ error: 'عنوان التوصيل مطلوب' }, { status: 400 })
+
+    if (!Array.isArray(b.items) || b.items.length === 0)
+      return NextResponse.json({ error: 'السلة فارغة' }, { status: 400 })
+
+    // ── Validate items structure (ignore client price entirely) ───────────────
+    for (const item of b.items as unknown[]) {
+      if (!item || typeof item !== 'object') {
+        return NextResponse.json({ error: 'بيانات المنتج غير صالحة' }, { status: 400 })
+      }
+      const i = item as Record<string, unknown>
+      if (typeof i.productId !== 'string' || !i.productId.trim())
+        return NextResponse.json({ error: 'معرّف المنتج مطلوب' }, { status: 400 })
+      if (typeof i.name !== 'string' || !i.name.trim())
+        return NextResponse.json({ error: 'اسم المنتج مطلوب' }, { status: 400 })
+      if (!Number.isInteger(i.quantity) || (i.quantity as number) < 1 || (i.quantity as number) > 1000)
+        return NextResponse.json({ error: 'الكمية غير صحيحة' }, { status: 400 })
+    }
+
+    // ── Fetch canonical DB prices for UUID products ───────────────────────────
+    const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    const rawItems = b.items as Array<Record<string, unknown>>
+    const dbProductIds = rawItems
+      .map(i => i.productId as string)
+      .filter(id => uuidRe.test(id))
+
+    let dbPriceMap: Record<string, number> = {}
     if (dbProductIds.length > 0) {
       const { data: products, error: pErr } = await supabase
-        .from('products').select('id, price').in('id', dbProductIds)
+        .from('products')
+        .select('id, price')
+        .in('id', dbProductIds)
+        .eq('active', true)
       if (pErr) throw pErr
-      priceMap = Object.fromEntries((products ?? []).map(p => [p.id, Number(p.price)]))
+      dbPriceMap = Object.fromEntries(
+        (products ?? []).map(p => [p.id as string, Number(p.price)])
+      )
     }
 
-    // Build verified items, using canonical DB price for products, client price for custom (print files etc.)
-    type RawItem = { productId: string; name: string; quantity: number; price: number; options?: Record<string, string> }
-    const verifiedItems = body.items.map((item: RawItem) => ({
-      productId: item.productId,
-      name: item.name,
-      quantity: item.quantity,
-      price: priceMap[item.productId] ?? item.price,
-      options: item.options,
+    // ── Build CartItemInput array (no client prices used) ────────────────────
+    const cartItems: CartItemInput[] = rawItems.map(i => ({
+      productId: i.productId as string,
+      name:      i.name as string,
+      quantity:  i.quantity as number,
+      options:   (i.options as CartItemInput['options']) ?? undefined,
+      pageCount: typeof i.pageCount === 'number' ? i.pageCount : undefined,
     }))
 
-    const computedSubtotal = verifiedItems.reduce((sum: number, i: RawItem) => sum + i.price * i.quantity, 0)
-    const deliveryFee = body.deliveryMethod === 'delivery' ? 2.0 : 0
-    const computedTotal = Math.round((computedSubtotal + deliveryFee) * 1000) / 1000
+    // ── Validate coupon server-side if provided ───────────────────────────────
+    let discountAmount = 0
+    let couponCode: string | null = null
+
+    if (typeof b.couponCode === 'string' && b.couponCode.trim()) {
+      const { data: coupon, error: cErr } = await supabase
+        .from('coupons')
+        .select('id, discount_type, discount_value, minimum_order, maximum_discount, usage_limit, usage_count, starts_at, expires_at')
+        .eq('code', b.couponCode.trim().toUpperCase())
+        .eq('active', true)
+        .single()
+
+      if (cErr || !coupon) {
+        return NextResponse.json({ error: 'رمز الخصم غير صحيح أو منتهي الصلاحية' }, { status: 400 })
+      }
+
+      // Check temporal validity
+      if (coupon.starts_at && new Date(coupon.starts_at as string) > new Date()) {
+        return NextResponse.json({ error: 'رمز الخصم لم يبدأ بعد' }, { status: 400 })
+      }
+      if (coupon.expires_at && new Date(coupon.expires_at as string) < new Date()) {
+        return NextResponse.json({ error: 'رمز الخصم منتهي الصلاحية' }, { status: 400 })
+      }
+      if (coupon.usage_limit !== null && (coupon.usage_count as number) >= (coupon.usage_limit as number)) {
+        return NextResponse.json({ error: 'رمز الخصم استُنفد' }, { status: 400 })
+      }
+
+      // We'll pass the code to the RPC which does the atomic usage increment
+      couponCode = b.couponCode.trim().toUpperCase()
+    }
+
+    // ── Server-side price computation ─────────────────────────────────────────
+    let pricing
+    try {
+      pricing = computeOrderPricing(
+        cartItems,
+        dbPriceMap,
+        b.deliveryMethod as 'pickup' | 'delivery',
+        discountAmount,
+      )
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'خطأ في حساب السعر'
+      return NextResponse.json({ error: msg }, { status: 400 })
+    }
+
+    // ── Idempotency key ───────────────────────────────────────────────────────
+    const idempotencyKey =
+      typeof b.idempotencyKey === 'string' && b.idempotencyKey.trim()
+        ? b.idempotencyKey.trim()
+        : null
 
     const { data: { user } } = await supabase.auth.getUser()
 
-    const orderNumber = `JP-${new Date().toISOString().slice(0,10).replace(/-/g,'')}-${crypto.randomUUID().slice(0,8).toUpperCase()}`
-
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        order_number: orderNumber,
-        user_id: user?.id ?? null,
-        customer_name: body.customerName,
-        customer_phone: body.customerPhone,
-        customer_email: body.customerEmail ?? null,
-        delivery_method: body.deliveryMethod,
-        delivery_address: body.deliveryAddress ?? null,
-        payment_method: body.paymentMethod,
-        subtotal: computedSubtotal,
-        delivery_fee: deliveryFee,
-        total: computedTotal,
-        notes: body.notes ?? null,
-        status: 'received',
-      })
-      .select()
-      .single()
-
-    if (orderError) throw orderError
-
-    if (verifiedItems.length > 0) {
-      const items = verifiedItems.map((item: RawItem) => ({
-        order_id: order.id,
-        product_id: item.productId,
-        product_name: item.name,
-        quantity: item.quantity,
-        unit_price: item.price,
-        options: item.options ?? null,
-      }))
-      const { error: itemsError } = await supabase.from('order_items').insert(items)
-      if (itemsError) throw itemsError
+    // ── Build RPC payload ─────────────────────────────────────────────────────
+    const rpcPayload: Record<string, unknown> = {
+      user_id:          user?.id ?? null,
+      customer_name:    (b.customerName as string).trim(),
+      customer_phone:   (b.customerPhone as string).trim(),
+      customer_email:   typeof b.customerEmail === 'string' ? b.customerEmail.trim() : null,
+      delivery_method:  b.deliveryMethod,
+      delivery_address: b.deliveryMethod === 'delivery' ? (b.deliveryAddress as string).trim() : null,
+      subtotal:         pricing.subtotal,
+      delivery_fee:     pricing.deliveryFee,
+      discount_amount:  pricing.discountAmount,
+      total:            pricing.total,
+      notes:            typeof b.notes === 'string' ? b.notes.trim() : null,
+      idempotency_key:  idempotencyKey,
+      coupon_code:      couponCode,
+      items: pricing.items.map(item => ({
+        product_id:   uuidRe.test(item.productId) ? item.productId : null,
+        product_name: item.productName,
+        quantity:     item.quantity,
+        unit_price:   item.unitPrice,
+        options:      item.options ?? null,
+      })),
+      file_ids: Array.isArray(b.fileIds) ? b.fileIds : [],
     }
 
+    // ── Call atomic RPC ───────────────────────────────────────────────────────
+    const { data: rpcResult, error: rpcError } = await supabase
+      .rpc('create_order_atomic', { payload: rpcPayload })
 
-    // Log initial status in history
-    await supabase.from('order_status_history').insert({
-      order_id: order.id,
-      status: 'received',
-      note: 'تم استلام الطلب',
-    })
+    if (rpcError) {
+      console.error('create_order_atomic error:', rpcError)
+      if (rpcError.message?.includes('idempotency')) {
+        return NextResponse.json({ error: 'الطلب مكرر' }, { status: 409 })
+      }
+      if (rpcError.message?.includes('coupon')) {
+        return NextResponse.json({ error: 'رمز الخصم غير صحيح' }, { status: 400 })
+      }
+      throw rpcError
+    }
 
-    // Auto-notify customer via WhatsApp
-    if (body.customerPhone) {
+    const result = rpcResult as { order_id: string; order_number: string; idempotent: boolean }
+
+    // ── WhatsApp notification (non-blocking) ──────────────────────────────────
+    if (b.customerPhone) {
       const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? ''
       const message =
-        `مرحباً ${body.customerName} 👋\n` +
+        `مرحباً ${(b.customerName as string).trim()} 👋\n` +
         `تم استلام طلبك في JO-PRINT بنجاح!\n` +
-        `رقم الطلب: ${orderNumber}\n` +
-        `يمكنك متابعة طلبك من:\n${appUrl}/orders/track?q=${orderNumber}`
-      const sent = await sendWhatsApp(body.customerPhone, message)
+        `رقم الطلب: ${result.order_number}\n` +
+        `طريقة الدفع: نقداً عند الاستلام\n` +
+        `المجموع: ${pricing.total.toFixed(3)} د.أ\n` +
+        `يمكنك متابعة طلبك من:\n${appUrl}/orders/track?q=${result.order_number}`
 
-      await supabase.from('notifications').insert({
-        order_id: order.id,
-        type: 'confirmed',
-        phone: body.customerPhone,
-        message,
-        sent,
+      sendWhatsApp(b.customerPhone as string, message).then(sent => {
+        supabase.from('notifications').insert({
+          order_id: result.order_id,
+          type: 'confirmed',
+          phone: b.customerPhone,
+          message,
+          sent,
+        }).then(() => {/* fire-and-forget */})
       })
     }
 
-    return NextResponse.json({ success: true, order })
+    return NextResponse.json({
+      success:      true,
+      orderId:      result.order_id,
+      orderNumber:  result.order_number,
+      idempotent:   result.idempotent,
+      pricing: {
+        subtotal:       pricing.subtotal,
+        deliveryFee:    pricing.deliveryFee,
+        discountAmount: pricing.discountAmount,
+        total:          pricing.total,
+      },
+    })
   } catch (error) {
     console.error('POST /api/orders error:', error)
     return NextResponse.json({ error: 'فشل في إنشاء الطلب' }, { status: 500 })
@@ -163,4 +250,3 @@ export async function GET() {
     return NextResponse.json({ error: 'فشل في جلب الطلبات' }, { status: 500 })
   }
 }
-

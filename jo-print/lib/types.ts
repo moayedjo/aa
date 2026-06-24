@@ -66,6 +66,7 @@ export interface CartItem {
   quantity: number
   type?: 'product' | 'print' | 'book'
   options?: Record<string, string>
+  pageCount?: number
 }
 
 export interface Order {
