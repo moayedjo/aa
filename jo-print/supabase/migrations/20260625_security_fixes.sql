@@ -269,12 +269,16 @@ grant execute on function create_order_atomic(jsonb) to authenticated, anon;
 -- 5. Audit log table for security events
 -- ============================================================
 create table if not exists public.audit_log (
-  id          bigserial primary key,
-  event_type  text not null,
-  user_id     uuid,
-  ip_address  text,
-  payload     jsonb,
-  created_at  timestamptz not null default now()
+  id            bigserial primary key,
+  event_type    text not null,
+  actor_user_id uuid,
+  action        text not null,
+  entity_type   text not null,
+  entity_id     text,
+  old_values    jsonb,
+  new_values    jsonb,
+  ip_hash       text,           -- SHA-256 hash of IP, never the raw address
+  created_at    timestamptz not null default now()
 );
 
 alter table public.audit_log enable row level security;
@@ -290,6 +294,6 @@ create policy "Admins read audit log" on public.audit_log
 -- Only service role can insert audit entries (no client direct insert)
 -- API routes use service role key for audit logging
 
-create index if not exists audit_log_event_type_idx on public.audit_log(event_type);
-create index if not exists audit_log_user_id_idx    on public.audit_log(user_id);
-create index if not exists audit_log_created_at_idx on public.audit_log(created_at desc);
+create index if not exists audit_log_event_type_idx    on public.audit_log(event_type);
+create index if not exists audit_log_actor_user_id_idx on public.audit_log(actor_user_id);
+create index if not exists audit_log_created_at_idx    on public.audit_log(created_at desc);

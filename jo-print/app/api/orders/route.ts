@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { rateLimit } from '@/lib/rateLimit'
 import { computeOrderPricing } from '@/lib/serverPricing'
 import type { CartItemInput } from '@/lib/serverPricing'
+import { writeAuditLog } from '@/lib/auditLog'
 
 async function sendWhatsApp(to: string, message: string): Promise<boolean> {
   const sid   = process.env.TWILIO_ACCOUNT_SID
@@ -36,6 +37,19 @@ export async function POST(request: NextRequest) {
     }
 
     const b = body as Record<string, unknown>
+
+    // ── Payment method validation ─────────────────────────────────────────────
+    if (b.paymentMethod && b.paymentMethod !== 'cash_on_delivery' && b.paymentMethod !== 'cash') {
+      return NextResponse.json(
+        { error: 'طريقة الدفع غير متاحة حالياً — الدفع نقداً عند الاستلام فقط' },
+        { status: 400 }
+      )
+    }
+
+    // Reject any attempt to pre-set payment_status to paid
+    if (b.payment_status === 'paid' || b.paymentStatus === 'paid') {
+      return NextResponse.json({ error: 'لا يمكن تعيين حالة الدفع يدوياً' }, { status: 400 })
+    }
 
     // ── Required field validation ─────────────────────────────────────────────
     if (typeof b.customerName !== 'string' || !b.customerName.trim())
@@ -190,6 +204,17 @@ export async function POST(request: NextRequest) {
     }
 
     const result = rpcResult as { order_id: string; order_number: string; idempotent: boolean }
+
+    // ── Audit log (non-blocking, non-fatal) ───────────────────────────────────
+    writeAuditLog({
+      event_type:    'order_created',
+      actor_user_id: user?.id ?? null,
+      action:        'create',
+      entity_type:   'order',
+      entity_id:     result.order_id,
+      new_values:    { order_number: result.order_number, total: pricing.total },
+      ip_address:    ip,
+    }).catch(err => console.error('writeAuditLog failed:', err))
 
     // ── WhatsApp notification (non-blocking) ──────────────────────────────────
     if (b.customerPhone) {
