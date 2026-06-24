@@ -12,7 +12,7 @@ export async function GET() {
   const supabase = createClient()
   if (!await requireAdmin(supabase)) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   const { data, error } = await supabase.from('print_shops').select('*').order('created_at', { ascending: false })
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: "حدث خطأ، يرجى المحاولة لاحقاً" }, { status: 500 })
   return NextResponse.json(data)
 }
 
@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     phone: body.phone.trim(), hours: body.hours?.trim() ?? null,
     rating: body.rating ?? 5.0, services: Array.isArray(body.services) ? body.services : [],
   }).select().single()
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: "حدث خطأ، يرجى المحاولة لاحقاً" }, { status: 500 })
   return NextResponse.json(data, { status: 201 })
 }
 

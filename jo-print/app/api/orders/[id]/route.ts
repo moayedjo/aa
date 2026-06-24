@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { ORDER_STATUS_LABELS } from '@/lib/constants'
+import { isValidUUID, invalidUUIDResponse } from '@/lib/apiHelpers'
 
 export async function GET(
   request: NextRequest,

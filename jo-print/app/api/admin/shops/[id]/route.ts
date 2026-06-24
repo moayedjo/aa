@@ -16,7 +16,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     name: body.name, address: body.address, area: body.area,
     phone: body.phone, hours: body.hours, rating: body.rating, services: body.services,
   }).eq('id', params.id).select().single()
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: "حدث خطأ، يرجى المحاولة لاحقاً" }, { status: 500 })
   return NextResponse.json(data)
 }
 
@@ -24,6 +24,6 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
   const supabase = createClient()
   if (!await requireAdmin(supabase)) return NextResponse.json({ error: 'غير مصرح' }, { status: 403 })
   const { error } = await supabase.from('print_shops').update({ active: false }).eq('id', params.id)
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: "حدث خطأ، يرجى المحاولة لاحقاً" }, { status: 500 })
   return NextResponse.json({ success: true })
 }

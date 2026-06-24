@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Upload, Phone } from 'lucide-react'
+import { Upload, Phone, Sparkles } from 'lucide-react'
 
 const printingServices = [
   { icon: '📄', title: 'طباعة وثائق', desc: 'PDF, Word, PowerPoint وجميع الصيغ', href: '/printing/upload' },
@@ -48,6 +48,20 @@ export default function PrintingPage() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* AI Quote Assistant Banner */}
+        <div className="bg-gradient-to-l from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-6 mb-6 flex flex-col md:flex-row items-center gap-4">
+          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0">
+            <Sparkles size={22} className="text-white" />
+          </div>
+          <div className="flex-1 text-center md:text-right">
+            <h3 className="font-bold text-gray-900 mb-1">مساعد الاقتباس الذكي ✨</h3>
+            <p className="text-sm text-gray-600">صِف طلبك بكلماتك — سيحلل النظام وصفك ويستخلص المواصفات تلقائياً</p>
+          </div>
+          <Link href="/printing/quote" className="bg-primary text-white px-5 py-2.5 rounded-xl font-semibold hover:bg-blue-700 transition-colors whitespace-nowrap">
+            جرّب الآن
+          </Link>
         </div>
 
         {/* Contact for custom orders */}
