@@ -41,6 +41,7 @@ export default function Header() {
     { href: '/printing', label: 'خدمات الطباعة' },
     { href: '/store', label: 'المتجر' },
     { href: '/books', label: 'ملخصات الكتب' },
+    { href: '/study', label: 'مساعد JO Study' },
     { href: '/teachers', label: 'المعلمين' },
     { href: '/shops', label: 'مكاتب الطباعة' },
   ]

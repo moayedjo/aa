@@ -5,6 +5,11 @@ const nextConfig = {
       { protocol: 'https', hostname: '*.supabase.co' },
     ],
   },
+  // Keep heavy Node-only libs out of the webpack bundle; load them at runtime
+  // from node_modules on the server (JO Study: PDF render + document parsing).
+  experimental: {
+    serverComponentsExternalPackages: ['playwright-core', 'pdfjs-dist', 'mammoth'],
+  },
   async headers() {
     const supabaseHost = process.env.NEXT_PUBLIC_SUPABASE_URL
       ? new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname

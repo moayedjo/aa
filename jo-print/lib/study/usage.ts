@@ -2,7 +2,7 @@
  * JO Study — usage tracking and limit enforcement.
  * Writes to ai_usage use the service-role client (server-only).
  */
-import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { createClient as createServiceClient, type SupabaseClient } from '@supabase/supabase-js'
 import { getPlanLimits, type StudyPlanLimits } from './config'
 import { estimateCost, type AiUsage } from './aiProvider'
 
@@ -27,12 +27,13 @@ function serviceClient() {
  * optional profiles.study_plan column and fall back to the free plan.
  */
 export async function getUserPlanLimits(
-  supabase: { from: (t: string) => { select: (c: string) => { eq: (k: string, v: string) => { single: () => Promise<{ data: { study_plan?: string | null } | null }> } } } },
+  supabase: SupabaseClient,
   userId: string,
 ): Promise<StudyPlanLimits> {
   try {
     const { data } = await supabase.from('profiles').select('study_plan').eq('id', userId).single()
-    return getPlanLimits(data?.study_plan ?? null)
+    const planRow = data as { study_plan?: string | null } | null
+    return getPlanLimits(planRow?.study_plan ?? null)
   } catch {
     return getPlanLimits(null)
   }
