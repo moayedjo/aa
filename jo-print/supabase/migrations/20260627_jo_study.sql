@@ -5,6 +5,56 @@
 -- ============================================================
 
 -- ============================================================
+-- 0a. is_admin() helper — SECURITY DEFINER so it reads profiles WITHOUT
+--     re-triggering profiles RLS. Using a plain "exists (select from profiles
+--     where ...)" inside a profiles policy causes infinite recursion in
+--     Postgres 15+. This helper is the recursion-safe way to gate admin access.
+-- ============================================================
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.profiles where id = auth.uid() and role = 'admin'
+  );
+$$;
+
+-- Broader staff check (admin + order_manager) for the profiles admin policy.
+create or replace function public.is_staff()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from public.profiles where id = auth.uid() and role in ('admin','order_manager')
+  );
+$$;
+
+revoke all on function public.is_admin() from public;
+revoke all on function public.is_staff() from public;
+grant execute on function public.is_admin() to authenticated, anon, service_role;
+grant execute on function public.is_staff() to authenticated, anon, service_role;
+
+-- Replace the recursive "Admins all profiles" policy. The helper is SECURITY
+-- DEFINER, so it reads profiles WITHOUT re-triggering profiles RLS — no recursion.
+drop policy if exists "Admins all profiles" on public.profiles;
+create policy "Admins all profiles" on public.profiles
+  for all using (auth.uid() = id or public.is_staff());
+
+-- ============================================================
+-- 0. Subscription plan column on profiles (prepares future billing).
+--    Plan resolution in lib/study/usage.ts reads this column.
+-- ============================================================
+alter table public.profiles
+  add column if not exists study_plan text not null default 'free'
+    check (study_plan in ('free','student','print_bundle'));
+
+-- ============================================================
 -- 1. study_files — uploaded educational material metadata
 -- ============================================================
 create table if not exists public.study_files (
@@ -225,7 +275,11 @@ alter table public.ai_usage               enable row level security;
 -- Helper pattern: owner can do everything on their own rows.
 -- We use explicit per-command policies for clarity and least privilege.
 
--- study_files (respect soft delete on select)
+-- study_files (respect soft delete on select). Idempotent: drop then create.
+drop policy if exists "study_files select own" on public.study_files;
+drop policy if exists "study_files insert own" on public.study_files;
+drop policy if exists "study_files update own" on public.study_files;
+drop policy if exists "study_files delete own" on public.study_files;
 create policy "study_files select own" on public.study_files
   for select using (user_id = auth.uid() and deleted_at is null);
 create policy "study_files insert own" on public.study_files
@@ -235,7 +289,7 @@ create policy "study_files update own" on public.study_files
 create policy "study_files delete own" on public.study_files
   for delete using (user_id = auth.uid());
 
--- Generic owner policies for the remaining tables
+-- Generic owner policies for the remaining tables (idempotent)
 do $$
 declare
   t text;
@@ -246,6 +300,10 @@ declare
   ];
 begin
   foreach t in array owned_tables loop
+    execute format($f$drop policy if exists "%1$s select own" on public.%1$s;$f$, t);
+    execute format($f$drop policy if exists "%1$s insert own" on public.%1$s;$f$, t);
+    execute format($f$drop policy if exists "%1$s update own" on public.%1$s;$f$, t);
+    execute format($f$drop policy if exists "%1$s delete own" on public.%1$s;$f$, t);
     execute format($f$create policy "%1$s select own" on public.%1$s for select using (user_id = auth.uid());$f$, t);
     execute format($f$create policy "%1$s insert own" on public.%1$s for insert with check (user_id = auth.uid());$f$, t);
     execute format($f$create policy "%1$s update own" on public.%1$s for update using (user_id = auth.uid()) with check (user_id = auth.uid());$f$, t);
@@ -254,19 +312,18 @@ begin
 end $$;
 
 -- ai_usage: users may read their own usage; inserts happen server-side via service role.
+drop policy if exists "ai_usage select own" on public.ai_usage;
 create policy "ai_usage select own" on public.ai_usage
   for select using (user_id = auth.uid());
 -- No client insert/update/delete policies — writes are service-role only.
 
 -- Admins can read aggregate metadata (NOT file contents — those live in storage).
+drop policy if exists "Admins read study_files metadata" on public.study_files;
+drop policy if exists "Admins read ai_usage" on public.ai_usage;
 create policy "Admins read study_files metadata" on public.study_files
-  for select using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
-  );
+  for select using (public.is_admin());
 create policy "Admins read ai_usage" on public.ai_usage
-  for select using (
-    exists (select 1 from public.profiles where id = auth.uid() and role = 'admin')
-  );
+  for select using (public.is_admin());
 
 -- ============================================================
 -- updated_at trigger for study tables
@@ -289,5 +346,51 @@ begin
   foreach t in array ts loop
     execute format('drop trigger if exists %1$s_touch on public.%1$s;', t);
     execute format('create trigger %1$s_touch before update on public.%1$s for each row execute function public.touch_updated_at();', t);
+  end loop;
+end $$;
+
+-- ============================================================
+-- Storage policies for JO Study buckets (defense in depth)
+--
+-- Buckets must be created as PRIVATE (public = false) via the Supabase
+-- dashboard or management API:
+--   study-files    (uploaded study material)
+--   study-exports  (generated print-ready documents)
+--
+-- All app access goes through server-side signed URLs. These RLS policies
+-- enforce that even direct authenticated access is restricted to the owner,
+-- where the object path is namespaced as "<user_id>/<file>".
+-- ============================================================
+do $$
+declare
+  b text;
+  buckets text[] := array['study-files','study-exports'];
+begin
+  foreach b in array buckets loop
+    execute format($f$drop policy if exists "%1$s owner select" on storage.objects;$f$, b);
+    execute format($f$drop policy if exists "%1$s owner insert" on storage.objects;$f$, b);
+    execute format($f$drop policy if exists "%1$s owner update" on storage.objects;$f$, b);
+    execute format($f$drop policy if exists "%1$s owner delete" on storage.objects;$f$, b);
+
+    execute format($f$
+      create policy "%1$s owner select" on storage.objects
+        for select to authenticated
+        using (bucket_id = %1$L and (storage.foldername(name))[1] = auth.uid()::text);
+    $f$, b);
+    execute format($f$
+      create policy "%1$s owner insert" on storage.objects
+        for insert to authenticated
+        with check (bucket_id = %1$L and (storage.foldername(name))[1] = auth.uid()::text);
+    $f$, b);
+    execute format($f$
+      create policy "%1$s owner update" on storage.objects
+        for update to authenticated
+        using (bucket_id = %1$L and (storage.foldername(name))[1] = auth.uid()::text);
+    $f$, b);
+    execute format($f$
+      create policy "%1$s owner delete" on storage.objects
+        for delete to authenticated
+        using (bucket_id = %1$L and (storage.foldername(name))[1] = auth.uid()::text);
+    $f$, b);
   end loop;
 end $$;
