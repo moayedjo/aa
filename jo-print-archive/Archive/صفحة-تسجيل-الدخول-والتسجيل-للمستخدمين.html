@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jo Print - Authentication</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#007FFF',secondary:'#0056b3'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+:root {
+--primary: #007FFF;
+--primary-dark: #0056b3;
+--primary-light: #4da3ff;
+}
+body {
+font-family: 'Tajawal', 'Poppins', sans-serif;
+}
+.rtl {
+direction: rtl;
+text-align: right;
+}
+.ltr {
+direction: ltr;
+text-align: left;
+}
+.form-input:focus {
+border-color: var(--primary);
+box-shadow: 0 0 0 3px rgba(0, 127, 255, 0.25);
+}
+.tab-active {
+color: var(--primary);
+border-bottom: 2px solid var(--primary);
+}
+.form-container {
+max-width: 480px;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-checkbox {
+position: relative;
+display: inline-block;
+width: 20px;
+height: 20px;
+}
+.custom-checkbox input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.checkmark {
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #fff;
+border: 2px solid #d1d5db;
+border-radius: 4px;
+transition: all 0.2s ease;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: var(--primary);
+border-color: var(--primary);
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+left: 6px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.password-strength {
+height: 4px;
+background-color: #e5e7eb;
+border-radius: 2px;
+overflow: hidden;
+}
+.password-strength-bar {
+height: 100%;
+width: 0%;
+transition: width 0.3s ease;
+}
+.strength-weak { width: 25%; background-color: #ef4444; }
+.strength-medium { width: 50%; background-color: #f59e0b; }
+.strength-good { width: 75%; background-color: #10b981; }
+.strength-strong { width: 100%; background-color: #059669; }
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 44px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #e5e7eb;
+transition: .4s;
+border-radius: 24px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+left: 3px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: var(--primary);
+}
+input:checked + .switch-slider:before {
+transform: translateX(20px);
+}
+.spinner {
+display: none;
+width: 20px;
+height: 20px;
+border: 2px solid rgba(255, 255, 255, 0.3);
+border-radius: 50%;
+border-top-color: #fff;
+animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+to { transform: rotate(360deg); }
+}
+.form-step {
+display: none;
+}
+.form-step.active {
+display: block;
+animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.progress-step {
+width: 30px;
+height: 30px;
+border-radius: 50%;
+background-color: #e5e7eb;
+display: flex;
+align-items: center;
+justify-content: center;
+position: relative;
+z-index: 1;
+}
+.progress-step.active {
+background-color: var(--primary);
+color: white;
+}
+.progress-step.completed {
+background-color: var(--primary);
+color: white;
+}
+.progress-line {
+flex: 1;
+height: 2px;
+background-color: #e5e7eb;
+}
+.progress-line.active {
+background-color: var(--primary);
+}
+.file-upload {
+border: 2px dashed #d1d5db;
+border-radius: 8px;
+padding: 20px;
+text-align: center;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+.file-upload:hover {
+border-color: var(--primary);
+}
+.file-upload.dragover {
+border-color: var(--primary);
+background-color: rgba(0, 127, 255, 0.05);
+}
+.time-slot {
+cursor: pointer;
+transition: all 0.2s ease;
+}
+.time-slot:hover {
+background-color: rgba(0, 127, 255, 0.1);
+}
+.time-slot.selected {
+background-color: var(--primary);
+color: white;
+}
+.map-container {
+background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png');
+background-position: center;
+background-size: cover;
+background-repeat: no-repeat;
+height: 200px;
+border-radius: 8px;
+overflow: hidden;
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<div class="relative">
+<!-- Language Switcher -->
+<div class="absolute top-4 right-4 z-10 flex items-center">
+<span class="text-sm text-gray-600 ml-2">English</span>
+<label class="custom-switch mx-2">
+<input type="checkbox" id="languageToggle" checked>
+<span class="switch-slider"></span>
+</label>
+<span class="text-sm text-gray-900 font-medium">العربية</span>
+</div>
+<!-- Header -->
+<header class="py-6 border-b bg-white">
+<div class="container mx-auto px-4 flex justify-center">
+<div class="font-['Pacifico'] text-primary text-3xl">Jo Print</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="container mx-auto px-4 py-8">
+<!-- Auth Type Selector -->
+<div class="max-w-md mx-auto mb-8">
+<div class="bg-white rounded-lg shadow-sm p-4 flex justify-between">
+<button id="userAuthBtn" class="flex-1 py-2 text-center font-medium text-primary border-b-2 border-primary">
+<span class="ar">الطلاب والزبائن</span>
+<span class="en hidden">Students & Customers</span>
+</button>
+<button id="teacherAuthBtn" class="flex-1 py-2 text-center font-medium text-gray-500">
+<span class="ar">المدرسين</span>
+<span class="en hidden">Teachers</span>
+</button>
+<button id="printShopAuthBtn" class="flex-1 py-2 text-center font-medium text-gray-500">
+<span class="ar">مكاتب الطباعة</span>
+<span class="en hidden">Print Shops</span>
+</button>
+</div>
+</div>
+<!-- User Authentication Form -->
+<div id="userAuthForm" class="max-w-md mx-auto">
+<div class="bg-white rounded-lg shadow-sm p-6">
+<!-- Form Tabs -->
+<div class="flex mb-6 border-b">
+<button id="loginTabBtn" class="flex-1 py-3 text-center font-medium tab-active">
+<span class="ar">تسجيل الدخول</span>
+<span class="en hidden">Login</span>
+</button>
+<button id="registerTabBtn" class="flex-1 py-3 text-center font-medium text-gray-500">
+<span class="ar">إنشاء حساب</span>
+<span class="en hidden">Register</span>
+</button>
+</div>
+<!-- Login Form -->
+<form id="loginForm" class="space-y-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">البريد الإلكتروني أو رقم الهاتف</span>
+<span class="en hidden">Email or Phone Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between mb-1">
+<label class="block text-sm font-medium text-gray-700">
+<span class="ar">كلمة المرور</span>
+<span class="en hidden">Password</span>
+</label>
+<a href="#" class="text-sm text-primary hover:underline">
+<span class="ar">هل نسيت كلمة المرور؟</span>
+<span class="en hidden">Forgot password?</span>
+</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="flex items-center">
+<label class="custom-checkbox">
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+<span class="text-sm text-gray-700 mr-2">
+<span class="ar">تذكرني</span>
+<span class="en hidden">Remember me</span>
+</span>
+</div>
+<button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-button transition duration-200 flex justify-center items-center whitespace-nowrap">
+<span class="ar">تسجيل الدخول</span>
+<span class="en hidden">Login</span>
+<div class="spinner mr-2"></div>
+</button>
+<div class="relative flex items-center justify-center my-4">
+<div class="border-t border-gray-300 flex-grow"></div>
+<span class="mx-4 text-sm text-gray-500">
+<span class="ar">أو</span>
+<span class="en hidden">OR</span>
+</span>
+<div class="border-t border-gray-300 flex-grow"></div>
+</div>
+<button type="button" class="w-full border border-gray-300 bg-white text-gray-700 py-2 px-4 rounded-button transition duration-200 flex justify-center items-center whitespace-nowrap">
+<div class="w-5 h-5 flex items-center justify-center mr-2">
+<i class="ri-google-fill text-lg"></i>
+</div>
+<span class="ar">تسجيل الدخول باستخدام Google</span>
+<span class="en hidden">Login with Google</span>
+</button>
+</form>
+<!-- Register Form -->
+<form id="registerForm" class="space-y-4 hidden">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">الاسم الكامل</span>
+<span class="en hidden">Full Name</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">البريد الإلكتروني</span>
+<span class="en hidden">Email</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-mail-line text-gray-400"></i>
+</div>
+<input type="email" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">رقم الهاتف</span>
+<span class="en hidden">Phone Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-phone-line text-gray-400"></i>
+</div>
+<input type="tel" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">كلمة المرور</span>
+<span class="en hidden">Password</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" id="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+<div class="password-strength mt-2">
+<div class="password-strength-bar"></div>
+</div>
+<div class="text-xs text-gray-500 mt-1">
+<span class="ar">قوة كلمة المرور: <span id="strengthText">ضعيفة</span></span>
+<span class="en hidden">Password strength: <span id="strengthTextEn">Weak</span></span>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">تأكيد كلمة المرور</span>
+<span class="en hidden">Confirm Password</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="flex items-center">
+<label class="custom-checkbox">
+<input type="checkbox" required>
+<span class="checkmark"></span>
+</label>
+<span class="text-sm text-gray-700 mr-2">
+<span class="ar">أوافق على <a href="#" class="text-primary hover:underline">الشروط والأحكام</a></span>
+<span class="en hidden">I agree to the <a href="#" class="text-primary hover:underline">Terms and Conditions</a></span>
+</span>
+</div>
+<button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-button transition duration-200 flex justify-center items-center whitespace-nowrap">
+<span class="ar">إنشاء حساب</span>
+<span class="en hidden">Create Account</span>
+<div class="spinner mr-2"></div>
+</button>
+</form>
+</div>
+</div>
+<!-- Teacher Authentication Form -->
+<div id="teacherAuthForm" class="max-w-2xl mx-auto hidden">
+<div class="bg-white rounded-lg shadow-sm p-6">
+<!-- Form Tabs -->
+<div class="flex mb-6 border-b">
+<button id="teacherLoginTabBtn" class="flex-1 py-3 text-center font-medium tab-active">
+<span class="ar">تسجيل الدخول</span>
+<span class="en hidden">Login</span>
+</button>
+<button id="teacherRegisterTabBtn" class="flex-1 py-3 text-center font-medium text-gray-500">
+<span class="ar">التسجيل كمدرس</span>
+<span class="en hidden">Register as Teacher</span>
+</button>
+</div>
+<!-- Teacher Login Form -->
+<form id="teacherLoginForm" class="space-y-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">البريد الإلكتروني أو رقم الهاتف</span>
+<span class="en hidden">Email or Phone Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between mb-1">
+<label class="block text-sm font-medium text-gray-700">
+<span class="ar">كلمة المرور</span>
+<span class="en hidden">Password</span>
+</label>
+<a href="#" class="text-sm text-primary hover:underline">
+<span class="ar">هل نسيت كلمة المرور؟</span>
+<span class="en hidden">Forgot password?</span>
+</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-button transition duration-200 flex justify-center items-center whitespace-nowrap">
+<span class="ar">تسجيل الدخول</span>
+<span class="en hidden">Login</span>
+<div class="spinner mr-2"></div>
+</button>
+</form>
+<!-- Teacher Register Form -->
+<form id="teacherRegisterForm" class="hidden">
+<!-- Progress Bar -->
+<div class="flex items-center mb-8">
+<div class="progress-step active">1</div>
+<div class="progress-line"></div>
+<div class="progress-step">2</div>
+<div class="progress-line"></div>
+<div class="progress-step">3</div>
+</div>
+<!-- Step 1: Personal Information -->
+<div class="form-step active space-y-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">
+<span class="ar">المعلومات الشخصية</span>
+<span class="en hidden">Personal Information</span>
+</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">الاسم الكامل</span>
+<span class="en hidden">Full Name</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">البريد الإلكتروني</span>
+<span class="en hidden">Email</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-mail-line text-gray-400"></i>
+</div>
+<input type="email" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">رقم الهاتف</span>
+<span class="en hidden">Phone Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-phone-line text-gray-400"></i>
+</div>
+<input type="tel" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">كلمة المرور</span>
+<span class="en hidden">Password</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+</div>
+<div class="flex justify-end mt-6">
+<button type="button" id="step1Next" class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">التالي</span>
+<span class="en hidden">Next</span>
+</button>
+</div>
+</div>
+<!-- Step 2: Teaching Information -->
+<div class="form-step space-y-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">
+<span class="ar">معلومات التدريس</span>
+<span class="en hidden">Teaching Information</span>
+</h3>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">المواد التي تدرسها</span>
+<span class="en hidden">Subjects You Teach</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-book-open-line text-gray-400"></i>
+</div>
+<select class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none appearance-none" multiple required>
+<option value="math">
+<span class="ar">الرياضيات</span>
+<span class="en hidden">Mathematics</span>
+</option>
+<option value="science">
+<span class="ar">العلوم</span>
+<span class="en hidden">Science</span>
+</option>
+<option value="arabic">
+<span class="ar">اللغة العربية</span>
+<span class="en hidden">Arabic</span>
+</option>
+<option value="english">
+<span class="ar">اللغة الإنجليزية</span>
+<span class="en hidden">English</span>
+</option>
+<option value="physics">
+<span class="ar">الفيزياء</span>
+<span class="en hidden">Physics</span>
+</option>
+<option value="chemistry">
+<span class="ar">الكيمياء</span>
+<span class="en hidden">Chemistry</span>
+</option>
+</select>
+</div>
+<p class="text-xs text-gray-500 mt-1">
+<span class="ar">يمكنك اختيار أكثر من مادة</span>
+<span class="en hidden">You can select multiple subjects</span>
+</p>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">المراحل الدراسية</span>
+<span class="en hidden">Educational Levels</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-graduation-cap-line text-gray-400"></i>
+</div>
+<select class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none appearance-none" multiple required>
+<option value="elementary">
+<span class="ar">المرحلة الابتدائية</span>
+<span class="en hidden">Elementary</span>
+</option>
+<option value="middle">
+<span class="ar">المرحلة المتوسطة</span>
+<span class="en hidden">Middle School</span>
+</option>
+<option value="high">
+<span class="ar">المرحلة الثانوية</span>
+<span class="en hidden">High School</span>
+</option>
+<option value="university">
+<span class="ar">المرحلة الجامعية</span>
+<span class="en hidden">University</span>
+</option>
+</select>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">الموقع (المحافظة/المدينة)</span>
+<span class="en hidden">Location (Governorate/City)</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-map-pin-line text-gray-400"></i>
+</div>
+<select class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none appearance-none" required>
+<option value="amman">
+<span class="ar">عمان</span>
+<span class="en hidden">Amman</span>
+</option>
+<option value="zarqa">
+<span class="ar">الزرقاء</span>
+<span class="en hidden">Zarqa</span>
+</option>
+<option value="irbid">
+<span class="ar">إربد</span>
+<span class="en hidden">Irbid</span>
+</option>
+<option value="aqaba">
+<span class="ar">العقبة</span>
+<span class="en hidden">Aqaba</span>
+</option>
+<option value="madaba">
+<span class="ar">مادبا</span>
+<span class="en hidden">Madaba</span>
+</option>
+</select>
+</div>
+</div>
+<div class="flex justify-between mt-6">
+<button type="button" id="step2Prev" class="border border-gray-300 bg-white text-gray-700 py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">السابق</span>
+<span class="en hidden">Previous</span>
+</button>
+<button type="button" id="step2Next" class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">التالي</span>
+<span class="en hidden">Next</span>
+</button>
+</div>
+</div>
+<!-- Step 3: Availability & Documents -->
+<div class="form-step space-y-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">
+<span class="ar">أوقات التفرغ والمستندات</span>
+<span class="en hidden">Availability & Documents</span>
+</h3>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-2">
+<span class="ar">أوقات التفرغ</span>
+<span class="en hidden">Availability Times</span>
+</label>
+<div class="grid grid-cols-7 gap-2 mb-2">
+<div class="text-center text-sm font-medium">
+<span class="ar">السبت</span>
+<span class="en hidden">Sat</span>
+</div>
+<div class="text-center text-sm font-medium">
+<span class="ar">الأحد</span>
+<span class="en hidden">Sun</span>
+</div>
+<div class="text-center text-sm font-medium">
+<span class="ar">الإثنين</span>
+<span class="en hidden">Mon</span>
+</div>
+<div class="text-center text-sm font-medium">
+<span class="ar">الثلاثاء</span>
+<span class="en hidden">Tue</span>
+</div>
+<div class="text-center text-sm font-medium">
+<span class="ar">الأربعاء</span>
+<span class="en hidden">Wed</span>
+</div>
+<div class="text-center text-sm font-medium">
+<span class="ar">الخميس</span>
+<span class="en hidden">Thu</span>
+</div>
+<div class="text-center text-sm font-medium">
+<span class="ar">الجمعة</span>
+<span class="en hidden">Fri</span>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-2">
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+<div class="flex flex-col gap-1">
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">صباحاً</span>
+<span class="en hidden">Morning</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">ظهراً</span>
+<span class="en hidden">Noon</span>
+</div>
+<div class="time-slot text-center py-1 border border-gray-200 rounded text-sm">
+<span class="ar">مساءً</span>
+<span class="en hidden">Evening</span>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-2">
+<span class="ar">السيرة الذاتية (اختياري)</span>
+<span class="en hidden">CV/Resume (Optional)</span>
+</label>
+<div class="file-upload">
+<div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center text-primary">
+<i class="ri-upload-cloud-line text-3xl"></i>
+</div>
+<p class="text-sm text-gray-700">
+<span class="ar">اسحب الملف هنا أو انقر للتحميل</span>
+<span class="en hidden">Drag file here or click to upload</span>
+</p>
+<p class="text-xs text-gray-500 mt-1">
+<span class="ar">PDF، DOC، DOCX (الحد الأقصى 5 ميجابايت)</span>
+<span class="en hidden">PDF, DOC, DOCX (Max 5MB)</span>
+</p>
+<input type="file" class="hidden" accept=".pdf,.doc,.docx">
+</div>
+</div>
+<div class="bg-blue-50 border border-blue-200 rounded-md p-4 mt-4">
+<div class="flex">
+<div class="w-5 h-5 flex items-center justify-center text-primary mr-3">
+<i class="ri-information-line"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium text-gray-900">
+<span class="ar">ملاحظة مهمة</span>
+<span class="en hidden">Important Note</span>
+</h4>
+<p class="text-sm text-gray-700 mt-1">
+<span class="ar">سيتم مراجعة طلبك من قبل فريقنا وسنتواصل معك خلال 24-48 ساعة.</span>
+<span class="en hidden">Your application will be reviewed by our team and we will contact you within 24-48 hours.</span>
+</p>
+</div>
+</div>
+</div>
+<div class="flex justify-between mt-6">
+<button type="button" id="step3Prev" class="border border-gray-300 bg-white text-gray-700 py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">السابق</span>
+<span class="en hidden">Previous</span>
+</button>
+<button type="submit" class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 flex items-center whitespace-nowrap">
+<span class="ar">سجّل كمدرس</span>
+<span class="en hidden">Register as Teacher</span>
+<div class="spinner mr-2"></div>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+<!-- Print Shop Authentication Form -->
+<div id="printShopAuthForm" class="max-w-2xl mx-auto hidden">
+<div class="bg-white rounded-lg shadow-sm p-6">
+<!-- Form Tabs -->
+<div class="flex mb-6 border-b">
+<button id="shopLoginTabBtn" class="flex-1 py-3 text-center font-medium tab-active">
+<span class="ar">تسجيل الدخول</span>
+<span class="en hidden">Login</span>
+</button>
+<button id="shopRegisterTabBtn" class="flex-1 py-3 text-center font-medium text-gray-500">
+<span class="ar">تسجيل مكتب طباعة</span>
+<span class="en hidden">Register Print Shop</span>
+</button>
+</div>
+<!-- Print Shop Login Form -->
+<form id="shopLoginForm" class="space-y-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">البريد الإلكتروني أو رقم الهاتف</span>
+<span class="en hidden">Email or Phone Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<div class="flex justify-between mb-1">
+<label class="block text-sm font-medium text-gray-700">
+<span class="ar">كلمة المرور</span>
+<span class="en hidden">Password</span>
+</label>
+<a href="#" class="text-sm text-primary hover:underline">
+<span class="ar">هل نسيت كلمة المرور؟</span>
+<span class="en hidden">Forgot password?</span>
+</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white py-2 px-4 rounded-button transition duration-200 flex justify-center items-center whitespace-nowrap">
+<span class="ar">تسجيل الدخول</span>
+<span class="en hidden">Login</span>
+<div class="spinner mr-2"></div>
+</button>
+</form>
+<!-- Print Shop Register Form -->
+<form id="shopRegisterForm" class="hidden">
+<!-- Progress Bar -->
+<div class="flex items-center mb-8">
+<div class="progress-step active">1</div>
+<div class="progress-line"></div>
+<div class="progress-step">2</div>
+<div class="progress-line"></div>
+<div class="progress-step">3</div>
+</div>
+<!-- Step 1: Shop Information -->
+<div class="form-step active space-y-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">
+<span class="ar">معلومات المكتب</span>
+<span class="en hidden">Shop Information</span>
+</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">اسم المكتب</span>
+<span class="en hidden">Shop Name</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-store-2-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">اسم المالك</span>
+<span class="en hidden">Owner Name</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">رقم التسجيل التجاري</span>
+<span class="en hidden">Business Registration Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-file-list-3-line text-gray-400"></i>
+</div>
+<input type="text" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">البريد الإلكتروني</span>
+<span class="en hidden">Email</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-mail-line text-gray-400"></i>
+</div>
+<input type="email" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">رقم الهاتف</span>
+<span class="en hidden">Phone Number</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-phone-line text-gray-400"></i>
+</div>
+<input type="tel" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-1">
+<span class="ar">كلمة المرور</span>
+<span class="en hidden">Password</span>
+</label>
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+</div>
+<div class="flex justify-end mt-6">
+<button type="button" id="shopStep1Next" class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">التالي</span>
+<span class="en hidden">Next</span>
+</button>
+</div>
+</div>
+<!-- Step 2: Location & Documents -->
+<div class="form-step space-y-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">
+<span class="ar">الموقع والمستندات</span>
+<span class="en hidden">Location & Documents</span>
+</h3>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-2">
+<span class="ar">الموقع الدقيق في الأردن</span>
+<span class="en hidden">Exact Location in Jordan</span>
+</label>
+<div class="map-container"></div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+<div class="relative">
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-map-pin-line text-gray-400"></i>
+</div>
+<input type="text" placeholder="المحافظة" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+<div class="relative">
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-road-map-line text-gray-400"></i>
+</div>
+<input type="text" placeholder="المدينة" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+</div>
+<div class="relative mt-4">
+<div class="relative">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+<i class="ri-map-pin-line text-gray-400"></i>
+</div>
+<input type="text" placeholder="العنوان التفصيلي" class="form-input w-full pr-10 py-2 border border-gray-300 rounded focus:outline-none" required>
+</div>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-2">
+<span class="ar">ترخيص المكتب</span>
+<span class="en hidden">Shop License</span>
+</label>
+<div class="file-upload">
+<div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center text-primary">
+<i class="ri-upload-cloud-line text-3xl"></i>
+</div>
+<p class="text-sm text-gray-700">
+<span class="ar">اسحب الملف هنا أو انقر للتحميل</span>
+<span class="en hidden">Drag file here or click to upload</span>
+</p>
+<p class="text-xs text-gray-500 mt-1">
+<span class="ar">PDF، JPG، PNG (الحد الأقصى 5 ميجابايت)</span>
+<span class="en hidden">PDF, JPG, PNG (Max 5MB)</span>
+</p>
+<input type="file" class="hidden" accept=".pdf,.jpg,.jpeg,.png" required>
+</div>
+</div>
+<div class="flex justify-between mt-6">
+<button type="button" id="shopStep2Prev" class="border border-gray-300 bg-white text-gray-700 py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">السابق</span>
+<span class="en hidden">Previous</span>
+</button>
+<button type="button" id="shopStep2Next" class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">التالي</span>
+<span class="en hidden">Next</span>
+</button>
+</div>
+</div>
+<!-- Step 3: Business Hours & Delivery -->
+<div class="form-step space-y-4">
+<h3 class="text-lg font-medium text-gray-900 mb-4">
+<span class="ar">ساعات العمل وخيارات التوصيل</span>
+<span class="en hidden">Business Hours & Delivery Options</span>
+</h3>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-2">
+<span class="ar">ساعات العمل</span>
+<span class="en hidden">Business Hours</span>
+</label>
+<div class="space-y-3">
+<div class="flex items-center justify-between">
+<div class="w-20 text-sm font-medium">
+<span class="ar">السبت - الخميس</span>
+<span class="en hidden">Sat - Thu</span>
+</div>
+<div class="flex items-center space-x-2 rtl:space-x-reverse">
+<select class="form-input py-1 px-2 border border-gray-300 rounded focus:outline-none text-sm">
+<option>8:00 AM</option>
+<option>9:00 AM</option>
+<option>10:00 AM</option>
+</select>
+<span class="text-sm">-</span>
+<select class="form-input py-1 px-2 border border-gray-300 rounded focus:outline-none text-sm">
+<option>5:00 PM</option>
+<option>6:00 PM</option>
+<option>7:00 PM</option>
+<option>8:00 PM</option>
+<option>9:00 PM</option>
+</select>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div class="w-20 text-sm font-medium">
+<span class="ar">الجمعة</span>
+<span class="en hidden">Friday</span>
+</div>
+<div class="flex items-center">
+<label class="custom-checkbox">
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+<span class="text-sm text-gray-700 mr-2">
+<span class="ar">مغلق</span>
+<span class="en hidden">Closed</span>
+</span>
+</div>
+</div>
+</div>
+</div>
+<div class="relative">
+<label class="block text-sm font-medium text-gray-700 mb-2">
+<span class="ar">خيارات التوصيل</span>
+<span class="en hidden">Delivery Options</span>
+</label>
+<div class="space-y-3">
+<div class="flex items-center">
+<label class="custom-checkbox">
+<input type="checkbox" checked>
+<span class="checkmark"></span>
+</label>
+<span class="text-sm text-gray-700 mr-2">
+<span class="ar">استلام من المكتب</span>
+<span class="en hidden">In-store pickup</span>
+</span>
+</div>
+<div class="flex items-center">
+<label class="custom-checkbox">
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+<span class="text-sm text-gray-700 mr-2">
+<span class="ar">توصيل داخل المدينة</span>
+<span class="en hidden">Local delivery</span>
+</span>
+</div>
+<div class="flex items-center">
+<label class="custom-checkbox">
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+<span class="text-sm text-gray-700 mr-2">
+<span class="ar">توصيل لجميع أنحاء الأردن</span>
+<span class="en hidden">Nationwide delivery</span>
+</span>
+</div>
+</div>
+</div>
+<div class="bg-blue-50 border border-blue-200 rounded-md p-4 mt-4">
+<div class="flex">
+<div class="w-5 h-5 flex items-center justify-center text-primary mr-3">
+<i class="ri-information-line"></i>
+</div>
+<div>
+<h4 class="text-sm font-medium text-gray-900">
+<span class="ar">ملاحظة مهمة</span>
+<span class="en hidden">Important Note</span>
+</h4>
+<p class="text-sm text-gray-700 mt-1">
+<span class="ar">سيتم مراجعة طلبك من قبل فريقنا وسنتواصل معك خلال 24-48 ساعة.</span>
+<span class="en hidden">Your application will be reviewed by our team and we will contact you within 24-48 hours.</span>
+</p>
+</div>
+</div>
+</div>
+<div class="flex justify-between mt-6">
+<button type="button" id="shopStep3Prev" class="border border-gray-300 bg-white text-gray-700 py-2 px-6 rounded-button transition duration-200 whitespace-nowrap">
+<span class="ar">السابق</span>
+<span class="en hidden">Previous</span>
+</button>
+<button type="submit" class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 flex items-center whitespace-nowrap">
+<span class="ar">سجّل مكتبك</span>
+<span class="en hidden">Register Your Shop</span>
+<div class="spinner mr-2"></div>
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+</main>
+<!-- Footer -->
+<footer class="bg-white border-t py-6 mt-12">
+<div class="container mx-auto px-4 text-center text-gray-500 text-sm">
+<p>
+<span class="ar">© جو برينت 2025. جميع الحقوق محفوظة.</span>
+<span class="en hidden">© Jo Print 2025. All rights reserved.</span>
+</p>
+</div>
+</footer>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Language Toggle
+const languageToggle = document.getElementById('languageToggle');
+const arElements = document.querySelectorAll('.ar');
+const enElements = document.querySelectorAll('.en');
+const htmlElement = document.documentElement;
+languageToggle.addEventListener('change', function() {
+if (this.checked) {
+// Arabic (RTL)
+htmlElement.setAttribute('dir', 'rtl');
+htmlElement.setAttribute('lang', 'ar');
+arElements.forEach(el => el.classList.remove('hidden'));
+enElements.forEach(el => el.classList.add('hidden'));
+} else {
+// English (LTR)
+htmlElement.setAttribute('dir', 'ltr');
+htmlElement.setAttribute('lang', 'en');
+arElements.forEach(el => el.classList.add('hidden'));
+enElements.forEach(el => el.classList.remove('hidden'));
+}
+});
+// Auth Type Selector
+const userAuthBtn = document.getElementById('userAuthBtn');
+const teacherAuthBtn = document.getElementById('teacherAuthBtn');
+const printShopAuthBtn = document.getElementById('printShopAuthBtn');
+const userAuthForm = document.getElementById('userAuthForm');
+const teacherAuthForm = document.getElementById('teacherAuthForm');
+const printShopAuthForm = document.getElementById('printShopAuthForm');
+userAuthBtn.addEventListener('click', function() {
+userAuthBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+userAuthBtn.classList.remove('text-gray-500');
+teacherAuthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+teacherAuthBtn.classList.add('text-gray-500');
+printShopAuthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+printShopAuthBtn.classList.add('text-gray-500');
+userAuthForm.classList.remove('hidden');
+teacherAuthForm.classList.add('hidden');
+printShopAuthForm.classList.add('hidden');
+});
+teacherAuthBtn.addEventListener('click', function() {
+teacherAuthBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+teacherAuthBtn.classList.remove('text-gray-500');
+userAuthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+userAuthBtn.classList.add('text-gray-500');
+printShopAuthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+printShopAuthBtn.classList.add('text-gray-500');
+teacherAuthForm.classList.remove('hidden');
+userAuthForm.classList.add('hidden');
+printShopAuthForm.classList.add('hidden');
+});
+printShopAuthBtn.addEventListener('click', function() {
+printShopAuthBtn.classList.add('text-primary', 'border-b-2', 'border-primary');
+printShopAuthBtn.classList.remove('text-gray-500');
+userAuthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+userAuthBtn.classList.add('text-gray-500');
+teacherAuthBtn.classList.remove('text-primary', 'border-b-2', 'border-primary');
+teacherAuthBtn.classList.add('text-gray-500');
+printShopAuthForm.classList.remove('hidden');
+userAuthForm.classList.add('hidden');
+teacherAuthForm.classList.add('hidden');
+});
+// User Auth Form Tabs
+const loginTabBtn = document.getElementById('loginTabBtn');
+const registerTabBtn = document.getElementById('registerTabBtn');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+loginTabBtn.addEventListener('click', function() {
+loginTabBtn.classList.add('tab-active');
+loginTabBtn.classList.remove('text-gray-500');
+registerTabBtn.classList.remove('tab-active');
+registerTabBtn.classList.add('text-gray-500');
+loginForm.classList.remove('hidden');
+registerForm.classList.add('hidden');
+});
+registerTabBtn.addEventListener('click', function() {
+registerTabBtn.classList.add('tab-active');
+registerTabBtn.classList.remove('text-gray-500');
+loginTabBtn.classList.remove('tab-active');
+loginTabBtn.classList.add('text-gray-500');
+registerForm.classList.remove('hidden');
+loginForm.classList.add('hidden');
+});
+// Teacher Auth Form Tabs
+const teacherLoginTabBtn = document.getElementById('teacherLoginTabBtn');
+const teacherRegisterTabBtn = document.getElementById('teacherRegisterTabBtn');
+const teacherLoginForm = document.getElementById('teacherLoginForm');
+const teacherRegisterForm = document.getElementById('teacherRegisterForm');
+teacherLoginTabBtn.addEventListener('click', function() {
+teacherLoginTabBtn.classList.add('tab-active');
+teacherLoginTabBtn.classList.remove('text-gray-500');
+teacherRegisterTabBtn.classList.remove('tab-active');
+teacherRegisterTabBtn.classList.add('text-gray-500');
+teacherLoginForm.classList.remove('hidden');
+teacherRegisterForm.classList.add('hidden');
+});
+teacherRegisterTabBtn.addEventListener('click', function() {
+teacherRegisterTabBtn.classList.add('tab-active');
+teacherRegisterTabBtn.classList.remove('text-gray-500');
+teacherLoginTabBtn.classList.remove('tab-active');
+teacherLoginTabBtn.classList.add('text-gray-500');
+teacherRegisterForm.classList.remove('hidden');
+teacherLoginForm.classList.add('hidden');
+});
+// Print Shop Auth Form Tabs
+const shopLoginTabBtn = document.getElementById('shopLoginTabBtn');
+const shopRegisterTabBtn = document.getElementById('shopRegisterTabBtn');
+const shopLoginForm = document.getElementById('shopLoginForm');
+const shopRegisterForm = document.getElementById('shopRegisterForm');
+shopLoginTabBtn.addEventListener('click', function() {
+shopLoginTabBtn.classList.add('tab-active');
+shopLoginTabBtn.classList.remove('text-gray-500');
+shopRegisterTabBtn.classList.remove('tab-active');
+shopRegisterTabBtn.classList.add('text-gray-500');
+shopLoginForm.classList.remove('hidden');
+shopRegisterForm.classList.add('hidden');
+});
+shopRegisterTabBtn.addEventListener('click', function() {
+shopRegisterTabBtn.classList.add('tab-active');
+shopRegisterTabBtn.classList.remove('text-gray-500');
+shopLoginTabBtn.classList.remove('tab-active');
+shopLoginTabBtn.classList.add('text-gray-500');
+shopRegisterForm.classList.remove('hidden');
+shopLoginForm.classList.add('hidden');
+});
+// Password Strength Meter
+const passwordInput = document.getElementById('password');
+const strengthBar = document.querySelector('.password-strength-bar');
+const strengthText = document.getElementById('strengthText');
+const strengthTextEn = document.getElementById('strengthTextEn');
+passwordInput.addEventListener('input', function() {
+const password = this.value;
+let strength = 0;
+if (password.length >= 8) strength += 1;
+if (/[A-Z]/.test(password)) strength += 1;
+if (/[0-9]/.test(password)) strength += 1;
+if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+switch (strength) {
+case 0:
+strengthBar.className = 'password-strength-bar strength-weak';
+strengthText.textContent = 'ضعيفة';
+strengthTextEn.textContent = 'Weak';
+break;
+case 1:
+strengthBar.className = 'password-strength-bar strength-weak';
+strengthText.textContent = 'ضعيفة';
+strengthTextEn.textContent = 'Weak';
+break;
+case 2:
+strengthBar.className = 'password-strength-bar strength-medium';
+strengthText.textContent = 'متوسطة';
+strengthTextEn.textContent = 'Medium';
+break;
+case 3:
+strengthBar.className = 'password-strength-bar strength-good';
+strengthText.textContent = 'جيدة';
+strengthTextEn.textContent = 'Good';
+break;
+case 4:
+strengthBar.className = 'password-strength-bar strength-strong';
+strengthText.textContent = 'قوية';
+strengthTextEn.textContent = 'Strong';
+break;
+}
+});
+// Teacher Registration Multi-step Form
+const step1Next = document.getElementById('step1Next');
+const step2Next = document.getElementById('step2Next');
+const step2Prev = document.getElementById('step2Prev');
+const step3Prev = document.getElementById('step3Prev');
+const formSteps = document.querySelectorAll('#teacherRegisterForm .form-step');
+const progressSteps = document.querySelectorAll('#teacherRegisterForm .progress-step');
+const progressLines = document.querySelectorAll('#teacherRegisterForm .progress-line');
+let currentStep = 0;
+step1Next.addEventListener('click', function() {
+formSteps[currentStep].classList.remove('active');
+currentStep = 1;
+formSteps[currentStep].classList.add('active');
+progressSteps[currentStep].classList.add('active');
+progressLines[0].classList.add('active');
+});
+step2Next.addEventListener('click', function() {
+formSteps[currentStep].classList.remove('active');
+currentStep = 2;
+formSteps[currentStep].classList.add('active');
+progressSteps[currentStep].classList.add('active');
+progressLines[1].classList.add('active');
+});
+step2Prev.addEventListener('click', function() {
+formSteps[currentStep].classList.remove('active');
+currentStep = 0;
+formSteps[currentStep].classList.add('active');
+progressSteps[1].classList.remove('active');
+progressLines[0].classList.remove('active');
+});
+step3Prev.addEventListener('click', function() {
+formSteps[currentStep].classList.remove('active');
+currentStep = 1;
+formSteps[currentStep].classList.add('active');
+progressSteps[2].classList.remove('active');
+progressLines[1].classList.remove('active');
+});
+// Print Shop Registration Multi-step Form
+const shopStep1Next = document.getElementById('shopStep1Next');
+const shopStep2Next = document.getElementById('shopStep2Next');
+const shopStep2Prev = document.getElementById('shopStep2Prev');
+const shopStep3Prev = document.getElementById('shopStep3Prev');
+const shopFormSteps = document.querySelectorAll('#shopRegisterForm .form-step');
+const shopProgressSteps = document.querySelectorAll('#shopRegisterForm .progress-step');
+const shopProgressLines = document.querySelectorAll('#shopRegisterForm .progress-line');
+let shopCurrentStep = 0;
+shopStep1Next.addEventListener('click', function() {
+shopFormSteps[shopCurrentStep].classList.remove('active');
+shopCurrentStep = 1;
+shopFormSteps[shopCurrentStep].classList.add('active');
+shopProgressSteps[shopCurrentStep].classList.add('active');
+shopProgressLines[0].classList.add('active');
+});
+shopStep2Next.addEventListener('click', function() {
+shopFormSteps[shopCurrentStep].classList.remove('active');
+shopCurrentStep = 2;
+shopFormSteps[shopCurrentStep].classList.add('active');
+shopProgressSteps[shopCurrentStep].classList.add('active');
+shopProgressLines[1].classList.add('active');
+});
+shopStep2Prev.addEventListener('click', function() {
+shopFormSteps[shopCurrentStep].classList.remove('active');
+shopCurrentStep = 0;
+shopFormSteps[shopCurrentStep].classList.add('active');
+shopProgressSteps[1].classList.remove('active');
+shopProgressLines[0].classList.remove('active');
+});
+shopStep3Prev.addEventListener('click', function() {
+shopFormSteps[shopCurrentStep].classList.remove('active');
+shopCurrentStep = 1;
+shopFormSteps[shopCurrentStep].classList.add('active');
+shopProgressSteps[2].classList.remove('active');
+shopProgressLines[1].classList.remove('active');
+});
+// Time Slot Selection
+const timeSlots = document.querySelectorAll('.time-slot');
+timeSlots.forEach(slot => {
+slot.addEventListener('click', function() {
+this.classList.toggle('selected');
+});
+});
+// File Upload
+const fileUploads = document.querySelectorAll('.file-upload');
+fileUploads.forEach(upload => {
+const input = upload.querySelector('input[type="file"]');
+upload.addEventListener('click', function() {
+input.click();
+});
+upload.addEventListener('dragover', function(e) {
+e.preventDefault();
+this.classList.add('dragover');
+});
+upload.addEventListener('dragleave', function() {
+this.classList.remove('dragover');
+});
+upload.addEventListener('drop', function(e) {
+e.preventDefault();
+this.classList.remove('dragover');
+input.files = e.dataTransfer.files;
+});
+input.addEventListener('change', function() {
+if (this.files.length > 0) {
+const fileName = this.files[0].name;
+const fileSize = Math.round(this.files[0].size / 1024);
+const fileInfo = upload.querySelector('p.text-sm');
+fileInfo.textContent = `${fileName} (${fileSize} KB)`;
+}
+});
+});
+// Form Submission with Loading Spinner and Confirmation
+const forms = document.querySelectorAll('form');
+forms.forEach(form => {
+form.addEventListener('submit', function(e) {
+e.preventDefault();
+const submitBtn = this.querySelector('button[type="submit"]');
+const spinner = submitBtn.querySelector('.spinner');
+
+if (form.id === 'registerForm') {
+// Handle user registration
+spinner.style.display = 'block';
+submitBtn.disabled = true;
+
+// Simulate form validation and submission
+setTimeout(() => {
+spinner.style.display = 'none';
+submitBtn.disabled = false;
+
+// Generate account reference number
+const accountRef = 'U' + Math.random().toString(36).substr(2, 8).toUpperCase();
+
+// Create confirmation modal
+const modal = document.createElement('div');
+modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+modal.innerHTML = `
+<div class="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
+<div class="text-center mb-6">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+<i class="ri-check-line text-3xl text-green-500"></i>
+</div>
+<h3 class="text-xl font-medium text-gray-900 mb-2">
+<span class="ar">مرحباً بك في Jo Print!</span>
+<span class="en hidden">Welcome to Jo Print!</span>
+</h3>
+<p class="text-gray-600 mb-4">
+<span class="ar">رقم الحساب المرجعي: ${accountRef}</span>
+<span class="en hidden">Account Reference: ${accountRef}</span>
+</p>
+<p class="text-gray-600 text-sm mb-4">
+<span class="ar">تم إنشاء حسابك بنجاح. لقد أرسلنا رسالة تأكيد إلى بريدك الإلكتروني. يرجى تفعيل حسابك للوصول إلى جميع الميزات.</span>
+<span class="en hidden">Your account has been created successfully. We've sent a confirmation email to your inbox. Please activate your account to access all features.</span>
+</p>
+</div>
+<div class="border-t border-gray-200 pt-4">
+<div class="space-y-3">
+<div class="flex justify-between text-sm">
+<span class="text-gray-600">
+<span class="ar">الاسم:</span>
+<span class="en hidden">Name:</span>
+</span>
+<span class="text-gray-900 font-medium">${form.querySelector('input[type="text"]').value}</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-600">
+<span class="ar">البريد الإلكتروني:</span>
+<span class="en hidden">Email:</span>
+</span>
+<span class="text-gray-900">${form.querySelector('input[type="email"]').value}</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex justify-center gap-4">
+<button class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap" onclick="window.location.href='/dashboard'">
+<span class="ar">الانتقال إلى لوحة التحكم</span>
+<span class="en hidden">Go to Dashboard</span>
+</button>
+<button class="border border-gray-300 bg-white text-gray-700 py-2 px-6 rounded-button transition duration-200 whitespace-nowrap" onclick="this.closest('.fixed').remove()">
+<span class="ar">إغلاق</span>
+<span class="en hidden">Close</span>
+</button>
+</div>
+</div>
+`;
+document.body.appendChild(modal);
+// Reset form
+form.reset();
+}, 1500);
+} else if (form.id === 'shopRegisterForm') {
+// Handle print shop registration
+spinner.style.display = 'block';
+submitBtn.disabled = true;
+// Simulate form submission
+setTimeout(() => {
+spinner.style.display = 'none';
+submitBtn.disabled = false;
+// Generate reference number
+const refNumber = 'PS' + Math.random().toString(36).substr(2, 8).toUpperCase();
+// Create confirmation modal
+const modal = document.createElement('div');
+modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+modal.innerHTML = `
+<div class="bg-white rounded-lg p-6 max-w-lg w-full mx-4">
+<div class="text-center mb-6">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+<i class="ri-check-line text-3xl text-green-500"></i>
+</div>
+<h3 class="text-xl font-medium text-gray-900 mb-2">
+<span class="ar">تم استلام طلبك بنجاح!</span>
+<span class="en hidden">Your application has been received!</span>
+</h3>
+<p class="text-gray-600 mb-4">
+<span class="ar">رقم الطلب المرجعي: ${refNumber}</span>
+<span class="en hidden">Reference Number: ${refNumber}</span>
+</p>
+<p class="text-gray-600 text-sm">
+<span class="ar">سيقوم فريقنا بمراجعة طلبك وسنتواصل معك خلال 24-48 ساعة.</span>
+<span class="en hidden">Our team will review your application and contact you within 24-48 hours.</span>
+</p>
+</div>
+<div class="border-t border-gray-200 pt-4">
+<div class="space-y-3">
+<div class="flex justify-between text-sm">
+<span class="text-gray-600">
+<span class="ar">اسم المكتب:</span>
+<span class="en hidden">Shop Name:</span>
+</span>
+<span class="text-gray-900 font-medium">${form.querySelector('input[placeholder="اسم المكتب"]').value}</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-600">
+<span class="ar">البريد الإلكتروني:</span>
+<span class="en hidden">Email:</span>
+</span>
+<span class="text-gray-900">${form.querySelector('input[type="email"]').value}</span>
+</div>
+<div class="flex justify-between text-sm">
+<span class="text-gray-600">
+<span class="ar">رقم الهاتف:</span>
+<span class="en hidden">Phone:</span>
+</span>
+<span class="text-gray-900">${form.querySelector('input[type="tel"]').value}</span>
+</div>
+</div>
+</div>
+<div class="mt-6 flex justify-center">
+<button class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap" onclick="this.closest('.fixed').remove()">
+<span class="ar">حسناً</span>
+<span class="en hidden">OK</span>
+</button>
+</div>
+</div>
+`;
+document.body.appendChild(modal);
+// Reset form
+form.reset();
+}, 1500);
+} else {
+// Handle other forms
+spinner.style.display = 'block';
+submitBtn.disabled = true;
+setTimeout(() => {
+spinner.style.display = 'none';
+submitBtn.disabled = false;
+const modal = document.createElement('div');
+modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+modal.innerHTML = `
+<div class="bg-white rounded-lg p-6 max-w-sm w-full mx-4">
+<div class="text-center mb-6">
+<div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+<i class="ri-check-line text-3xl text-green-500"></i>
+</div>
+<h3 class="text-xl font-medium text-gray-900 mb-2">
+<span class="ar">تم إرسال النموذج بنجاح!</span>
+<span class="en hidden">Form submitted successfully!</span>
+</h3>
+</div>
+<div class="mt-6 flex justify-center">
+<button class="bg-primary hover:bg-primary-dark text-white py-2 px-6 rounded-button transition duration-200 whitespace-nowrap" onclick="this.closest('.fixed').remove()">
+<span class="ar">حسناً</span>
+<span class="en hidden">OK</span>
+</button>
+</div>
+</div>
+`;
+document.body.appendChild(modal);
+}, 1500);
+}
+});
+});
+});
+</script>
+</body>
+</html>

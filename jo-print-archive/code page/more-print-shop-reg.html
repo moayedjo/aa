@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تعرف على منصة جو برنت - خدمات الطباعة في الأردن</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#0078D4',secondary:'#f3f4f6'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.ltr {
+direction: ltr;
+text-align: left;
+}
+.rtl {
+direction: rtl;
+text-align: right;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+.custom-checkbox {
+display: flex;
+align-items: center;
+cursor: pointer;
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.checkmark {
+height: 20px;
+width: 20px;
+background-color: #fff;
+border: 2px solid #0078D4;
+border-radius: 4px;
+position: relative;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+content: "";
+position: absolute;
+display: block;
+left: 6px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid #0078D4;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 48px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+border-radius: 24px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+right: 4px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #0078D4;
+}
+input:checked + .switch-slider:before {
+transform: translateX(-24px);
+}
+.custom-radio {
+display: flex;
+align-items: center;
+cursor: pointer;
+}
+.custom-radio input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+}
+.radio-mark {
+height: 20px;
+width: 20px;
+background-color: #fff;
+border: 2px solid #0078D4;
+border-radius: 50%;
+position: relative;
+}
+.custom-radio input:checked ~ .radio-mark:after {
+content: "";
+position: absolute;
+display: block;
+top: 4px;
+left: 4px;
+width: 8px;
+height: 8px;
+border-radius: 50%;
+background: #0078D4;
+}
+.tab-active {
+background-color: #0078D4;
+color: white;
+}
+.accordion-item.active .accordion-content {
+display: block;
+}
+.accordion-item.active .accordion-icon-plus {
+display: none;
+}
+.accordion-item.active .accordion-icon-minus {
+display: block;
+}
+.accordion-item .accordion-icon-minus {
+display: none;
+}
+.video-container {
+position: relative;
+padding-bottom: 56.25%;
+height: 0;
+overflow: hidden;
+}
+.video-container iframe {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<header class="bg-white shadow-sm sticky top-0 z-50">
+<div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<div class="flex items-center">
+<a href="#" class="text-2xl font-['Pacifico'] text-primary mr-8">JO PRINT</a>
+<nav class="hidden md:flex space-x-1 space-x-reverse">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">الرئيسية</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">خدمات الطباعة</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">ملخصات الكتب</a>
+<a href="#" class="px-3 py-2 text-gray-700 hover:text-primary font-medium">المدرسون</a>
+<a href="#" class="px-3 py-2 text-primary font-medium">المطابع</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4 space-x-reverse">
+<div class="relative">
+<button class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-8 h-8 flex items-center justify-center">
+<i class="ri-search-line text-lg"></i>
+</span>
+</button>
+</div>
+<div class="relative">
+<button class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-8 h-8 flex items-center justify-center">
+<i class="ri-shopping-cart-line text-lg"></i>
+</span>
+<span class="absolute -top-1 -right-1 bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">3</span>
+</button>
+</div>
+<div class="relative">
+<button class="flex items-center text-gray-700 hover:text-primary">
+<span class="w-8 h-8 flex items-center justify-center">
+<i class="ri-user-line text-lg"></i>
+</span>
+</button>
+</div>
+<button class="bg-white border border-gray-300 rounded-button px-3 py-1.5 text-sm flex items-center hover:bg-gray-50 whitespace-nowrap">
+<span class="w-5 h-5 flex items-center justify-center mr-1.5">
+<i class="ri-global-line"></i>
+</span>
+<span>English</span>
+</button>
+<button class="md:hidden w-8 h-8 flex items-center justify-center">
+<i class="ri-menu-line text-xl"></i>
+</button>
+</div>
+</div>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="relative bg-primary text-white overflow-hidden">
+<div class="absolute inset-0" style="background-image: url('https://readdy.ai/api/search-image?query=professional%2520printing%2520office%2520with%2520high-tech%2520equipment%252C%2520blue%2520color%2520scheme%252C%2520Arabic%2520signage%252C%2520staff%2520working%2520on%2520digital%2520printing%2520machines%252C%2520bright%2520lighting%252C%2520clean%2520workspace%252C%2520organized%2520environment%252C%2520customers%2520at%2520service%2520counter%252C%2520modern%2520interior%2520design&width=1600&height=800&seq=101&orientation=landscape'); background-size: cover; background-position: center; opacity: 0.2;"></div>
+<div class="container mx-auto px-4 py-16 relative z-10">
+<div class="max-w-4xl mx-auto text-center">
+<h1 class="text-4xl md:text-5xl font-bold mb-6">تعرف على منصة جو برنت</h1>
+<p class="text-xl mb-8">المنصة الرائدة في الأردن لربط المطابع بالعملاء وتوفير خدمات الطباعة الرقمية بكفاءة عالية</p>
+<div class="flex justify-center mb-8">
+<div class="video-container w-full max-w-3xl bg-black/20 rounded-lg overflow-hidden shadow-lg">
+<img src="https://readdy.ai/api/search-image?query=video%2520player%2520thumbnail%2520showing%2520printing%2520service%2520platform%2520interface%2520with%2520Arabic%2520text%252C%2520blue%2520color%2520scheme%252C%2520play%2520button%2520in%2520center%252C%2520professional%2520design%252C%2520showing%2520printing%2520machines%2520and%2520digital%2520workflow&width=1280&height=720&seq=102&orientation=landscape" alt="فيديو تعريفي عن منصة جو برنت" class="w-full h-full object-cover">
+<div class="absolute inset-0 flex items-center justify-center">
+<button class="w-20 h-20 bg-primary/80 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-play-fill text-4xl"></i>
+</button>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap justify-center gap-4">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/d5ef01a2-44e4-4a71-9162-22fa2881928d" data-readdy="true" class="bg-white text-primary px-6 py-3 rounded-button font-medium hover:bg-gray-100 transition duration-300 !rounded-button whitespace-nowrap">انضم كمطبعة</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="bg-transparent border-2 border-white px-6 py-3 rounded-button font-medium hover:bg-white/10 transition duration-300 !rounded-button whitespace-nowrap">العودة للصفحة الرئيسية</a>
+</div>
+</div>
+</div>
+</section>
+<!-- Platform Overview -->
+<section class="py-16 bg-white">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">آلية عمل منصة جو برنت</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">نظام متكامل يربط بين المطابع والعملاء بطريقة سهلة وفعالة</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Platform Workflow -->
+<div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+<i class="ri-flow-chart text-primary text-2xl"></i>
+</div>
+<h3 class="text-xl font-bold mb-4 text-center">مسار العمل</h3>
+<div class="space-y-4">
+<div class="flex items-start">
+<div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+<span class="font-bold">1</span>
+</div>
+<div class="mr-3">
+<h4 class="font-bold mb-1">تسجيل المطبعة</h4>
+<p class="text-gray-600 text-sm">إنشاء حساب وإضافة معلومات المطبعة والخدمات المقدمة</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+<span class="font-bold">2</span>
+</div>
+<div class="mr-3">
+<h4 class="font-bold mb-1">استقبال الطلبات</h4>
+<p class="text-gray-600 text-sm">استلام طلبات الطباعة من العملاء القريبين من موقعك</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+<span class="font-bold">3</span>
+</div>
+<div class="mr-3">
+<h4 class="font-bold mb-1">تنفيذ الطباعة</h4>
+<p class="text-gray-600 text-sm">طباعة الملفات حسب المواصفات المطلوبة وتجهيزها</p>
+</div>
+</div>
+<div class="flex items-start">
+<div class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+<span class="font-bold">4</span>
+</div>
+<div class="mr-3">
+<h4 class="font-bold mb-1">التوصيل والدفع</h4>
+<p class="text-gray-600 text-sm">توصيل المطبوعات للعميل واستلام المدفوعات عبر المنصة</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Key Statistics -->
+<div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+<i class="ri-bar-chart-grouped-line text-primary text-2xl"></i>
+</div>
+<h3 class="text-xl font-bold mb-4 text-center">إحصائيات المنصة</h3>
+<div class="space-y-6">
+<div class="text-center">
+<div class="text-3xl font-bold text-primary mb-1">+120</div>
+<p class="text-gray-600">مطبعة معتمدة</p>
+</div>
+<div class="text-center">
+<div class="text-3xl font-bold text-primary mb-1">+25,000</div>
+<p class="text-gray-600">طلب شهري</p>
+</div>
+<div class="text-center">
+<div class="text-3xl font-bold text-primary mb-1">12</div>
+<p class="text-gray-600">مدينة في الأردن</p>
+</div>
+<div class="text-center">
+<div class="text-3xl font-bold text-primary mb-1">98%</div>
+<p class="text-gray-600">نسبة رضا العملاء</p>
+</div>
+</div>
+</div>
+<!-- Value Proposition -->
+<div class="bg-gray-50 p-8 rounded-lg shadow-sm">
+<div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+<i class="ri-award-line text-primary text-2xl"></i>
+</div>
+<h3 class="text-xl font-bold mb-4 text-center">القيمة المضافة</h3>
+<div class="space-y-4">
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<div class="mr-3">
+<h4 class="font-bold mb-1">توسيع نطاق العمل</h4>
+<p class="text-gray-600 text-sm">الوصول إلى آلاف العملاء المحتملين في جميع أنحاء الأردن</p>
+</div>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<div class="mr-3">
+<h4 class="font-bold mb-1">إدارة متكاملة</h4>
+<p class="text-gray-600 text-sm">نظام إدارة متطور للطلبات والمدفوعات والتوصيل</p>
+</div>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<div class="mr-3">
+<h4 class="font-bold mb-1">زيادة الإيرادات</h4>
+<p class="text-gray-600 text-sm">تنويع مصادر الدخل وزيادة حجم المبيعات</p>
+</div>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<div class="mr-3">
+<h4 class="font-bold mb-1">دعم فني متواصل</h4>
+<p class="text-gray-600 text-sm">فريق دعم فني متخصص على مدار الساعة</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Benefits & Features -->
+<section class="py-16 bg-gray-50">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">مميزات الانضمام لمنصة جو برنت</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">اكتشف الفوائد التي تحصل عليها مطبعتك عند الانضمام إلى شبكتنا</p>
+</div>
+<!-- Feature 1 -->
+<div class="flex flex-col md:flex-row items-center gap-8 mb-16">
+<div class="w-full md:w-1/2 order-2 md:order-1">
+<h3 class="text-2xl font-bold mb-4">نظام إدارة متكامل للمطابع</h3>
+<p class="text-gray-600 mb-6">توفر منصة جو برنت نظام إدارة متكامل يساعد المطابع على تنظيم عملها بكفاءة عالية من خلال:</p>
+<div class="space-y-4">
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">لوحة تحكم سهلة الاستخدام لإدارة جميع الطلبات في مكان واحد</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">نظام إشعارات فوري للطلبات الجديدة والتحديثات</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">تقارير مفصلة عن المبيعات والأرباح والعملاء</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">أدوات لإدارة المخزون وتتبع الطلبات</p>
+</div>
+</div>
+</div>
+<div class="w-full md:w-1/2 order-1 md:order-2">
+<img src="https://readdy.ai/api/search-image?query=modern%2520dashboard%2520interface%2520for%2520printing%2520management%2520system%2520with%2520Arabic%2520text%252C%2520showing%2520orders%252C%2520statistics%252C%2520and%2520customer%2520data%252C%2520blue%2520color%2520scheme%252C%2520clean%2520design%252C%2520professional%2520layout%252C%2520charts%2520and%2520graphs%2520visible&width=800&height=600&seq=103&orientation=landscape" alt="نظام إدارة المطابع" class="w-full h-auto rounded-lg shadow-md">
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="flex flex-col md:flex-row items-center gap-8 mb-16">
+<div class="w-full md:w-1/2">
+<img src="https://readdy.ai/api/search-image?query=digital%2520marketing%2520concept%2520for%2520printing%2520services%252C%2520showing%2520online%2520advertising%2520on%2520multiple%2520devices%252C%2520Arabic%2520interface%252C%2520blue%2520color%2520scheme%252C%2520professional%2520design%252C%2520showing%2520customer%2520reach%2520and%2520marketing%2520analytics&width=800&height=600&seq=104&orientation=landscape" alt="الوصول إلى العملاء" class="w-full h-auto rounded-lg shadow-md">
+</div>
+<div class="w-full md:w-1/2">
+<h3 class="text-2xl font-bold mb-4">الوصول إلى قاعدة واسعة من العملاء</h3>
+<p class="text-gray-600 mb-6">استفد من وجودك على منصة جو برنت للوصول إلى آلاف العملاء المحتملين:</p>
+<div class="space-y-4">
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">ظهور مطبعتك في نتائج البحث للعملاء القريبين من موقعك</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">حملات تسويقية مستمرة تقوم بها المنصة لجذب العملاء</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">نظام تقييمات يساعد على بناء سمعة طيبة وجذب المزيد من العملاء</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">إمكانية تقديم عروض وخصومات خاصة للعملاء</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="flex flex-col md:flex-row items-center gap-8">
+<div class="w-full md:w-1/2 order-2 md:order-1">
+<h3 class="text-2xl font-bold mb-4">نظام مدفوعات آمن وسهل</h3>
+<p class="text-gray-600 mb-6">استفد من نظام مدفوعات متكامل يوفر تجربة سلسة لك ولعملائك:</p>
+<div class="space-y-4">
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">تحصيل المدفوعات إلكترونياً أو نقداً عند التسليم</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">تسوية مالية أسبوعية مع تقارير مفصلة</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">نظام محاسبة متكامل لتتبع الإيرادات والمصروفات</p>
+</div>
+<div class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line text-lg"></i>
+</span>
+<p class="mr-3 text-gray-700">حماية كاملة للمعاملات المالية وبيانات العملاء</p>
+</div>
+</div>
+</div>
+<div class="w-full md:w-1/2 order-1 md:order-2">
+<img src="https://readdy.ai/api/search-image?query=secure%2520payment%2520system%2520interface%2520with%2520Arabic%2520text%252C%2520showing%2520payment%2520options%252C%2520transaction%2520history%252C%2520and%2520financial%2520reports%252C%2520blue%2520color%2520scheme%252C%2520professional%2520design%252C%2520mobile%2520payment%2520methods%2520visible&width=800&height=600&seq=105&orientation=landscape" alt="نظام المدفوعات" class="w-full h-auto rounded-lg shadow-md">
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing & Commission -->
+<section class="py-16 bg-white">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">الرسوم والعمولات</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">تعرف على نظام العمولات والرسوم الخاص بمنصة جو برنت</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+<!-- Basic Plan -->
+<div class="bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md">
+<div class="bg-primary/10 p-6 text-center">
+<h3 class="text-xl font-bold text-primary">الباقة الأساسية</h3>
+<p class="text-gray-600 mt-2">للمطابع الصغيرة والمتوسطة</p>
+</div>
+<div class="p-6">
+<div class="text-center mb-6">
+<span class="text-4xl font-bold">10%</span>
+<p class="text-gray-600">عمولة على كل طلب</p>
+</div>
+<ul class="space-y-3 mb-6">
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">تسجيل مجاني في المنصة</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">نظام إدارة الطلبات الأساسي</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">ظهور في نتائج البحث المحلية</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">تسوية مالية أسبوعية</span>
+</li>
+</ul>
+<button class="w-full bg-primary text-white py-2 rounded-button font-medium hover:bg-primary/90 transition duration-300 !rounded-button whitespace-nowrap">اختر هذه الباقة</button>
+</div>
+</div>
+<!-- Premium Plan -->
+<div class="bg-gray-50 rounded-lg overflow-hidden shadow-md transform scale-105 border-2 border-primary">
+<div class="bg-primary p-6 text-center text-white">
+<h3 class="text-xl font-bold">الباقة المميزة</h3>
+<p class="text-white/80 mt-2">الأكثر اختياراً من المطابع</p>
+</div>
+<div class="p-6">
+<div class="text-center mb-6">
+<span class="text-4xl font-bold">8%</span>
+<p class="text-gray-600">عمولة على كل طلب</p>
+</div>
+<ul class="space-y-3 mb-6">
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">جميع مميزات الباقة الأساسية</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">ظهور مميز في نتائج البحث</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">تقارير تحليلية متقدمة</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">دعم فني على مدار الساعة</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">تسوية مالية نصف أسبوعية</span>
+</li>
+</ul>
+<button class="w-full bg-primary text-white py-2 rounded-button font-medium hover:bg-primary/90 transition duration-300 !rounded-button whitespace-nowrap">اختر هذه الباقة</button>
+</div>
+</div>
+<!-- Enterprise Plan -->
+<div class="bg-gray-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 hover:shadow-md">
+<div class="bg-primary/10 p-6 text-center">
+<h3 class="text-xl font-bold text-primary">الباقة الاحترافية</h3>
+<p class="text-gray-600 mt-2">للمطابع الكبيرة ومراكز الخدمات</p>
+</div>
+<div class="p-6">
+<div class="text-center mb-6">
+<span class="text-4xl font-bold">6%</span>
+<p class="text-gray-600">عمولة على كل طلب</p>
+</div>
+<ul class="space-y-3 mb-6">
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">جميع مميزات الباقة المميزة</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">واجهة برمجة تطبيقات API</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">مدير حساب مخصص</span>
+</li>
+<li class="flex items-start">
+<span class="w-6 h-6 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2 text-gray-700">تسوية مالية يومية</span>
+</li>
+</ul>
+<button class="w-full bg-primary text-white py-2 rounded-button font-medium hover:bg-primary/90 transition duration-300 !rounded-button whitespace-nowrap">اختر هذه الباقة</button>
+</div>
+</div>
+</div>
+<!-- Comparison Table -->
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr class="bg-gray-100">
+<th class="p-4 text-right border-b border-gray-200">المميزات</th>
+<th class="p-4 text-center border-b border-gray-200">الباقة الأساسية</th>
+<th class="p-4 text-center border-b border-gray-200 bg-primary/5">الباقة المميزة</th>
+<th class="p-4 text-center border-b border-gray-200">الباقة الاحترافية</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="p-4 border-b border-gray-200 font-medium">نسبة العمولة</td>
+<td class="p-4 border-b border-gray-200 text-center">10%</td>
+<td class="p-4 border-b border-gray-200 text-center bg-primary/5 font-medium">8%</td>
+<td class="p-4 border-b border-gray-200 text-center">6%</td>
+</tr>
+<tr>
+<td class="p-4 border-b border-gray-200 font-medium">رسوم التسجيل</td>
+<td class="p-4 border-b border-gray-200 text-center">مجاناً</td>
+<td class="p-4 border-b border-gray-200 text-center bg-primary/5">مجاناً</td>
+<td class="p-4 border-b border-gray-200 text-center">مجاناً</td>
+</tr>
+<tr>
+<td class="p-4 border-b border-gray-200 font-medium">دورة التسوية المالية</td>
+<td class="p-4 border-b border-gray-200 text-center">أسبوعية</td>
+<td class="p-4 border-b border-gray-200 text-center bg-primary/5">نصف أسبوعية</td>
+<td class="p-4 border-b border-gray-200 text-center">يومية</td>
+</tr>
+<tr>
+<td class="p-4 border-b border-gray-200 font-medium">الدعم الفني</td>
+<td class="p-4 border-b border-gray-200 text-center">خلال ساعات العمل</td>
+<td class="p-4 border-b border-gray-200 text-center bg-primary/5">24/7</td>
+<td class="p-4 border-b border-gray-200 text-center">مدير حساب مخصص</td>
+</tr>
+<tr>
+<td class="p-4 border-b border-gray-200 font-medium">التقارير التحليلية</td>
+<td class="p-4 border-b border-gray-200 text-center">أساسية</td>
+<td class="p-4 border-b border-gray-200 text-center bg-primary/5">متقدمة</td>
+<td class="p-4 border-b border-gray-200 text-center">شاملة ومخصصة</td>
+</tr>
+<tr>
+<td class="p-4 border-b border-gray-200 font-medium">ترتيب الظهور في نتائج البحث</td>
+<td class="p-4 border-b border-gray-200 text-center">عادي</td>
+<td class="p-4 border-b border-gray-200 text-center bg-primary/5">مميز</td>
+<td class="p-4 border-b border-gray-200 text-center">أولوية قصوى</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Success Stories -->
+<section class="py-16 bg-gray-50">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">قصص نجاح من مطابع منضمة</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">تعرف على تجارب المطابع التي انضمت إلى منصتنا وكيف ساهمت في نمو أعمالهم</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Success Story 1 -->
+<div class="bg-white rounded-lg overflow-hidden shadow-sm">
+<div class="flex flex-col md:flex-row">
+<div class="w-full md:w-2/5">
+<img src="https://readdy.ai/api/search-image?query=professional%2520Arab%2520male%2520printing%2520shop%2520owner%2520in%2520business%2520casual%2520attire%252C%2520standing%2520proudly%2520in%2520his%2520modern%2520printing%2520facility%252C%2520blue%2520interior%2520design%252C%2520printing%2520equipment%2520visible%2520in%2520background%252C%2520confident%2520pose%252C%2520professional%2520portrait&width=500&height=600&seq=106&orientation=portrait" alt="أحمد السعدي - مطبعة المستقبل" class="w-full h-full object-cover">
+</div>
+<div class="w-full md:w-3/5 p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
+أ
+</div>
+<div class="mr-3">
+<h4 class="font-bold text-lg">أحمد السعدي</h4>
+<p class="text-gray-600 text-sm">مطبعة المستقبل - عمان</p>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex text-yellow-500 mb-2">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+</div>
+<p class="text-gray-700">"انضممنا إلى منصة جو برنت قبل عام، وكانت النتائج مذهلة. زاد عدد الطلبات بنسبة 65% وتمكنا من الوصول إلى شريحة جديدة من العملاء، خاصة من طلاب الجامعات. نظام إدارة الطلبات سهل علينا تنظيم العمل وتقليل الأخطاء."</p>
+</div>
+<div class="grid grid-cols-2 gap-4 text-center">
+<div>
+<p class="text-2xl font-bold text-primary">+65%</p>
+<p class="text-gray-600 text-sm">زيادة في المبيعات</p>
+</div>
+<div>
+<p class="text-2xl font-bold text-primary">+120</p>
+<p class="text-gray-600 text-sm">عميل جديد شهرياً</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Success Story 2 -->
+<div class="bg-white rounded-lg overflow-hidden shadow-sm">
+<div class="flex flex-col md:flex-row">
+<div class="w-full md:w-2/5">
+<img src="https://readdy.ai/api/search-image?query=professional%2520Arab%2520female%2520business%2520owner%2520in%2520modern%2520printing%2520shop%252C%2520wearing%2520hijab%2520and%2520business%2520attire%252C%2520standing%2520confidently%2520with%2520printing%2520equipment%2520in%2520background%252C%2520blue%2520interior%2520design%252C%2520professional%2520portrait%252C%2520successful%2520entrepreneur&width=500&height=600&seq=107&orientation=portrait" alt="سارة الخطيب - مطبعة الإبداع" class="w-full h-full object-cover">
+</div>
+<div class="w-full md:w-3/5 p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
+س
+</div>
+<div class="mr-3">
+<h4 class="font-bold text-lg">سارة الخطيب</h4>
+<p class="text-gray-600 text-sm">مطبعة الإبداع - إربد</p>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex text-yellow-500 mb-2">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-half-fill"></i>
+</div>
+<p class="text-gray-700">"كمطبعة صغيرة في إربد، كان من الصعب الوصول إلى عدد كبير من العملاء. بعد الانضمام إلى جو برنت، أصبحنا نستقبل طلبات من جميع أنحاء المدينة وحتى من المدن المجاورة. نظام المدفوعات سهل وآمن، والدعم الفني ممتاز."</p>
+</div>
+<div class="grid grid-cols-2 gap-4 text-center">
+<div>
+<p class="text-2xl font-bold text-primary">+85%</p>
+<p class="text-gray-600 text-sm">توسع في نطاق الخدمة</p>
+</div>
+<div>
+<p class="text-2xl font-bold text-primary">+40%</p>
+<p class="text-gray-600 text-sm">زيادة في الأرباح</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Success Story 3 -->
+<div class="bg-white rounded-lg overflow-hidden shadow-sm">
+<div class="flex flex-col md:flex-row">
+<div class="w-full md:w-2/5">
+<img src="https://readdy.ai/api/search-image?query=middle-aged%2520Arab%2520male%2520business%2520owner%2520in%2520professional%2520attire%252C%2520standing%2520in%2520large%2520printing%2520facility%2520with%2520advanced%2520equipment%252C%2520blue%2520interior%2520design%252C%2520staff%2520working%2520in%2520background%252C%2520successful%2520printing%2520business%252C%2520professional%2520portrait&width=500&height=600&seq=108&orientation=portrait" alt="محمد العمري - مطبعة الرواد" class="w-full h-full object-cover">
+</div>
+<div class="w-full md:w-3/5 p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
+م
+</div>
+<div class="mr-3">
+<h4 class="font-bold text-lg">محمد العمري</h4>
+<p class="text-gray-600 text-sm">مطبعة الرواد - عمان</p>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex text-yellow-500 mb-2">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-line"></i>
+</div>
+<p class="text-gray-700">"كنا نعاني من تذبذب في الطلبات خلال فترات معينة من السنة. مع جو برنت، أصبح لدينا تدفق مستمر من الطلبات على مدار العام. النظام سهل الاستخدام، والتقارير التحليلية ساعدتنا على فهم احتياجات السوق بشكل أفضل."</p>
+</div>
+<div class="grid grid-cols-2 gap-4 text-center">
+<div>
+<p class="text-2xl font-bold text-primary">-30%</p>
+<p class="text-gray-600 text-sm">انخفاض في موسمية العمل</p>
+</div>
+<div>
+<p class="text-2xl font-bold text-primary">+50%</p>
+<p class="text-gray-600 text-sm">زيادة في الإنتاجية</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Success Story 4 -->
+<div class="bg-white rounded-lg overflow-hidden shadow-sm">
+<div class="flex flex-col md:flex-row">
+<div class="w-full md:w-2/5">
+<img src="https://readdy.ai/api/search-image?query=young%2520Arab%2520male%2520and%2520female%2520business%2520partners%2520in%2520professional%2520attire%252C%2520standing%2520in%2520modern%2520printing%2520shop%252C%2520blue%2520interior%2520design%252C%2520digital%2520printing%2520equipment%2520visible%252C%2520successful%2520entrepreneurs%252C%2520professional%2520portrait&width=500&height=600&seq=109&orientation=portrait" alt="عمر وليلى - مطبعة الأفق" class="w-full h-full object-cover">
+</div>
+<div class="w-full md:w-3/5 p-6">
+<div class="flex items-center mb-4">
+<div class="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center text-primary font-bold">
+ع
+</div>
+<div class="mr-3">
+<h4 class="font-bold text-lg">عمر وليلى حسن</h4>
+<p class="text-gray-600 text-sm">مطبعة الأفق - الزرقاء</p>
+</div>
+</div>
+<div class="mb-4">
+<div class="flex text-yellow-500 mb-2">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-half-fill"></i>
+</div>
+<p class="text-gray-700">"بدأنا مشروعنا الصغير قبل سنتين، وكان الانضمام إلى جو برنت نقطة تحول في مسيرتنا. ساعدتنا المنصة على بناء قاعدة عملاء قوية وتوسيع نطاق خدماتنا. نظام التوصيل المتكامل أضاف قيمة كبيرة لعملنا."</p>
+</div>
+<div class="grid grid-cols-2 gap-4 text-center">
+<div>
+<p class="text-2xl font-bold text-primary">3x</p>
+<p class="text-gray-600 text-sm">نمو في حجم الأعمال</p>
+</div>
+<div>
+<p class="text-2xl font-bold text-primary">+70%</p>
+<p class="text-gray-600 text-sm">زيادة في قاعدة العملاء</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Market Statistics -->
+<section class="py-16 bg-white">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">إحصائيات سوق الطباعة في الأردن</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">تعرف على حجم سوق الطباعة في الأردن والفرص المتاحة للنمو</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Market Size Chart -->
+<div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4">حجم سوق الطباعة (بالمليون دينار)</h3>
+<div id="marketSizeChart" class="w-full h-80"></div>
+</div>
+<!-- User Demographics Chart -->
+<div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4">توزيع المستخدمين حسب الفئة</h3>
+<div id="userDemographicsChart" class="w-full h-80"></div>
+</div>
+<!-- Growth Trend Chart -->
+<div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4">معدل نمو الطلبات الشهرية</h3>
+<div id="growthTrendChart" class="w-full h-80"></div>
+</div>
+<!-- Service Distribution Chart -->
+<div class="bg-gray-50 p-6 rounded-lg shadow-sm">
+<h3 class="text-xl font-bold mb-4">توزيع الخدمات المطلوبة</h3>
+<div id="serviceDistributionChart" class="w-full h-80"></div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-8">
+<div class="bg-gray-50 p-6 rounded-lg text-center">
+<div class="text-3xl font-bold text-primary mb-2">120+</div>
+<p class="text-gray-700">مطبعة معتمدة</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg text-center">
+<div class="text-3xl font-bold text-primary mb-2">12</div>
+<p class="text-gray-700">مدينة في الأردن</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg text-center">
+<div class="text-3xl font-bold text-primary mb-2">25,000+</div>
+<p class="text-gray-700">طلب شهري</p>
+</div>
+<div class="bg-gray-50 p-6 rounded-lg text-center">
+<div class="text-3xl font-bold text-primary mb-2">35%</div>
+<p class="text-gray-700">معدل النمو السنوي</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Registration Steps -->
+<section id="registration-steps" class="py-16 bg-gray-50">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">خطوات الانضمام إلى منصة جو برنت</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">عملية بسيطة وسريعة للانضمام إلى شبكة المطابع المعتمدة</p>
+</div>
+<div class="max-w-4xl mx-auto">
+<div class="relative">
+<!-- Timeline Line -->
+<div class="absolute h-full w-0.5 bg-primary/20 right-[19px] top-0"></div>
+<!-- Step 1 -->
+<div class="flex mb-8 relative">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold z-10 ml-4">
+1
+</div>
+<div class="bg-white rounded-lg shadow-sm p-6 flex-1">
+<h3 class="text-xl font-bold mb-3">تعبئة نموذج التسجيل</h3>
+<p class="text-gray-600 mb-4">قم بتعبئة نموذج التسجيل الإلكتروني وتقديم المعلومات الأساسية عن مطبعتك:</p>
+<ul class="space-y-2 text-gray-700">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">اسم المطبعة وبيانات التواصل</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">العنوان التفصيلي وموقع المطبعة</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">خدمات الطباعة المتوفرة وأسعارها</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="flex mb-8 relative">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold z-10 ml-4">
+2
+</div>
+<div class="bg-white rounded-lg shadow-sm p-6 flex-1">
+<h3 class="text-xl font-bold mb-3">تقديم الوثائق المطلوبة</h3>
+<p class="text-gray-600 mb-4">قم بتحميل المستندات الرسمية المطلوبة للتحقق من هوية المطبعة:</p>
+<ul class="space-y-2 text-gray-700">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">رخصة مهن سارية المفعول</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">السجل التجاري للمطبعة</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">هوية شخصية للمالك أو المفوض بالتوقيع</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">صور للمطبعة والمعدات</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="flex mb-8 relative">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold z-10 ml-4">
+3
+</div>
+<div class="bg-white rounded-lg shadow-sm p-6 flex-1">
+<h3 class="text-xl font-bold mb-3">التحقق والموافقة</h3>
+<p class="text-gray-600 mb-4">يقوم فريق جو برنت بمراجعة الطلب والتحقق من المعلومات:</p>
+<ul class="space-y-2 text-gray-700">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">مراجعة المستندات والتحقق من صحتها</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">زيارة ميدانية للمطبعة (اختياري)</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">إرسال إشعار بالموافقة خلال 48 ساعة</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Step 4 -->
+<div class="flex mb-8 relative">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold z-10 ml-4">
+4
+</div>
+<div class="bg-white rounded-lg shadow-sm p-6 flex-1">
+<h3 class="text-xl font-bold mb-3">إعداد الحساب والتدريب</h3>
+<p class="text-gray-600 mb-4">بعد الموافقة، يتم إعداد حسابك على المنصة وتدريبك على استخدامها:</p>
+<ul class="space-y-2 text-gray-700">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">إنشاء حساب المطبعة على المنصة</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">تدريب على استخدام لوحة التحكم</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">شرح آلية استقبال الطلبات وتنفيذها</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">توضيح نظام المدفوعات والتسويات المالية</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Step 5 -->
+<div class="flex relative">
+<div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold z-10 ml-4">
+5
+</div>
+<div class="bg-white rounded-lg shadow-sm p-6 flex-1">
+<h3 class="text-xl font-bold mb-3">إطلاق الحساب واستقبال الطلبات</h3>
+<p class="text-gray-600 mb-4">أنت الآن جاهز لاستقبال الطلبات وبدء العمل على المنصة:</p>
+<ul class="space-y-2 text-gray-700">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">تفعيل الحساب وظهور المطبعة في نتائج البحث</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">البدء في استقبال الطلبات من العملاء</span>
+</li>
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-primary flex-shrink-0 mt-1">
+<i class="ri-check-line"></i>
+</span>
+<span class="mr-2">متابعة مستمرة من فريق الدعم خلال الأسابيع الأولى</span>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="text-center mt-10">
+<a href="#" class="inline-block bg-primary text-white px-8 py-3 rounded-button font-medium hover:bg-primary/90 transition duration-300 !rounded-button whitespace-nowrap">ابدأ التسجيل الآن</a>
+</div>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-16 bg-white">
+<div class="container mx-auto px-4">
+<div class="text-center mb-12">
+<h2 class="text-3xl font-bold mb-4">الأسئلة الشائعة</h2>
+<p class="text-gray-600 max-w-2xl mx-auto">إجابات على الأسئلة الأكثر شيوعاً حول الانضمام إلى منصة جو برنت</p>
+</div>
+<div class="max-w-3xl mx-auto">
+<!-- FAQ Item 1 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">ما هي تكلفة الانضمام إلى منصة جو برنت؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>التسجيل في منصة جو برنت مجاني تماماً، ولا توجد أي رسوم اشتراك شهرية أو سنوية. نعتمد على نظام العمولة بنسبة تتراوح بين 6% و10% من قيمة كل طلب يتم تنفيذه من خلال المنصة، وذلك حسب الباقة التي تختارها. يتم خصم العمولة تلقائياً عند تسوية المدفوعات الدورية.</p>
+</div>
+</div>
+</div>
+<!-- FAQ Item 2 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">ما هي المستندات المطلوبة للتسجيل؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>المستندات المطلوبة للتسجيل تشمل:</p>
+<ul class="list-disc list-inside mt-2 space-y-1">
+<li>رخصة مهن سارية المفعول</li>
+<li>السجل التجاري للمطبعة</li>
+<li>هوية شخصية للمالك أو المفوض بالتوقيع</li>
+<li>صور للمطبعة والمعدات</li>
+<li>شهادة تسجيل ضريبي (إن وجدت)</li>
+<li>تفاصيل الحساب البنكي للتحويلات المالية</li>
+</ul>
+</div>
+</div>
+</div>
+<!-- FAQ Item 3 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">كيف يتم توزيع الطلبات على المطابع؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>يتم توزيع الطلبات بناءً على عدة عوامل:</p>
+<ul class="list-disc list-inside mt-2 space-y-1">
+<li>القرب الجغرافي من العميل (الأولوية للمطابع الأقرب)</li>
+<li>توفر الخدمات المطلوبة في الطلب</li>
+<li>تقييمات المطبعة ومستوى الخدمة</li>
+<li>أوقات العمل ومدى توفر المطبعة</li>
+<li>نوع الباقة المشترك بها (الباقات الأعلى تحصل على أولوية أكبر)</li>
+</ul>
+<p class="mt-2">كما يمكن للعميل اختيار مطبعة محددة بناءً على تفضيلاته الشخصية.</p>
+</div>
+</div>
+</div>
+<!-- FAQ Item 4 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">كيف تتم عملية الدفع والتسوية المالية؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>تتم عملية الدفع والتسوية المالية كالتالي:</p>
+<ol class="list-decimal list-inside mt-2 space-y-1">
+<li>يمكن للعملاء الدفع إما إلكترونياً عبر المنصة أو نقداً عند الاستلام</li>
+<li>في حالة الدفع الإلكتروني، يتم إيداع المبلغ في حساب المنصة</li>
+<li>في حالة الدفع النقدي، تقوم المطبعة بتسجيل استلام المبلغ في النظام</li>
+<li>تتم التسوية المالية بشكل دوري (أسبوعي، نصف أسبوعي، أو يومي) حسب الباقة</li>
+<li>يتم تحويل المبالغ المستحقة للمطبعة بعد خصم عمولة المنصة</li>
+<li>يتم إرسال تقرير مفصل بالمبيعات والعمولات مع كل تسوية مالية</li>
+</ol>
+</div>
+</div>
+</div>
+<!-- FAQ Item 5 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">هل يمكنني رفض بعض الطلبات؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>نعم، يمكنك رفض الطلبات في حالات معينة مثل:</p>
+<ul class="list-disc list-inside mt-2 space-y-1">
+<li>ضغط العمل وعدم القدرة على تنفيذ الطلب في الوقت المحدد</li>
+<li>عدم توفر المواد أو المعدات اللازمة لتنفيذ الطلب</li>
+<li>وجود مشكلة فنية في الملفات المرسلة</li>
+<li>الطلبات التي تحتوي على محتوى مخالف للقوانين</li>
+</ul>
+<p class="mt-2">ومع ذلك، نشجع المطابع على الحفاظ على معدل قبول عالٍ للطلبات (فوق 85%) لضمان تجربة إيجابية للعملاء وتحسين تصنيف المطبعة في المنصة.</p>
+</div>
+</div>
+</div>
+<!-- FAQ Item 6 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">كيف يمكنني تحديث معلومات مطبعتي وخدماتها؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>يمكنك تحديث معلومات مطبعتك وخدماتها في أي وقت من خلال:</p>
+<ol class="list-decimal list-inside mt-2 space-y-1">
+<li>تسجيل الدخول إلى لوحة التحكم الخاصة بك</li>
+<li>الانتقال إلى قسم "إعدادات المطبعة" أو "الملف الشخصي"</li>
+<li>تحديث المعلومات المطلوبة (العنوان، أوقات العمل، الخدمات، الأسعار، إلخ)</li>
+<li>حفظ التغييرات</li>
+</ol>
+<p class="mt-2">تظهر التغييرات مباشرة في صفحة مطبعتك على المنصة. بعض التغييرات الجوهرية (مثل تغيير العنوان أو إضافة خدمات جديدة) قد تتطلب مراجعة من فريق المنصة قبل نشرها.</p>
+</div>
+</div>
+</div>
+<!-- FAQ Item 7 -->
+<div class="accordion-item mb-4">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">ما هي مدة التعاقد مع المنصة؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>لا توجد مدة تعاقد إلزامية مع منصة جو برنت. يمكنك الانضمام والاستمرار في المنصة طالما ترغب في ذلك. يمكنك أيضاً إيقاف حسابك مؤقتاً أو إلغاء الاشتراك في أي وقت دون أي رسوم إضافية.</p>
+<p class="mt-2">في حالة الرغبة في إلغاء الاشتراك، نطلب فقط إشعاراً مسبقاً بـ 7 أيام لإكمال الطلبات الحالية وتسوية الحسابات المالية.</p>
+</div>
+</div>
+</div>
+<!-- FAQ Item 8 -->
+<div class="accordion-item">
+<div class="bg-gray-50 p-4 rounded-lg shadow-sm">
+<button class="accordion-button flex justify-between items-center w-full text-right">
+<h3 class="text-lg font-bold">كيف يمكنني الحصول على دعم فني؟</h3>
+<span class="w-6 h-6 flex items-center justify-center">
+<i class="ri-add-line text-primary accordion-icon-plus"></i>
+<i class="ri-subtract-line text-primary accordion-icon-minus"></i>
+</span>
+</button>
+<div class="accordion-content mt-4 text-gray-600 hidden">
+<p>يمكنك الحصول على الدعم الفني من خلال عدة قنوات:</p>
+<ul class="list-disc list-inside mt-2 space-y-1">
+<li>الدردشة المباشرة المتوفرة في لوحة التحكم</li>
+<li>الاتصال بخط الدعم الفني: 06-123-4567</li>
+<li>إرسال بريد إلكتروني إلى: support@joprint.jo</li>
+<li>زيارة مركز المساعدة على الموقع الإلكتروني</li>
+</ul>
+<p class="mt-2">يتوفر الدعم الفني خلال ساعات العمل الرسمية للباقة الأساسية، وعلى مدار الساعة للباقات الأخرى.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="py-16 bg-primary text-white">
+<div class="container mx-auto px-4 text-center">
+<h2 class="text-3xl font-bold mb-4">انضم إلى شبكة مطابع جو برنت اليوم</h2>
+<p class="text-xl mb-8 max-w-2xl mx-auto">وسّع نطاق عملك واستفد من فرص النمو في سوق الطباعة الرقمية</p>
+<div class="flex flex-wrap justify-center gap-4">
+<a href="#registration-steps" class="bg-white text-primary px-6 py-3 rounded-button font-medium hover:bg-gray-100 transition duration-300 !rounded-button whitespace-nowrap">سجل مطبعتك الآن</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="bg-transparent border-2 border-white px-6 py-3 rounded-button font-medium hover:bg-white/10 transition duration-300 !rounded-button whitespace-nowrap">العودة للصفحة الرئيسية</a>
+</div>
+</div>
+</section>
+</main>
+<footer class="bg-gray-800 text-white py-12">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<a href="#" class="text-2xl font-['Pacifico'] text-white mb-4 block">JO PRINT</a>
+<p class="text-gray-400 mb-4">منصة رقمية تربط بين المطابع والطلاب والعملاء في جميع أنحاء الأردن</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-twitter-x-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-instagram-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-primary transition duration-300">
+<i class="ri-linkedin-fill"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="text-gray-400 hover:text-white transition duration-300">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">المدرسون</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">المطابع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">تسجيل الدخول</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">خدماتنا</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">طباعة الملفات</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">طباعة الأبحاث والأطروحات</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">ملخصات الكتب الجامعية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">ملخصات المدارس</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">التدريس الخصوصي</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-300">خدمات التوصيل</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">تواصل معنا</h3>
+<ul class="space-y-3">
+<li class="flex items-start">
+<span class="w-5 h-5 flex items-center justify-center text-gray-400 mt-0.5">
+<i class="ri-map-pin-line"></i>
+</span>
+<span class="mr-2 text-gray-400">عمان، الأردن<br>شارع الجامعة، مجمع الجامعة التجاري</span>
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-phone-line"></i>
+</span>
+<span class="mr-2 text-gray-400">+962 6 123 4567</span>
+</li>
+<li class="flex items-center">
+<span class="w-5 h-5 flex items-center justify-center text-gray-400">
+<i class="ri-mail-line"></i>
+</span>
+<span class="mr-2 text-gray-400">info@joprint.jo</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 JO PRINT. جميع الحقوق محفوظة</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="text-gray-400 hover:text-white transition duration-300 text-sm">سياسة الخصوصية</a>
+<a href="#" class="text-gray-400 hover:text-white transition duration-300 text-sm">الشروط والأحكام</a>
+<a href="#" class="text-gray-400 hover:text-white transition duration-300 text-sm">الأسئلة الشائعة</a>
+</div>
+</div>
+</div>
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+// Accordion functionality
+const accordionButtons = document.querySelectorAll('.accordion-button');
+accordionButtons.forEach(button => {
+button.addEventListener('click', function() {
+const accordionItem = this.closest('.accordion-item');
+const content = accordionItem.querySelector('.accordion-content');
+// Toggle active class
+if (accordionItem.classList.contains('active')) {
+accordionItem.classList.remove('active');
+content.classList.add('hidden');
+} else {
+accordionItem.classList.add('active');
+content.classList.remove('hidden');
+}
+});
+});
+// Video player functionality
+const videoButton = document.querySelector('.video-container button');
+if (videoButton) {
+videoButton.addEventListener('click', function() {
+const videoContainer = this.closest('.video-container');
+const img = videoContainer.querySelector('img');
+// Replace image with iframe (simulated)
+videoContainer.innerHTML = `
+<div class="absolute inset-0 bg-black flex items-center justify-center">
+<p class="text-white text-xl">تشغيل الفيديو...</p>
+</div>
+`;
+});
+}
+// Initialize charts
+// Market Size Chart
+const marketSizeChart = echarts.init(document.getElementById('marketSizeChart'));
+marketSizeChart.setOption({
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#eee',
+borderWidth: 1,
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+top: 10,
+right: 10,
+bottom: 30,
+left: 50
+},
+xAxis: {
+type: 'category',
+data: ['2020', '2021', '2022', '2023', '2024', '2025'],
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937'
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937'
+},
+splitLine: {
+lineStyle: {
+color: '#eee'
+}
+}
+},
+series: [{
+data: [35, 42, 58, 75, 95, 120],
+type: 'line',
+smooth: true,
+symbol: 'none',
+lineStyle: {
+width: 3,
+color: 'rgba(87, 181, 231, 1)'
+},
+areaStyle: {
+color: {
+type: 'linear',
+x: 0,
+y: 0,
+x2: 0,
+y2: 1,
+colorStops: [{
+offset: 0,
+color: 'rgba(87, 181, 231, 0.2)'
+}, {
+offset: 1,
+color: 'rgba(87, 181, 231, 0.05)'
+}]
+}
+}
+}]
+});
+// User Demographics Chart
+const userDemographicsChart = echarts.init(document.getElementById('userDemographicsChart'));
+userDemographicsChart.setOption({
+animation: false,
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#eee',
+borderWidth: 1,
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+orient: 'vertical',
+right: 10,
+top: 'center',
+textStyle: {
+color: '#1f2937'
+}
+},
+series: [{
+name: 'توزيع المستخدمين',
+type: 'pie',
+radius: ['40%', '70%'],
+center: ['40%', '50%'],
+avoidLabelOverlap: false,
+itemStyle: {
+borderRadius: 8,
+borderColor: '#fff',
+borderWidth: 2
+},
+label: {
+show: false
+},
+emphasis: {
+label: {
+show: false
+}
+},
+labelLine: {
+show: false
+},
+data: [
+{ value: 45, name: 'طلاب جامعات', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+{ value: 25, name: 'شركات ومؤسسات', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+{ value: 15, name: 'طلاب مدارس', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+{ value: 15, name: 'أفراد', itemStyle: { color: 'rgba(252, 141, 98, 1)' } }
+]
+}]
+});
+// Growth Trend Chart
+const growthTrendChart = echarts.init(document.getElementById('growthTrendChart'));
+growthTrendChart.setOption({
+animation: false,
+tooltip: {
+trigger: 'axis',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#eee',
+borderWidth: 1,
+textStyle: {
+color: '#1f2937'
+}
+},
+grid: {
+top: 10,
+right: 10,
+bottom: 30,
+left: 50
+},
+xAxis: {
+type: 'category',
+data: ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'],
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937',
+rotate: 45
+}
+},
+yAxis: {
+type: 'value',
+axisLine: {
+lineStyle: {
+color: '#ddd'
+}
+},
+axisLabel: {
+color: '#1f2937'
+},
+splitLine: {
+lineStyle: {
+color: '#eee'
+}
+}
+},
+series: [{
+data: [15000, 16200, 17500, 18800, 20000, 22500, 24000, 25500, 27000, 28500, 30000, 32000],
+type: 'bar',
+barWidth: '60%',
+itemStyle: {
+color: 'rgba(87, 181, 231, 1)',
+borderRadius: [4, 4, 0, 0]
+}
+}]
+});
+// Service Distribution Chart
+const serviceDistributionChart = echarts.init(document.getElementById('serviceDistributionChart'));
+serviceDistributionChart.setOption({
+animation: false,
+tooltip: {
+trigger: 'item',
+backgroundColor: 'rgba(255, 255, 255, 0.8)',
+borderColor: '#eee',
+borderWidth: 1,
+textStyle: {
+color: '#1f2937'
+}
+},
+legend: {
+orient: 'vertical',
+right: 10,
+top: 'center',
+textStyle: {
+color: '#1f2937'
+}
+},
+series: [{
+name: 'توزيع الخدمات',
+type: 'pie',
+radius: '75%',
+center: ['40%', '50%'],
+data: [
+{ value: 35, name: 'طباعة أبحاث وأطروحات', itemStyle: { color: 'rgba(87, 181, 231, 1)' } },
+{ value: 25, name: 'طباعة ملونة', itemStyle: { color: 'rgba(141, 211, 199, 1)' } },
+{ value: 20, name: 'تجليد', itemStyle: { color: 'rgba(251, 191, 114, 1)' } },
+{ value: 15, name: 'طباعة كتب', itemStyle: { color: 'rgba(252, 141, 98, 1)' } },
+{ value: 5, name: 'خدمات أخرى', itemStyle: { color: '#ccc' } }
+],
+emphasis: {
+itemStyle: {
+shadowBlur: 10,
+shadowOffsetX: 0,
+shadowColor: 'rgba(0, 0, 0, 0.5)'
+}
+}
+}]
+});
+// Resize charts when window size changes
+window.addEventListener('resize', function() {
+marketSizeChart.resize();
+userDemographicsChart.resize();
+growthTrendChart.resize();
+serviceDistributionChart.resize();
+});
+});
+</script>
+</body>
+</html>

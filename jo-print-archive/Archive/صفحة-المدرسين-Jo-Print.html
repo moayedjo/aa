@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المعلمين | Jo Print</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.5.0/echarts.min.js"></script>
+<script>
+tailwind.config = {
+theme: {
+extend: {
+colors: {
+primary: '#0078D7',
+secondary: '#005A9E'
+},
+borderRadius: {
+'none': '0px',
+'sm': '4px',
+DEFAULT: '8px',
+'md': '12px',
+'lg': '16px',
+'xl': '20px',
+'2xl': '24px',
+'3xl': '32px',
+'full': '9999px',
+'button': '8px'
+}
+}
+}
+}
+</script>
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+.tutor-card {
+transition: opacity 0.3s ease, transform 0.3s ease;
+}
+#apply-filter:disabled {
+opacity: 0.7;
+cursor: not-allowed;
+}
+@keyframes fadeInUp {
+from {
+opacity: 0;
+transform: translateY(20px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.hero-section {
+background-image: url('https://readdy.ai/api/search-image?query=A%20professional%20and%20modern%20educational%20scene%20with%20tutors%20helping%20students%2C%20showing%20both%20in-person%20and%20online%20tutoring.%20The%20image%20has%20a%20clean%20gradient%20from%20white%20on%20the%20left%20to%20a%20soft%20azure%20blue%20on%20the%20right.%20The%20transition%20is%20seamless%20and%20natural.%20The%20right%20side%20shows%20diverse%20tutors%20and%20students%20with%20books%20and%20digital%20devices.%20The%20left%20side%20is%20mostly%20white%20space%20for%20text%20overlay.&width=1920&height=600&seq=1&orientation=landscape');
+background-size: cover;
+background-position: center;
+}
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #0078D7;
+cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+width: 20px;
+height: 20px;
+border-radius: 50%;
+background: #0078D7;
+cursor: pointer;
+}
+.custom-checkbox {
+display: flex;
+align-items: center;
+cursor: pointer;
+}
+.custom-checkbox .checkbox {
+width: 20px;
+height: 20px;
+border: 2px solid #0078D7;
+border-radius: 4px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-left: 8px;
+}
+.custom-checkbox input:checked + .checkbox {
+background-color: #0078D7;
+}
+.custom-checkbox .checkbox i {
+color: white;
+font-size: 14px;
+display: none;
+}
+.custom-checkbox input:checked + .checkbox i {
+display: block;
+}
+.custom-switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 24px;
+}
+.custom-switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.switch-slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+right: 0;
+left: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .4s;
+border-radius: 34px;
+}
+.switch-slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+right: 4px;
+bottom: 3px;
+background-color: white;
+transition: .4s;
+border-radius: 50%;
+}
+input:checked + .switch-slider {
+background-color: #0078D7;
+}
+input:checked + .switch-slider:before {
+transform: translateX(-26px);
+}
+.tutor-card:hover {
+transform: translateY(-5px);
+box-shadow: 0 10px 25px rgba(0, 120, 215, 0.1);
+}
+.star-rating {
+color: #FFD700;
+}
+.availability-cell {
+width: 30px;
+height: 30px;
+border-radius: 4px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 12px;
+}
+.available {
+background-color: rgba(0, 120, 215, 0.2);
+color: #0078D7;
+}
+.unavailable {
+background-color: #f5f5f5;
+color: #aaa;
+}
+.modal {
+transition: opacity 0.3s ease;
+}
+.modal-content {
+transition: transform 0.3s ease;
+}
+.map-container {
+background-image: url('https://public.readdy.ai/gen_page/map_placeholder_1280x720.png');
+background-size: cover;
+background-position: center;
+}
+.language-switch {
+transition: all 0.25s ease;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+-webkit-appearance: none;
+margin: 0;
+}
+input[type="number"] {
+-moz-appearance: textfield;
+}
+</style>
+</head>
+<body class="bg-gray-50">
+<header class="bg-white shadow-sm">
+<div class="container mx-auto px-4 py-4 flex justify-between items-center">
+<div class="flex items-center">
+<a href="#" class="text-3xl font-['Pacifico'] text-primary">logo</a>
+<nav class="hidden md:flex mr-10">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="mx-3 text-gray-500 hover:text-primary transition-colors">الرئيسية</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/93310aac-7a7c-4bb8-9dec-d2f2a27e5141" data-readdy="true" class="mx-3 text-gray-500 hover:text-primary transition-colors">خدمات الطباعة</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/7a08f868-a153-467f-b21f-45e4de4de1d9" data-readdy="true" class="mx-3 text-gray-500 hover:text-primary transition-colors">ملخصات الكتب</a>
+<a href="#" class="mx-3 text-primary font-medium">المعلمين</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="mx-3 text-gray-500 hover:text-primary transition-colors">مكاتب الطباعة</a>
+<a href="#" class="mx-3 text-gray-500 hover:text-primary transition-colors">المتجر</a>
+</nav>
+</div>
+<div class="flex items-center">
+<button class="language-switch bg-gray-100 rounded-full px-3 py-1 text-sm text-gray-600 hover:bg-gray-200 transition-colors mr-4">English</button>
+<a href="#" class="hidden md:flex items-center text-gray-600 hover:text-primary transition-colors mr-4">
+<div class="w-6 h-6 flex items-center justify-center">
+<i class="ri-user-line"></i>
+</div>
+<span class="mr-1">تسجيل الدخول</span>
+</a>
+<button class="w-10 h-10 flex items-center justify-center md:hidden text-gray-600">
+<i class="ri-menu-line text-xl"></i>
+</button>
+</div>
+</div>
+</header>
+<section class="hero-section py-16 md:py-24 relative">
+<div class="absolute inset-0 bg-gradient-to-l from-transparent to-white/90"></div>
+<div class="container mx-auto px-4 relative z-10">
+<div class="max-w-2xl">
+<h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">أفضل المعلمين الخصوصيين في الأردن</h1>
+<p class="text-lg text-gray-700 mb-8">ابحث عن معلمين خصوصيين موثوقين لجميع المواد والمستويات الدراسية، سواء للتعليم المباشر أو عبر الإنترنت.</p>
+<div class="flex flex-wrap gap-4">
+<button id="start-search-btn" class="bg-primary hover:bg-secondary text-white py-3 px-6 rounded-button transition-colors whitespace-nowrap">ابدأ البحث الآن</button>
+<button class="bg-white text-primary border border-primary py-3 px-6 rounded-button hover:bg-gray-50 transition-colors whitespace-nowrap">كيف يعمل</button>
+</div>
+</div>
+</div>
+</section>
+<section class="py-10 bg-white">
+<div class="container mx-auto px-4">
+<div class="flex flex-col md:flex-row gap-6">
+<div id="filter-section" class="md:w-1/4 bg-white rounded p-6 shadow-sm h-fit">
+<div id="search-tips" class="hidden fixed top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl p-6 z-50 w-96">
+<button class="absolute top-4 left-4 text-gray-500 hover:text-gray-700" onclick="document.getElementById('search-tips').classList.add('hidden')">
+<i class="ri-close-line text-xl"></i>
+</button>
+<h3 class="text-lg font-bold mb-4">نصائح للبحث</h3>
+<ul class="space-y-2 text-gray-700">
+<li class="flex items-center">
+<i class="ri-checkbox-circle-line text-primary ml-2"></i>
+<span>حدد المواد الدراسية التي تهمك</span>
+</li>
+<li class="flex items-center">
+<i class="ri-checkbox-circle-line text-primary ml-2"></i>
+<span>اختر المستوى الدراسي المناسب</span>
+</li>
+<li class="flex items-center">
+<i class="ri-checkbox-circle-line text-primary ml-2"></i>
+<span>حدد نطاق السعر المناسب لك</span>
+</li>
+<li class="flex items-center">
+<i class="ri-checkbox-circle-line text-primary ml-2"></i>
+<span>تصفح التقييمات والمراجعات</span>
+</li>
+</ul>
+</div>
+<div class="flex justify-between items-center mb-6">
+<h3 class="text-lg font-bold">تصفية النتائج</h3>
+<button class="text-primary hover:text-secondary transition-colors text-sm">إعادة تعيين</button>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-3">المادة الدراسية</h4>
+<div class="space-y-2">
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>الرياضيات</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>العلوم</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>اللغة العربية</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>اللغة الإنجليزية</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>الفيزياء</span>
+</label>
+<button class="text-primary hover:text-secondary transition-colors text-sm mt-2">عرض المزيد</button>
+</div>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-3">المستوى الدراسي</h4>
+<div class="space-y-2">
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>رياض الأطفال</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>المرحلة الابتدائية</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>المرحلة الإعدادية</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>التوجيهي</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>الجامعة</span>
+</label>
+</div>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-3">المحافظة</h4>
+<select class="w-full border border-gray-300 rounded p-2 bg-white pr-8">
+<option value="">جميع المحافظات</option>
+<option value="amman">محافظة العاصمة</option>
+<option value="irbid">محافظة إربد</option>
+<option value="zarqa">محافظة الزرقاء</option>
+<option value="balqa">محافظة البلقاء</option>
+<option value="madaba">محافظة مأدبا</option>
+<option value="jerash">محافظة جرش</option>
+<option value="ajloun">محافظة عجلون</option>
+<option value="karak">محافظة الكرك</option>
+<option value="tafilah">محافظة الطفيلة</option>
+<option value="maan">محافظة معان</option>
+<option value="aqaba">محافظة العقبة</option>
+<option value="mafraq">محافظة المفرق</option>
+</select>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-3">نطاق السعر (دينار/ساعة)</h4>
+<div class="flex items-center justify-between mb-2">
+<span id="min-price">5</span>
+<span id="max-price">50</span>
+</div>
+<input type="range" min="5" max="50" value="5" class="w-full" id="price-range">
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-3">التقييم</h4>
+<div class="space-y-2">
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<div class="flex">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+</div>
+</div>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<div class="flex">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-line"></i>
+</div>
+<span class="mr-1">وأعلى</span>
+</div>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<div class="flex">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-line"></i>
+<i class="ri-star-line"></i>
+</div>
+<span class="mr-1">وأعلى</span>
+</div>
+</label>
+</div>
+</div>
+<div class="mb-6">
+<h4 class="font-medium mb-3">نوع التدريس</h4>
+<div class="space-y-2">
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>حضوري</span>
+</label>
+<label class="custom-checkbox">
+<input type="checkbox" class="hidden">
+<div class="checkbox"><i class="ri-check-line"></i></div>
+<span>عبر الإنترنت</span>
+</label>
+</div>
+</div>
+<button id="apply-filter" class="w-full bg-primary hover:bg-secondary text-white py-3 px-6 rounded-button transition-colors whitespace-nowrap flex items-center justify-center">
+<span>تطبيق الفلتر</span>
+<div id="filter-loader" class="hidden mr-2">
+<div class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+</div>
+</button>
+</div>
+<div class="md:w-3/4">
+<div class="bg-white rounded p-6 shadow-sm mb-6">
+<div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+<div>
+<h2 class="text-xl font-bold">تم العثور على 245 معلم</h2>
+<p class="text-gray-600">يمكنك تصفية النتائج للعثور على المعلم المناسب</p>
+</div>
+<div class="flex items-center mt-4 md:mt-0">
+<div class="flex items-center ml-6">
+<span class="ml-2">طريقة العرض:</span>
+<button class="w-8 h-8 flex items-center justify-center text-primary bg-gray-100 rounded ml-1">
+<i class="ri-layout-grid-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-gray-500 hover:text-primary rounded">
+<i class="ri-list-check"></i>
+</button>
+</div>
+<div class="flex items-center">
+<span class="ml-2">عرض على الخريطة:</span>
+<label class="custom-switch">
+<input type="checkbox">
+<span class="switch-slider"></span>
+</label>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap items-center">
+<div class="bg-gray-100 rounded-full py-1 px-3 flex items-center ml-2 mb-2">
+<span>الرياضيات</span>
+<button class="w-4 h-4 flex items-center justify-center mr-1 text-gray-500">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<div class="bg-gray-100 rounded-full py-1 px-3 flex items-center ml-2 mb-2">
+<span>التوجيهي</span>
+<button class="w-4 h-4 flex items-center justify-center mr-1 text-gray-500">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<div class="bg-gray-100 rounded-full py-1 px-3 flex items-center ml-2 mb-2">
+<span>عمّان</span>
+<button class="w-4 h-4 flex items-center justify-center mr-1 text-gray-500">
+<i class="ri-close-line"></i>
+</button>
+</div>
+<button class="text-primary hover:text-secondary transition-colors text-sm mb-2">مسح الكل</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<!-- Tutor Card 1 -->
+<div class="tutor-card bg-white rounded shadow-sm overflow-hidden transition-all duration-300">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20male%20tutor%20with%20glasses%20and%20formal%20attire%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=400&height=300&seq=2&orientation=portrait" alt="معلم" class="w-full h-48 object-cover object-top">
+<div class="absolute top-3 left-3 bg-white rounded-full p-2">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-heart-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">أحمد الخطيب</h3>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-sm">15 دينار/ساعة</span>
+</div>
+<div class="flex items-center text-gray-600 text-sm mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">عمّان، الأردن</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الرياضيات</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الفيزياء</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">التوجيهي</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1">الجامعة</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-half-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(42 تقييم)</span>
+</div>
+<div class="mb-4">
+<h4 class="text-sm font-medium mb-2">الجدول الأسبوعي:</h4>
+<div class="grid grid-cols-7 gap-1">
+<div class="availability-cell available">س</div>
+<div class="availability-cell available">ح</div>
+<div class="availability-cell unavailable">إ</div>
+<div class="availability-cell available">ث</div>
+<div class="availability-cell available">ر</div>
+<div class="availability-cell unavailable">خ</div>
+<div class="availability-cell unavailable">ج</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-white text-primary border border-primary hover:bg-gray-50 py-2 rounded-button transition-colors whitespace-nowrap">عرض الملف</button>
+<button class="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+</div>
+</div>
+</div>
+<!-- Tutor Card 2 -->
+<div class="tutor-card bg-white rounded shadow-sm overflow-hidden transition-all duration-300">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20female%20tutor%20with%20hijab%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=400&height=300&seq=3&orientation=portrait" alt="معلمة" class="w-full h-48 object-cover object-top">
+<div class="absolute top-3 left-3 bg-white rounded-full p-2">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-heart-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">سارة العمري</h3>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-sm">20 دينار/ساعة</span>
+</div>
+<div class="flex items-center text-gray-600 text-sm mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">إربد، الأردن</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">اللغة العربية</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">اللغة الإنجليزية</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">المرحلة الابتدائية</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1">المرحلة الإعدادية</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(68 تقييم)</span>
+</div>
+<div class="mb-4">
+<h4 class="text-sm font-medium mb-2">الجدول الأسبوعي:</h4>
+<div class="grid grid-cols-7 gap-1">
+<div class="availability-cell unavailable">س</div>
+<div class="availability-cell available">ح</div>
+<div class="availability-cell available">إ</div>
+<div class="availability-cell available">ث</div>
+<div class="availability-cell available">ر</div>
+<div class="availability-cell available">خ</div>
+<div class="availability-cell unavailable">ج</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-white text-primary border border-primary hover:bg-gray-50 py-2 rounded-button transition-colors whitespace-nowrap">عرض الملف</button>
+<button class="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+</div>
+</div>
+</div>
+<!-- Tutor Card 3 -->
+<div class="tutor-card bg-white rounded shadow-sm overflow-hidden transition-all duration-300">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20male%20tutor%20in%20his%2040s%20with%20beard%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=400&height=300&seq=4&orientation=portrait" alt="معلم" class="w-full h-48 object-cover object-top">
+<div class="absolute top-3 left-3 bg-white rounded-full p-2">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-heart-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">محمد الحسن</h3>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-sm">25 دينار/ساعة</span>
+</div>
+<div class="flex items-center text-gray-600 text-sm mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">الزرقاء، الأردن</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الكيمياء</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الأحياء</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">التوجيهي</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1">الجامعة</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-line"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(36 تقييم)</span>
+</div>
+<div class="mb-4">
+<h4 class="text-sm font-medium mb-2">الجدول الأسبوعي:</h4>
+<div class="grid grid-cols-7 gap-1">
+<div class="availability-cell available">س</div>
+<div class="availability-cell available">ح</div>
+<div class="availability-cell available">إ</div>
+<div class="availability-cell unavailable">ث</div>
+<div class="availability-cell unavailable">ر</div>
+<div class="availability-cell available">خ</div>
+<div class="availability-cell available">ج</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-white text-primary border border-primary hover:bg-gray-50 py-2 rounded-button transition-colors whitespace-nowrap">عرض الملف</button>
+<button class="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+</div>
+</div>
+</div>
+<!-- Tutor Card 4 -->
+<div class="tutor-card bg-white rounded shadow-sm overflow-hidden transition-all duration-300">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20female%20tutor%20in%20her%2030s%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=400&height=300&seq=5&orientation=portrait" alt="معلمة" class="w-full h-48 object-cover object-top">
+<div class="absolute top-3 left-3 bg-white rounded-full p-2">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-heart-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">رنا القاسم</h3>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-sm">18 دينار/ساعة</span>
+</div>
+<div class="flex items-center text-gray-600 text-sm mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">عمّان، الأردن</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الرياضيات</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">العلوم</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">المرحلة الابتدائية</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1">المرحلة الإعدادية</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-half-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(54 تقييم)</span>
+</div>
+<div class="mb-4">
+<h4 class="text-sm font-medium mb-2">الجدول الأسبوعي:</h4>
+<div class="grid grid-cols-7 gap-1">
+<div class="availability-cell unavailable">س</div>
+<div class="availability-cell available">ح</div>
+<div class="availability-cell available">إ</div>
+<div class="availability-cell available">ث</div>
+<div class="availability-cell available">ر</div>
+<div class="availability-cell available">خ</div>
+<div class="availability-cell unavailable">ج</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-white text-primary border border-primary hover:bg-gray-50 py-2 rounded-button transition-colors whitespace-nowrap">عرض الملف</button>
+<button class="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+</div>
+</div>
+</div>
+<!-- Tutor Card 5 -->
+<div class="tutor-card bg-white rounded shadow-sm overflow-hidden transition-all duration-300">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20male%20tutor%20in%20his%2030s%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=400&height=300&seq=6&orientation=portrait" alt="معلم" class="w-full h-48 object-cover object-top">
+<div class="absolute top-3 left-3 bg-white rounded-full p-2">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-heart-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">عمر الصالح</h3>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-sm">22 دينار/ساعة</span>
+</div>
+<div class="flex items-center text-gray-600 text-sm mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">العقبة، الأردن</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">اللغة الإنجليزية</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الفرنسية</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">المرحلة الإعدادية</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1">التوجيهي</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-line"></i>
+<i class="ri-star-line"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(22 تقييم)</span>
+</div>
+<div class="mb-4">
+<h4 class="text-sm font-medium mb-2">الجدول الأسبوعي:</h4>
+<div class="grid grid-cols-7 gap-1">
+<div class="availability-cell available">س</div>
+<div class="availability-cell available">ح</div>
+<div class="availability-cell unavailable">إ</div>
+<div class="availability-cell unavailable">ث</div>
+<div class="availability-cell available">ر</div>
+<div class="availability-cell available">خ</div>
+<div class="availability-cell available">ج</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-white text-primary border border-primary hover:bg-gray-50 py-2 rounded-button transition-colors whitespace-nowrap">عرض الملف</button>
+<button class="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+</div>
+</div>
+</div>
+<!-- Tutor Card 6 -->
+<div class="tutor-card bg-white rounded shadow-sm overflow-hidden transition-all duration-300">
+<div class="relative">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20female%20tutor%20with%20hijab%20in%20her%2040s%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=400&height=300&seq=7&orientation=portrait" alt="معلمة" class="w-full h-48 object-cover object-top">
+<div class="absolute top-3 left-3 bg-white rounded-full p-2">
+<button class="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-red-500">
+<i class="ri-heart-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2">
+<h3 class="font-bold text-lg">نور الدين</h3>
+<span class="bg-primary/10 text-primary px-2 py-1 rounded text-sm">30 دينار/ساعة</span>
+</div>
+<div class="flex items-center text-gray-600 text-sm mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">عمّان، الأردن</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الفيزياء</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">الرياضيات</span>
+</div>
+<div class="mb-3">
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1 ml-1">التوجيهي</span>
+<span class="text-sm bg-gray-100 rounded-full px-2 py-1">الجامعة</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(87 تقييم)</span>
+</div>
+<div class="mb-4">
+<h4 class="text-sm font-medium mb-2">الجدول الأسبوعي:</h4>
+<div class="grid grid-cols-7 gap-1">
+<div class="availability-cell available">س</div>
+<div class="availability-cell available">ح</div>
+<div class="availability-cell available">إ</div>
+<div class="availability-cell available">ث</div>
+<div class="availability-cell unavailable">ر</div>
+<div class="availability-cell unavailable">خ</div>
+<div class="availability-cell available">ج</div>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="flex-1 bg-white text-primary border border-primary hover:bg-gray-50 py-2 rounded-button transition-colors whitespace-nowrap">عرض الملف</button>
+<button class="flex-1 bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<nav class="inline-flex rounded-md shadow">
+<a href="#" class="py-2 px-4 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 rounded-r-md">السابق</a>
+<a href="#" class="py-2 px-4 bg-primary text-white border border-primary">1</a>
+<a href="#" class="py-2 px-4 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">2</a>
+<a href="#" class="py-2 px-4 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">3</a>
+<a href="#" class="py-2 px-4 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">...</a>
+<a href="#" class="py-2 px-4 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50">10</a>
+<a href="#" class="py-2 px-4 bg-white border border-gray-300 text-gray-500 hover:bg-gray-50 rounded-l-md">التالي</a>
+</nav>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div id="tutor-profile-modal" class="modal hidden fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+<div class="modal-content bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 transform scale-95 opacity-0 transition-all">
+<div class="relative">
+<button class="absolute top-4 left-4 text-gray-500 hover:text-gray-700 w-8 h-8 flex items-center justify-center">
+<i class="ri-close-line text-xl"></i>
+</button>
+<div class="p-6">
+<div class="flex flex-col md:flex-row gap-6">
+<div class="md:w-1/3">
+<img src="https://readdy.ai/api/search-image?query=Professional%20Arabic%20male%20tutor%20with%20glasses%20and%20formal%20attire%2C%20smiling%20at%20camera%2C%20clean%20professional%20headshot%20with%20neutral%20background%2C%20high%20quality%20portrait%20for%20educational%20website&width=300&height=300&seq=8&orientation=portrait" alt="معلم" class="w-full h-auto rounded">
+<div class="mt-4">
+<h2 class="text-2xl font-bold">أحمد الخطيب</h2>
+<div class="flex items-center text-gray-600 text-sm mt-1 mb-2">
+<div class="w-4 h-4 flex items-center justify-center">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="mr-1">عمّان، الأردن</span>
+</div>
+<div class="flex items-center mb-4">
+<div class="star-rating flex">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-half-fill"></i>
+</div>
+<span class="text-gray-600 text-sm mr-1">(42 تقييم)</span>
+</div>
+<div class="bg-primary/10 text-primary px-3 py-2 rounded text-center mb-4">
+<span class="font-bold">15 دينار</span> / ساعة
+</div>
+<div class="space-y-2">
+<button class="w-full bg-primary hover:bg-secondary text-white py-3 px-6 rounded-button transition-colors whitespace-nowrap">تواصل الآن</button>
+<button class="w-full bg-white text-primary border border-primary hover:bg-gray-50 py-3 px-6 rounded-button transition-colors whitespace-nowrap">حفظ في المفضلة</button>
+</div>
+</div>
+</div>
+<div class="md:w-2/3">
+<div class="mb-6">
+<h3 class="text-lg font-bold mb-2">نبذة عني</h3>
+<p class="text-gray-700">معلم رياضيات وفيزياء خبرة أكثر من 15 عاماً في تدريس طلاب التوجيهي والجامعة. حاصل على شهادة الماجستير في الرياضيات التطبيقية من الجامعة الأردنية. أقدم دروساً خصوصية للطلاب بطرق تعليمية مبتكرة تساعدهم على فهم المفاهيم الصعبة بسهولة. نسبة نجاح طلابي تتجاوز 95% وأكثر من 80% من طلابي يحصلون على علامات فوق 90%.</p>
+</div>
+<div class="mb-6">
+<h3 class="text-lg font-bold mb-2">المؤهلات والخبرات</h3>
+<ul class="list-disc list-inside text-gray-700 space-y-1">
+<li>ماجستير في الرياضيات التطبيقية - الجامعة الأردنية (2008)</li>
+<li>بكالوريوس في الفيزياء - جامعة اليرموك (2005)</li>
+<li>مدرس رياضيات في مدرسة الملك عبدالله الثاني للتميز (2010-2018)</li>
+<li>معلم خصوصي منذ عام 2008 وحتى الآن</li>
+<li>مؤلف كتاب "أساسيات الرياضيات للتوجيهي"</li>
+</ul>
+</div>
+<div class="mb-6">
+<h3 class="text-lg font-bold mb-2">المواد التي أدرسها</h3>
+<div class="flex flex-wrap gap-2">
+<span class="bg-gray-100 rounded-full px-3 py-1">الرياضيات - التوجيهي</span>
+<span class="bg-gray-100 rounded-full px-3 py-1">الرياضيات - الجامعة</span>
+<span class="bg-gray-100 rounded-full px-3 py-1">الفيزياء - التوجيهي</span>
+<span class="bg-gray-100 rounded-full px-3 py-1">الفيزياء - الجامعة</span>
+<span class="bg-gray-100 rounded-full px-3 py-1">الإحصاء - الجامعة</span>
+</div>
+</div>
+<div class="mb-6">
+<h3 class="text-lg font-bold mb-2">الجدول الأسبوعي</h3>
+<div class="overflow-x-auto">
+<table class="w-full border-collapse">
+<thead>
+<tr>
+<th class="border p-2 bg-gray-50">الوقت</th>
+<th class="border p-2 bg-gray-50">السبت</th>
+<th class="border p-2 bg-gray-50">الأحد</th>
+<th class="border p-2 bg-gray-50">الإثنين</th>
+<th class="border p-2 bg-gray-50">الثلاثاء</th>
+<th class="border p-2 bg-gray-50">الأربعاء</th>
+<th class="border p-2 bg-gray-50">الخميس</th>
+<th class="border p-2 bg-gray-50">الجمعة</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="border p-2 bg-gray-50 font-medium">9 - 12</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+</tr>
+<tr>
+<td class="border p-2 bg-gray-50 font-medium">12 - 3</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+</tr>
+<tr>
+<td class="border p-2 bg-gray-50 font-medium">3 - 6</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+</tr>
+<tr>
+<td class="border p-2 bg-gray-50 font-medium">6 - 9</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-primary">متاح</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+<td class="border p-2 text-center text-gray-400">محجوز</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-2">آراء الطلاب (42)</h3>
+<div class="space-y-4">
+<div class="border-b pb-4">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-medium">ليلى عبدالله</h4>
+<div class="star-rating flex text-sm">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+</div>
+</div>
+<span class="text-gray-500 text-sm">منذ شهر</span>
+</div>
+<p class="text-gray-700 mt-2">أستاذ أحمد معلم ممتاز، ساعدني كثيراً في فهم مادة الرياضيات للتوجيهي. شرحه واضح وبسيط ويعطي أمثلة كثيرة تساعد على الفهم. أنصح به بشدة!</p>
+</div>
+<div class="border-b pb-4">
+<div class="flex justify-between items-start">
+<div>
+<h4 class="font-medium">خالد المصري</h4>
+<div class="star-rating flex text-sm">
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-fill"></i>
+<i class="ri-star-line"></i>
+</div>
+</div>
+<span class="text-gray-500 text-sm">منذ 3 أشهر</span>
+</div>
+<p class="text-gray-700 mt-2">كنت أعاني من صعوبة في مادة الفيزياء، وبعد الدروس مع الأستاذ أحمد تحسن مستواي بشكل كبير. يشرح المفاهيم الصعبة بطريقة سهلة ومفهومة.</p>
+</div>
+<button class="text-primary hover:text-secondary transition-colors">عرض جميع التقييمات</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="map-view" class="hidden">
+<div class="container mx-auto px-4 py-10">
+<div class="bg-white rounded shadow-sm p-6 mb-6">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-xl font-bold">المعلمين على الخريطة</h2>
+<button class="bg-white text-primary border border-primary hover:bg-gray-50 py-2 px-4 rounded-button transition-colors whitespace-nowrap">
+<div class="w-4 h-4 flex items-center justify-center inline-block ml-1">
+<i class="ri-list-check"></i>
+</div>
+العودة للقائمة
+</button>
+</div>
+<div class="map-container h-[600px] rounded overflow-hidden relative">
+<div class="absolute top-4 right-4 bg-white p-3 rounded shadow-md">
+<h3 class="font-medium mb-2">تصفية حسب المنطقة</h3>
+<select class="w-full border border-gray-300 rounded p-2 bg-white mb-2 pr-8">
+<option value="amman">عمّان</option>
+<option value="irbid">إربد</option>
+<option value="zarqa">الزرقاء</option>
+<option value="aqaba">العقبة</option>
+</select>
+<button class="w-full bg-primary hover:bg-secondary text-white py-2 rounded-button transition-colors whitespace-nowrap">تطبيق</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="bg-gray-900 text-white py-12">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<a href="#" class="text-3xl font-['Pacifico'] text-white mb-4 block">logo</a>
+<p class="text-gray-400 mb-4">منصة Jo Print هي منصة أردنية متخصصة في خدمات الطباعة وتوفير المعلمين الخصوصيين وملخصات الكتب.</p>
+<div class="flex space-x-4 space-x-reverse">
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors">
+<i class="ri-twitter-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors">
+<i class="ri-instagram-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors">
+<i class="ri-linkedin-fill"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">ملخصات الكتب</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">المعلمين</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">مكاتب الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">المتجر</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">الدعم والمساعدة</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">الأسئلة الشائعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الخصوصية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">شروط الاستخدام</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">سياسة الإرجاع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition-colors">اتصل بنا</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-lg font-bold mb-4">اتصل بنا</h3>
+<ul class="space-y-2">
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-map-pin-line"></i>
+</div>
+<span class="text-gray-400">عمّان، الأردن</span>
+</li>
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-phone-line"></i>
+</div>
+<span class="text-gray-400">+962 79 123 4567</span>
+</li>
+<li class="flex items-center">
+<div class="w-5 h-5 flex items-center justify-center ml-2">
+<i class="ri-mail-line"></i>
+</div>
+<span class="text-gray-400">info@joprint.com</span>
+</li>
+</ul>
+<div class="mt-4">
+<h4 class="font-medium mb-2">طرق الدفع</h4>
+<div class="flex space-x-3 space-x-reverse">
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<i class="ri-visa-fill text-blue-800"></i>
+</div>
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<i class="ri-mastercard-fill text-red-500"></i>
+</div>
+<div class="w-10 h-6 flex items-center justify-center bg-white rounded">
+<i class="ri-paypal-fill text-blue-600"></i>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-800 mt-8 pt-8 text-center">
+<p class="text-gray-500">© 2025 Jo Print. جميع الحقوق محفوظة.</p>
+</div>
+</div>
+</footer>
+<style>
+@keyframes highlightSection {
+0% { box-shadow: 0 0 0 0 rgba(0, 120, 215, 0.4); }
+70% { box-shadow: 0 0 0 10px rgba(0, 120, 215, 0); }
+100% { box-shadow: 0 0 0 0 rgba(0, 120, 215, 0); }
+}
+.highlight-section {
+animation: highlightSection 2s ease-out;
+}
+</style>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const startSearchBtn = document.getElementById('start-search-btn');
+const filterSection = document.getElementById('filter-section');
+const searchTips = document.getElementById('search-tips');
+const resetFilterBtn = filterSection.querySelector('button.text-primary');
+// Reset filter functionality
+resetFilterBtn.addEventListener('click', function() {
+// Reset checkboxes
+const checkboxes = filterSection.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+checkboxes.forEach(checkbox => {
+checkbox.checked = false;
+const icon = checkbox.nextElementSibling.querySelector('i');
+if (icon) {
+icon.style.display = 'none';
+}
+});
+// Reset price range
+const priceRange = document.getElementById('price-range');
+const minPrice = document.getElementById('min-price');
+if (priceRange && minPrice) {
+priceRange.value = 5;
+minPrice.textContent = '5';
+}
+// Reset location select
+const locationSelect = filterSection.querySelector('select');
+if (locationSelect) {
+locationSelect.value = '';
+}
+// Reset active filters
+const activeFilters = document.querySelector('.flex.flex-wrap.items-center');
+if (activeFilters) {
+activeFilters.innerHTML = '';
+}
+// Reset results count to total
+const resultsCount = document.querySelector('h2.text-xl.font-bold');
+if (resultsCount) {
+resultsCount.textContent = 'تم العثور على 245 معلم';
+}
+// Animate cards
+const tutorGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+if (tutorGrid) {
+const cards = tutorGrid.children;
+// Fade out
+Array.from(cards).forEach(card => {
+card.style.opacity = '0';
+card.style.transform = 'translateY(20px)';
+});
+// Fade in after a short delay
+setTimeout(() => {
+Array.from(cards).forEach((card, index) => {
+setTimeout(() => {
+card.style.opacity = '1';
+card.style.transform = 'translateY(0)';
+}, index * 100);
+});
+}, 300);
+}
+});
+if (startSearchBtn) {
+startSearchBtn.addEventListener('click', function() {
+// Smooth scroll to filter section
+filterSection.scrollIntoView({ behavior: 'smooth' });
+// Add highlight animation
+setTimeout(() => {
+filterSection.classList.add('highlight-section');
+// Show search tips
+searchTips.classList.remove('hidden');
+// Auto-hide search tips after 8 seconds
+setTimeout(() => {
+searchTips.classList.add('hidden');
+}, 8000);
+}, 500);
+// Remove highlight class after animation
+setTimeout(() => {
+filterSection.classList.remove('highlight-section');
+}, 2500);
+});
+}
+const applyFilterBtn = document.getElementById('apply-filter');
+const filterLoader = document.getElementById('filter-loader');
+const resultsCount = document.querySelector('h2.text-xl.font-bold');
+const tutorGrid = document.querySelector('.grid.grid-cols-1.md\\:grid-cols-2.lg\\:grid-cols-3.gap-6');
+const activeFilters = document.querySelector('.flex.flex-wrap.items-center');
+applyFilterBtn.addEventListener('click', function() {
+// Show loader
+const btnText = applyFilterBtn.querySelector('span');
+btnText.textContent = 'جاري التطبيق...';
+filterLoader.classList.remove('hidden');
+applyFilterBtn.disabled = true;
+// Get selected filters
+const selectedSubjects = Array.from(document.querySelectorAll('.custom-checkbox input[type="checkbox"]:checked'))
+.map(cb => cb.closest('.custom-checkbox').querySelector('span').textContent);
+// Simulate API call delay
+setTimeout(() => {
+// Update results count
+const newCount = Math.floor(Math.random() * 100) + 50;
+resultsCount.textContent = `تم العثور على ${newCount} معلم`;
+// Update active filters
+activeFilters.innerHTML = '';
+selectedSubjects.forEach(subject => {
+activeFilters.insertAdjacentHTML('beforeend', `
+<div class="bg-gray-100 rounded-full py-1 px-3 flex items-center ml-2 mb-2">
+<span>${subject}</span>
+<button class="w-4 h-4 flex items-center justify-center mr-1 text-gray-500">
+<i class="ri-close-line"></i>
+</button>
+</div>
+`);
+});
+// Add "Clear all" button if there are filters
+if (selectedSubjects.length > 0) {
+activeFilters.insertAdjacentHTML('beforeend', `
+<button class="text-primary hover:text-secondary transition-colors text-sm mb-2">مسح الكل</button>
+`);
+}
+// Animate cards out
+const cards = tutorGrid.children;
+Array.from(cards).forEach(card => {
+card.style.opacity = '0';
+card.style.transform = 'translateY(20px)';
+});
+// After a short delay, animate new cards in
+setTimeout(() => {
+Array.from(cards).forEach((card, index) => {
+setTimeout(() => {
+card.style.opacity = '1';
+card.style.transform = 'translateY(0)';
+}, index * 100);
+});
+}, 300);
+// Reset button state
+btnText.textContent = 'تطبيق الفلتر';
+filterLoader.classList.add('hidden');
+applyFilterBtn.disabled = false;
+}, 1000);
+});
+// Custom checkbox functionality
+const checkboxes = document.querySelectorAll('.custom-checkbox input[type="checkbox"]');
+checkboxes.forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+const icon = this.nextElementSibling.querySelector('i');
+if (this.checked) {
+icon.style.display = 'block';
+} else {
+icon.style.display = 'none';
+}
+});
+});
+// Price range slider
+const priceRange = document.getElementById('price-range');
+const minPrice = document.getElementById('min-price');
+const maxPrice = document.getElementById('max-price');
+if (priceRange && minPrice && maxPrice) {
+priceRange.addEventListener('input', function() {
+minPrice.textContent = this.value;
+});
+}
+// Modal functionality
+const tutorCards = document.querySelectorAll('.tutor-card');
+const tutorProfileModal = document.getElementById('tutor-profile-modal');
+const modalContent = tutorProfileModal.querySelector('.modal-content');
+const closeModalButton = tutorProfileModal.querySelector('button');
+tutorCards.forEach(card => {
+const viewProfileButton = card.querySelector('button:first-of-type');
+if (viewProfileButton) {
+viewProfileButton.addEventListener('click', function() {
+tutorProfileModal.classList.remove('hidden');
+setTimeout(() => {
+tutorProfileModal.classList.add('opacity-100');
+modalContent.classList.add('scale-100', 'opacity-100');
+}, 10);
+});
+}
+});
+if (closeModalButton) {
+closeModalButton.addEventListener('click', function() {
+modalContent.classList.remove('scale-100', 'opacity-100');
+modalContent.classList.add('scale-95', 'opacity-0');
+setTimeout(() => {
+tutorProfileModal.classList.add('hidden');
+}, 300);
+});
+}
+// Map view toggle
+const mapViewToggle = document.querySelector('.custom-switch input');
+const tutorListView = document.querySelector('.md\\:w-3\\/4');
+const mapView = document.getElementById('map-view');
+if (mapViewToggle && tutorListView && mapView) {
+mapViewToggle.addEventListener('change', function() {
+if (this.checked) {
+tutorListView.classList.add('hidden');
+mapView.classList.remove('hidden');
+} else {
+mapView.classList.add('hidden');
+tutorListView.classList.remove('hidden');
+}
+});
+}
+// Language switch
+const languageSwitch = document.querySelector('.language-switch');
+if (languageSwitch) {
+languageSwitch.addEventListener('click', function() {
+document.documentElement.dir = document.documentElement.dir === 'rtl' ? 'ltr' : 'rtl';
+document.documentElement.lang = document.documentElement.lang === 'ar' ? 'en' : 'ar';
+this.textContent = document.documentElement.lang === 'ar' ? 'English' : 'العربية';
+});
+}
+});
+</script>
+</body>
+</html>

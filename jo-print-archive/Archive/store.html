@@ -1,0 +1,1032 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المتجر - Jo Print</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#007FFF',secondary:'#005BB5'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+<style>
+:where([class^="ri-"])::before { content: "\f3c2"; }
+body {
+font-family: 'Tajawal', sans-serif;
+}
+.product-card:hover .quick-actions {
+opacity: 1;
+}
+.product-card:hover .product-image {
+transform: scale(1.05);
+}
+.product-image {
+transition: transform 0.3s ease;
+}
+.quick-actions {
+opacity: 0;
+transition: opacity 0.3s ease;
+}
+input[type="range"]::-webkit-slider-thumb {
+-webkit-appearance: none;
+appearance: none;
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #007FFF;
+cursor: pointer;
+}
+input[type="range"]::-moz-range-thumb {
+width: 18px;
+height: 18px;
+border-radius: 50%;
+background: #007FFF;
+cursor: pointer;
+}
+.custom-checkbox {
+position: relative;
+padding-right: 28px;
+cursor: pointer;
+user-select: none;
+}
+.custom-checkbox input {
+position: absolute;
+opacity: 0;
+cursor: pointer;
+height: 0;
+width: 0;
+}
+.checkmark {
+position: absolute;
+top: 0;
+right: 0;
+height: 20px;
+width: 20px;
+border: 2px solid #ccc;
+border-radius: 4px;
+}
+.custom-checkbox:hover input ~ .checkmark {
+border-color: #007FFF;
+}
+.custom-checkbox input:checked ~ .checkmark {
+background-color: #007FFF;
+border-color: #007FFF;
+}
+.checkmark:after {
+content: "";
+position: absolute;
+display: none;
+}
+.custom-checkbox input:checked ~ .checkmark:after {
+display: block;
+}
+.custom-checkbox .checkmark:after {
+right: 6px;
+top: 2px;
+width: 5px;
+height: 10px;
+border: solid white;
+border-width: 0 2px 2px 0;
+transform: rotate(45deg);
+}
+.switch {
+position: relative;
+display: inline-block;
+width: 50px;
+height: 24px;
+}
+.switch input {
+opacity: 0;
+width: 0;
+height: 0;
+}
+.slider {
+position: absolute;
+cursor: pointer;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background-color: #ccc;
+transition: .3s;
+border-radius: 24px;
+}
+.slider:before {
+position: absolute;
+content: "";
+height: 18px;
+width: 18px;
+right: 4px;
+bottom: 3px;
+background-color: white;
+transition: .3s;
+border-radius: 50%;
+}
+input:checked + .slider {
+background-color: #007FFF;
+}
+input:checked + .slider:before {
+transform: translateX(-26px);
+}
+[dir="ltr"] .slider:before {
+right: auto;
+left: 4px;
+}
+[dir="ltr"] input:checked + .slider:before {
+transform: translateX(26px);
+}
+.product-modal {
+opacity: 0;
+visibility: hidden;
+transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+.product-modal.active {
+opacity: 1;
+visibility: visible;
+}
+.cart-dropdown {
+opacity: 0;
+visibility: hidden;
+transform: translateY(10px);
+transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+.cart-container:hover .cart-dropdown,
+.user-container:hover .user-dropdown {
+opacity: 1;
+visibility: visible;
+transform: translateY(0);
+}
+[dir="ltr"] .custom-checkbox {
+padding-right: 0;
+padding-left: 28px;
+}
+[dir="ltr"] .checkmark {
+right: auto;
+left: 0;
+}
+[dir="ltr"] .custom-checkbox .checkmark:after {
+right: auto;
+left: 6px;
+}
+</style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+<!-- Header -->
+<header class="bg-primary text-white shadow-md">
+<div class="container mx-auto px-4 py-3 flex justify-between items-center">
+<div class="flex items-center gap-2">
+<span class="font-['Pacifico'] text-2xl">logo</span>
+<div class="language-toggle ms-4 flex items-center">
+<span class="text-sm">AR</span>
+<label class="switch mx-2">
+<input type="checkbox" id="languageToggle">
+<span class="slider"></span>
+</label>
+<span class="text-sm">EN</span>
+</div>
+</div>
+<nav class="hidden md:flex space-x-6 rtl:space-x-reverse">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">الرئيسية</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/93310aac-7a7c-4bb8-9dec-d2f2a27e5141" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">خدمات الطباعة</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/7a08f868-a153-467f-b21f-45e4de4de1d9" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">ملخصات الكتب</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/8ee6a544-f3a7-4758-b5c9-19ee9e168b49" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">المعلمين</a>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/b1f8ee00-0a0d-4a5a-8375-31a4c4b59c21" data-readdy="true" class="py-2 hover:text-blue-200 transition duration-200">مكاتب الطباعة</a>
+<a href="#" class="py-2 border-b-2 border-white font-medium">المتجر</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="cart-container relative">
+<button class="w-10 h-10 flex items-center justify-center text-white relative">
+<i class="ri-shopping-cart-2-line text-xl"></i>
+<span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">3</span>
+</button>
+<div class="cart-dropdown absolute left-0 rtl:left-0 rtl:right-auto ltr:left-auto ltr:right-0 top-full mt-2 w-80 bg-white rounded shadow-lg z-50 p-4 text-gray-800">
+<h3 class="font-bold text-lg mb-3 text-gray-800">سلة التسوق</h3>
+<div class="max-h-60 overflow-y-auto">
+<div class="flex items-center gap-3 mb-3 pb-3 border-b">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20t-shirt%20with%20blue%20design%2C%20simple%20background%2C%20product%20photography&width=80&height=80&seq=1&orientation=squarish" alt="تيشيرت مطبوع" class="w-16 h-16 object-cover rounded">
+<div class="flex-1">
+<h4 class="font-medium">تيشيرت مطبوع</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-sm text-gray-600">1 × 15.00 د.أ</span>
+<button class="text-red-500 hover:text-red-700">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-3 pb-3 border-b">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20notebook%20with%20minimalist%20design%2C%20product%20photography&width=80&height=80&seq=2&orientation=squarish" alt="دفتر ملاحظات" class="w-16 h-16 object-cover rounded">
+<div class="flex-1">
+<h4 class="font-medium">دفتر ملاحظات</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-sm text-gray-600">1 × 8.50 د.أ</span>
+<button class="text-red-500 hover:text-red-700">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3 mb-3">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20mug%20with%20elegant%20design%2C%20product%20photography&width=80&height=80&seq=3&orientation=squarish" alt="كوب مطبوع" class="w-16 h-16 object-cover rounded">
+<div class="flex-1">
+<h4 class="font-medium">كوب مطبوع</h4>
+<div class="flex justify-between items-center mt-1">
+<span class="text-sm text-gray-600">1 × 12.00 د.أ</span>
+<button class="text-red-500 hover:text-red-700">
+<i class="ri-delete-bin-line"></i>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-4 pt-3 border-t">
+<div class="flex justify-between font-bold mb-4">
+<span>المجموع:</span>
+<span>35.50 د.أ</span>
+</div>
+<div class="flex gap-2">
+<a href="#" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-button text-center hover:bg-gray-300 transition duration-200 whitespace-nowrap">عرض السلة</a>
+<a href="#" class="flex-1 bg-primary text-white py-2 px-4 rounded-button text-center hover:bg-secondary transition duration-200 whitespace-nowrap">الدفع</a>
+</div>
+</div>
+</div>
+</div>
+<div class="user-container relative">
+<button class="w-10 h-10 flex items-center justify-center text-white">
+<i class="ri-user-line text-xl"></i>
+</button>
+<div class="user-dropdown absolute left-0 rtl:left-0 rtl:right-auto ltr:left-auto ltr:right-0 top-full mt-2 w-64 bg-white rounded shadow-lg z-50 p-4 text-gray-800 opacity-0 invisible transform translate-y-2 transition-all duration-300">
+<div class="guest-options">
+<h3 class="font-bold text-lg mb-3 text-gray-800">مرحباً بك</h3>
+<div class="flex flex-col gap-2">
+<a href="#" class="bg-primary hover:bg-secondary text-white py-2 px-4 rounded-button text-center transition duration-200 whitespace-nowrap">تسجيل الدخول</a>
+<a href="#" class="bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded-button text-center transition duration-200 whitespace-nowrap">إنشاء حساب جديد</a>
+</div>
+</div>
+<div class="user-options hidden">
+<div class="flex items-center gap-3 pb-3 border-b mb-3">
+<div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+<i class="ri-user-line text-gray-600"></i>
+</div>
+<div>
+<h3 class="font-medium text-gray-800">أحمد محمد</h3>
+<p class="text-sm text-gray-500">ahmed@example.com</p>
+</div>
+</div>
+<ul class="space-y-1">
+<li>
+<a href="#" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-gray-100 text-gray-700 transition duration-200">
+<i class="ri-user-settings-line"></i>
+<span>حسابي</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-gray-100 text-gray-700 transition duration-200">
+<i class="ri-shopping-bag-line"></i>
+<span>طلباتي</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-gray-100 text-gray-700 transition duration-200">
+<i class="ri-heart-line"></i>
+<span>المفضلة</span>
+</a>
+</li>
+<li>
+<a href="#" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-gray-100 text-gray-700 transition duration-200">
+<i class="ri-settings-3-line"></i>
+<span>الإعدادات</span>
+</a>
+</li>
+<li class="pt-2 mt-2 border-t">
+<a href="#" class="flex items-center gap-2 py-2 px-3 rounded hover:bg-gray-100 text-red-600 transition duration-200">
+<i class="ri-logout-box-r-line"></i>
+<span>تسجيل الخروج</span>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<button class="w-10 h-10 md:hidden flex items-center justify-center text-white">
+<i class="ri-menu-line text-xl"></i>
+</button>
+</div>
+</div>
+</header>
+<!-- Breadcrumb -->
+<div class="bg-white py-3 shadow-sm">
+<div class="container mx-auto px-4">
+<div class="text-sm text-gray-600">
+<a href="#" class="hover:text-primary">الرئيسية</a>
+<span class="mx-2">/</span>
+<span class="text-gray-800 font-medium">المتجر</span>
+</div>
+</div>
+</div>
+<!-- Hero Section -->
+<section class="relative overflow-hidden">
+<div style="background-image: url('https://readdy.ai/api/search-image?query=modern%20print%20shop%20with%20various%20custom%20products%20like%20t-shirts%2C%20notebooks%2C%20mugs%20and%20graduation%20gifts%20displayed%20elegantly%20on%20shelves%20with%20soft%20blue%20lighting%20and%20clean%20modern%20interior%2C%20high%20quality%20product%20photography&width=1600&height=500&seq=4&orientation=landscape');" class="absolute inset-0 bg-cover bg-center opacity-90"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 to-primary/30"></div>
+<div class="container mx-auto px-4 py-16 md:py-24 relative z-10">
+<div class="max-w-2xl">
+<h1 class="text-4xl md:text-5xl font-bold text-white mb-4">المتجر</h1>
+<p class="text-lg text-white/90 mb-6">اكتشف تشكيلتنا الواسعة من المنتجات المخصصة - هدايا التخرج، التيشرتات المطبوعة، الدفاتر المخصصة، والأكواب المميزة. نحن نقدم خدمات طباعة عالية الجودة لتحويل أفكارك إلى منتجات فريدة تعبر عن شخصيتك.</p>
+<div class="bg-white/90 p-4 rounded-lg shadow-md inline-block">
+<p class="text-primary font-bold text-lg">عرض خاص: خصم 15% على جميع هدايا التخرج</p>
+<p class="text-gray-700 text-sm">استخدم الرمز: GRAD2025 | ينتهي في 30 أبريل</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Main Content -->
+<div class="container mx-auto px-4 py-8">
+<div id="toastNotification" class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 opacity-0 translate-y-2 z-50 flex items-center gap-2">
+<i class="ri-check-line text-green-400"></i>
+<span id="toastMessage"></span>
+</div>
+<div class="flex flex-col md:flex-row gap-6">
+<!-- Mobile Filter Toggle -->
+<div class="md:hidden mb-4">
+<button id="mobileFilterToggle" class="w-full bg-white py-3 px-4 rounded shadow flex justify-between items-center border">
+<span class="font-medium">تصفية المنتجات</span>
+<i class="ri-filter-3-line"></i>
+</button>
+</div>
+<!-- Sidebar Filters -->
+<aside id="filterSidebar" class="w-full md:w-64 lg:w-72 bg-white rounded-lg shadow-sm p-5 md:block hidden">
+<div class="mb-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">الفئات</h3>
+<ul class="space-y-2">
+<li>
+<label class="custom-checkbox flex items-center text-gray-700 hover:text-primary cursor-pointer">
+تيشرتات مطبوعة
+<input type="checkbox" checked>
+<span class="checkmark"></span>
+</label>
+</li>
+<li>
+<label class="custom-checkbox flex items-center text-gray-700 hover:text-primary cursor-pointer">
+هدايا التخرج
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+</li>
+<li>
+<label class="custom-checkbox flex items-center text-gray-700 hover:text-primary cursor-pointer">
+دفاتر مخصصة
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+</li>
+<li>
+<label class="custom-checkbox flex items-center text-gray-700 hover:text-primary cursor-pointer">
+أكواب وإكسسوارات مطبوعة
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+</li>
+</ul>
+</div>
+<div class="mb-6 border-t pt-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">نطاق السعر</h3>
+<div class="px-1">
+<input type="range" min="0" max="100" value="50" class="w-full h-2 bg-gray-200 rounded-full appearance-none cursor-pointer">
+<div class="flex justify-between mt-2 text-sm text-gray-600">
+<span>0 د.أ</span>
+<span>50 د.أ</span>
+<span>100 د.أ</span>
+</div>
+</div>
+</div>
+<div class="mb-6 border-t pt-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">ترتيب حسب</h3>
+<div class="space-y-2">
+<label class="custom-radio flex items-center text-gray-700 relative cursor-pointer">
+<input type="radio" name="sort" class="absolute opacity-0 h-0 w-0" checked>
+<span class="w-4 h-4 rounded-full border border-gray-300 inline-block mr-2 relative">
+<span class="absolute inset-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
+</span>
+الأحدث
+</label>
+<label class="custom-radio flex items-center text-gray-700 relative cursor-pointer">
+<input type="radio" name="sort" class="absolute opacity-0 h-0 w-0">
+<span class="w-4 h-4 rounded-full border border-gray-300 inline-block mr-2 relative">
+<span class="absolute inset-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
+</span>
+السعر: من الأقل للأعلى
+</label>
+<label class="custom-radio flex items-center text-gray-700 relative cursor-pointer">
+<input type="radio" name="sort" class="absolute opacity-0 h-0 w-0">
+<span class="w-4 h-4 rounded-full border border-gray-300 inline-block mr-2 relative">
+<span class="absolute inset-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
+</span>
+السعر: من الأعلى للأقل
+</label>
+<label class="custom-radio flex items-center text-gray-700 relative cursor-pointer">
+<input type="radio" name="sort" class="absolute opacity-0 h-0 w-0">
+<span class="w-4 h-4 rounded-full border border-gray-300 inline-block mr-2 relative">
+<span class="absolute inset-1 rounded-full bg-primary opacity-0 transition-opacity"></span>
+</span>
+الأكثر شعبية
+</label>
+</div>
+</div>
+<div class="mb-6 border-t pt-6">
+<h3 class="font-bold text-lg mb-4 text-gray-800">التوفر</h3>
+<div class="space-y-2">
+<label class="custom-checkbox flex items-center text-gray-700 hover:text-primary cursor-pointer">
+متوفر في المخزون
+<input type="checkbox" checked>
+<span class="checkmark"></span>
+</label>
+<label class="custom-checkbox flex items-center text-gray-700 hover:text-primary cursor-pointer">
+طلب مسبق
+<input type="checkbox">
+<span class="checkmark"></span>
+</label>
+</div>
+</div>
+<button id="applyFiltersBtn" class="w-full bg-primary hover:bg-secondary text-white py-2 px-4 rounded-button transition duration-200 whitespace-nowrap flex items-center justify-center gap-2">
+<span>تطبيق الفلاتر</span>
+<div id="filterSpinner" class="hidden">
+<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+</div>
+</button>
+</aside>
+<!-- Products Grid -->
+<div class="flex-1">
+<div class="flex justify-between items-center mb-6">
+<h2 class="text-2xl font-bold text-gray-800">منتجاتنا</h2>
+<div class="flex items-center gap-3">
+<span class="text-sm text-gray-600">عرض:</span>
+<div class="flex border rounded overflow-hidden">
+<button class="w-8 h-8 flex items-center justify-center bg-primary text-white">
+<i class="ri-layout-grid-line"></i>
+</button>
+<button class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100">
+<i class="ri-list-check"></i>
+</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<!-- Product 1 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20blue%20t-shirt%20with%20modern%20design%2C%20clean%20product%20photography%20with%20simple%20background&width=400&height=300&seq=5&orientation=portrait" alt="تيشيرت مطبوع أزرق" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="1">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">تيشيرت مطبوع أزرق</h3>
+<p class="text-sm text-gray-500 mb-2">Blue Printed T-shirt</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">15.00 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20graduation%20gift%20box%20with%20certificate%20holder%20and%20pen%2C%20elegant%20product%20photography%20with%20simple%20background&width=400&height=300&seq=6&orientation=portrait" alt="هدية تخرج مخصصة" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="2">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-red-500 text-white text-xs py-1 px-2 rounded">خصم 15%</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">هدية تخرج مخصصة</h3>
+<p class="text-sm text-gray-500 mb-2">Custom Graduation Gift</p>
+<div class="flex justify-between items-center">
+<div>
+<span class="font-bold text-lg text-gray-900">25.50 د.أ</span>
+<span class="text-sm text-gray-500 line-through ms-2">30.00 د.أ</span>
+</div>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 3 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20notebook%20with%20elegant%20minimalist%20design%2C%20professional%20product%20photography%20with%20simple%20background&width=400&height=300&seq=7&orientation=portrait" alt="دفتر ملاحظات مخصص" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="3">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">دفتر ملاحظات مخصص</h3>
+<p class="text-sm text-gray-500 mb-2">Custom Notebook</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">8.50 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 4 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20ceramic%20mug%20with%20elegant%20design%2C%20professional%20product%20photography%20with%20simple%20background&width=400&height=300&seq=8&orientation=portrait" alt="كوب سيراميك مطبوع" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="4">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">كوب سيراميك مطبوع</h3>
+<p class="text-sm text-gray-500 mb-2">Printed Ceramic Mug</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">12.00 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 5 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20hoodie%20with%20modern%20design%2C%20professional%20product%20photography%20with%20simple%20background&width=400&height=300&seq=9&orientation=portrait" alt="هودي مطبوع" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="5">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">هودي مطبوع</h3>
+<p class="text-sm text-gray-500 mb-2">Printed Hoodie</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">28.00 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 6 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20graduation%20plaque%20with%20elegant%20design%2C%20professional%20product%20photography%20with%20simple%20background&width=400&height=300&seq=10&orientation=portrait" alt="لوحة تخرج مخصصة" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="6">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-primary text-white text-xs py-1 px-2 rounded">جديد</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">لوحة تخرج مخصصة</h3>
+<p class="text-sm text-gray-500 mb-2">Custom Graduation Plaque</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">35.00 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 7 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20phone%20case%20with%20elegant%20design%2C%20professional%20product%20photography%20with%20simple%20background&width=400&height=300&seq=11&orientation=portrait" alt="غطاء هاتف مطبوع" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="7">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">غطاء هاتف مطبوع</h3>
+<p class="text-sm text-gray-500 mb-2">Printed Phone Case</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">10.00 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+<!-- Product 8 -->
+<div class="product-card bg-white rounded-lg shadow-sm overflow-hidden">
+<div class="relative overflow-hidden h-48">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20tote%20bag%20with%20elegant%20design%2C%20professional%20product%20photography%20with%20simple%20background&width=400&height=300&seq=12&orientation=portrait" alt="حقيبة قماشية مطبوعة" class="w-full h-full object-cover product-image">
+<div class="quick-actions absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center gap-2">
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="إضافة إلى المفضلة">
+<i class="ri-heart-line"></i>
+</button>
+<button class="w-10 h-10 rounded-full bg-white text-primary flex items-center justify-center hover:bg-primary hover:text-white transition duration-200" title="معاينة سريعة" data-product-id="8">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+<div class="absolute top-2 left-2 bg-yellow-500 text-white text-xs py-1 px-2 rounded">الأكثر مبيعاً</div>
+</div>
+<div class="p-4">
+<h3 class="font-medium text-gray-800 mb-1">حقيبة قماشية مطبوعة</h3>
+<p class="text-sm text-gray-500 mb-2">Printed Tote Bag</p>
+<div class="flex justify-between items-center">
+<span class="font-bold text-lg text-gray-900">9.50 د.أ</span>
+<button class="bg-primary hover:bg-secondary text-white py-1.5 px-3 rounded-button text-sm transition duration-200 whitespace-nowrap">إضافة للسلة</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-10 flex justify-center">
+<nav class="flex items-center gap-1">
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100">
+<i class="ri-arrow-right-s-line"></i>
+</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded border bg-primary text-white">1</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100">2</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100">3</a>
+<span class="w-10 h-10 flex items-center justify-center text-gray-600">...</span>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100">8</a>
+<a href="#" class="w-10 h-10 flex items-center justify-center rounded border text-gray-600 hover:bg-gray-100">
+<i class="ri-arrow-left-s-line"></i>
+</a>
+</nav>
+</div>
+</div>
+</div>
+</div>
+<!-- Product Modal -->
+<div id="productModal" class="product-modal fixed inset-0 z-50 flex items-center justify-center p-4">
+<div class="absolute inset-0 bg-black bg-opacity-50" id="modalOverlay"></div>
+<div class="relative bg-white rounded-lg shadow-xl w-full max-w-4xl max-h-90vh overflow-auto">
+<button id="closeModal" class="absolute top-4 right-4 w-8 h-8 flex items-center justify-center text-gray-500 hover:text-gray-700 z-10">
+<i class="ri-close-line text-xl"></i>
+</button>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6">
+<div class="product-gallery">
+<div class="main-image mb-3 rounded-lg overflow-hidden">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20blue%20t-shirt%20with%20modern%20design%2C%20clean%20product%20photography%20with%20simple%20background&width=600&height=600&seq=13&orientation=squarish" alt="تيشيرت مطبوع أزرق" class="w-full h-auto object-cover">
+</div>
+<div class="thumbnails grid grid-cols-4 gap-2">
+<div class="thumbnail rounded overflow-hidden border-2 border-primary">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20blue%20t-shirt%20with%20modern%20design%2C%20clean%20product%20photography%20with%20simple%20background&width=150&height=150&seq=14&orientation=squarish" alt="تيشيرت مطبوع أزرق" class="w-full h-auto object-cover">
+</div>
+<div class="thumbnail rounded overflow-hidden border border-gray-200">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20blue%20t-shirt%20with%20modern%20design%2C%20back%20view%2C%20clean%20product%20photography%20with%20simple%20background&width=150&height=150&seq=15&orientation=squarish" alt="تيشيرت مطبوع أزرق - الخلف" class="w-full h-auto object-cover">
+</div>
+<div class="thumbnail rounded overflow-hidden border border-gray-200">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20blue%20t-shirt%20with%20modern%20design%2C%20close-up%20of%20print%20detail%2C%20clean%20product%20photography%20with%20simple%20background&width=150&height=150&seq=16&orientation=squarish" alt="تيشيرت مطبوع أزرق - تفاصيل" class="w-full h-auto object-cover">
+</div>
+<div class="thumbnail rounded overflow-hidden border border-gray-200">
+<img src="https://readdy.ai/api/search-image?query=custom%20printed%20blue%20t-shirt%20with%20modern%20design%2C%20folded%20view%2C%20clean%20product%20photography%20with%20simple%20background&width=150&height=150&seq=17&orientation=squarish" alt="تيشيرت مطبوع أزرق - مطوي" class="w-full h-auto object-cover">
+</div>
+</div>
+</div>
+<div class="product-info">
+<h2 class="text-2xl font-bold text-gray-800 mb-2">تيشيرت مطبوع أزرق</h2>
+<p class="text-gray-500 mb-4">Blue Printed T-shirt</p>
+<div class="price-info mb-4">
+<span class="text-2xl font-bold text-gray-900">15.00 د.أ</span>
+<span class="text-sm text-green-600 ms-2">متوفر في المخزون</span>
+</div>
+<div class="description mb-6">
+<p class="text-gray-700">تيشيرت قطني عالي الجودة بتصميم عصري وطباعة مخصصة. مناسب للاستخدام اليومي والمناسبات المختلفة. يمكنك تخصيص التصميم حسب رغبتك.</p>
+</div>
+<div class="options mb-6">
+<div class="mb-4">
+<label class="block text-gray-700 font-medium mb-2">المقاس</label>
+<div class="flex flex-wrap gap-2">
+<button class="size-option px-4 py-2 border border-gray-300 rounded-button hover:border-primary text-gray-700 whitespace-nowrap">S</button>
+<button class="size-option px-4 py-2 border border-primary bg-primary/10 rounded-button text-primary font-medium whitespace-nowrap">M</button>
+<button class="size-option px-4 py-2 border border-gray-300 rounded-button hover:border-primary text-gray-700 whitespace-nowrap">L</button>
+<button class="size-option px-4 py-2 border border-gray-300 rounded-button hover:border-primary text-gray-700 whitespace-nowrap">XL</button>
+<button class="size-option px-4 py-2 border border-gray-300 rounded-button hover:border-primary text-gray-700 whitespace-nowrap">XXL</button>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-gray-700 font-medium mb-2">اللون</label>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full border-2 border-primary bg-blue-500"></button>
+<button class="w-8 h-8 rounded-full border border-gray-300 bg-black"></button>
+<button class="w-8 h-8 rounded-full border border-gray-300 bg-gray-700"></button>
+<button class="w-8 h-8 rounded-full border border-gray-300 bg-red-600"></button>
+</div>
+</div>
+<div class="mb-4">
+<label class="block text-gray-700 font-medium mb-2">التخصيص</label>
+<input type="text" placeholder="أدخل النص المطلوب طباعته" class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:border-primary">
+<p class="text-sm text-gray-500 mt-1">الحد الأقصى: 20 حرف</p>
+</div>
+</div>
+<div class="quantity-selector mb-6">
+<label class="block text-gray-700 font-medium mb-2">الكمية</label>
+<div class="flex">
+<button class="w-10 h-10 border border-gray-300 flex items-center justify-center text-gray-600 rounded-r-button">-</button>
+<input type="text" value="1" class="w-16 h-10 border-t border-b border-gray-300 text-center focus:outline-none">
+<button class="w-10 h-10 border border-gray-300 flex items-center justify-center text-gray-600 rounded-l-button">+</button>
+</div>
+</div>
+<div class="actions flex gap-3">
+<button id="addToCartBtn" class="flex-1 bg-primary hover:bg-secondary text-white py-3 px-6 rounded-button font-medium transition duration-200 whitespace-nowrap">إضافة إلى السلة</button>
+<div class="flex gap-3 mt-3 hidden" id="postAddButtons">
+<button id="continueShopping" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-2 px-4 rounded-button font-medium transition duration-200 whitespace-nowrap">مواصلة التسوق</button>
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/e01d0422-3d93-4055-8353-0b759795f12f" data-readdy="true" id="goToCart" class="flex-1 bg-primary hover:bg-secondary text-white py-2 px-4 rounded-button font-medium transition duration-200 whitespace-nowrap text-center">الذهاب إلى السلة</a>
+</div>
+<button class="w-12 h-12 border border-gray-300 rounded-button flex items-center justify-center text-gray-600 hover:text-primary hover:border-primary transition duration-200">
+<i class="ri-heart-line text-xl"></i>
+</button>
+</div>
+<div class="mt-6 pt-6 border-t">
+<div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+<i class="ri-truck-line"></i>
+<span>الشحن خلال 2-4 أيام عمل</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-gray-600 mb-2">
+<i class="ri-refresh-line"></i>
+<span>إرجاع مجاني خلال 30 يوم</span>
+</div>
+<div class="flex items-center gap-2 text-sm text-gray-600">
+<i class="ri-secure-payment-line"></i>
+<span>دفع آمن</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="bg-gray-800 text-white pt-12 pb-6 mt-16">
+<div class="container mx-auto px-4">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+<div>
+<h3 class="text-xl font-bold mb-4">Jo Print</h3>
+<p class="text-gray-400 mb-4">نقدم خدمات طباعة عالية الجودة ومنتجات مخصصة لتلبية احتياجاتك الشخصية والتجارية.</p>
+<div class="flex space-x-4 rtl:space-x-reverse">
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-facebook-fill"></i>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-instagram-line"></i>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-twitter-x-line"></i>
+</a>
+<a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-primary transition duration-200">
+<i class="ri-whatsapp-line"></i>
+</a>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold mb-4">روابط سريعة</h3>
+<ul class="space-y-2">
+<li><a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="text-gray-400 hover:text-white transition duration-200">الرئيسية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">المتجر</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">خدمات الطباعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">من نحن</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">اتصل بنا</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-xl font-bold mb-4">خدمة العملاء</h3>
+<ul class="space-y-2">
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">الأسئلة الشائعة</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">سياسة الشحن</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">سياسة الإرجاع</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">الخصوصية</a></li>
+<li><a href="#" class="text-gray-400 hover:text-white transition duration-200">الشروط والأحكام</a></li>
+</ul>
+</div>
+<div>
+<h3 class="text-xl font-bold mb-4">اتصل بنا</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<i class="ri-map-pin-line mt-1"></i>
+<span class="text-gray-400">عمان، الأردن<br>شارع المدينة المنورة، مجمع الحسيني</span>
+</li>
+<li class="flex items-center gap-3">
+<i class="ri-phone-line"></i>
+<span class="text-gray-400">+962 6 123 4567</span>
+</li>
+<li class="flex items-center gap-3">
+<i class="ri-mail-line"></i>
+<span class="text-gray-400">info@joprint.com</span>
+</li>
+</ul>
+</div>
+</div>
+<div class="pt-8 mt-8 border-t border-gray-700 flex flex-col md:flex-row justify-between items-center">
+<p class="text-gray-400 text-sm mb-4 md:mb-0">© 2025 Jo Print. جميع الحقوق محفوظة.</p>
+<div class="flex items-center gap-3">
+<span class="text-gray-400 text-sm">وسائل الدفع:</span>
+<div class="flex gap-2">
+<i class="ri-visa-fill text-2xl text-gray-300"></i>
+<i class="ri-mastercard-fill text-2xl text-gray-300"></i>
+<i class="ri-paypal-fill text-2xl text-gray-300"></i>
+<i class="ri-bank-card-fill text-2xl text-gray-300"></i>
+</div>
+</div>
+</div>
+</div>
+</footer>
+<!-- Mobile Bottom Navigation -->
+<div class="md:hidden fixed bottom-0 left-0 right-0 bg-white shadow-lg border-t z-30">
+<div class="flex justify-around">
+<a href="https://readdy.ai/home/e329d16e-45ea-4263-bf56-9d34253e0d04/21b9027a-19a2-4214-aa65-5550cf80ea82" data-readdy="true" class="flex flex-col items-center py-2 px-3">
+<i class="ri-home-4-line text-xl text-gray-600"></i>
+<span class="text-xs mt-1 text-gray-600">الرئيسية</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3 text-primary">
+<i class="ri-store-2-line text-xl"></i>
+<span class="text-xs mt-1">المتجر</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3">
+<i class="ri-printer-line text-xl text-gray-600"></i>
+<span class="text-xs mt-1 text-gray-600">الطباعة</span>
+</a>
+<a href="#" class="flex flex-col items-center py-2 px-3">
+<i class="ri-user-line text-xl text-gray-600"></i>
+<span class="text-xs mt-1 text-gray-600">حسابي</span>
+</a>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+const addToCartBtn = document.getElementById('addToCartBtn');
+const postAddButtons = document.getElementById('postAddButtons');
+const cartCountBadge = document.querySelector('.ri-shopping-cart-2-line').nextElementSibling;
+const continueShopping = document.getElementById('continueShopping');
+const goToCart = document.getElementById('goToCart');
+let cartCount = 3; // Initial cart count
+function updateCartCount(count) {
+cartCountBadge.textContent = count;
+}
+function showPostAddButtons() {
+addToCartBtn.classList.add('hidden');
+postAddButtons.classList.remove('hidden');
+}
+function hidePostAddButtons() {
+addToCartBtn.classList.remove('hidden');
+postAddButtons.classList.add('hidden');
+}
+addToCartBtn.addEventListener('click', function() {
+const productName = document.querySelector('.product-info h2').textContent;
+const quantity = parseInt(document.querySelector('.quantity-selector input').value);
+const price = parseFloat(document.querySelector('.price-info .text-2xl').textContent);
+cartCount += quantity;
+updateCartCount(cartCount);
+showToast(`تمت إضافة ${quantity} ${productName} (${price} د.أ) إلى السلة`);
+showPostAddButtons();
+});
+continueShopping.addEventListener('click', function() {
+productModal.classList.remove('active');
+document.body.style.overflow = '';
+hidePostAddButtons();
+});
+goToCart.addEventListener('click', function() {
+// Event listener kept for any additional functionality if needed
+});
+const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+const filterSpinner = document.getElementById('filterSpinner');
+const toastNotification = document.getElementById('toastNotification');
+const toastMessage = document.getElementById('toastMessage');
+function showToast(message) {
+toastMessage.textContent = message;
+toastNotification.classList.remove('opacity-0', 'translate-y-2');
+setTimeout(() => {
+toastNotification.classList.add('opacity-0', 'translate-y-2');
+}, 3000);
+}
+applyFiltersBtn.addEventListener('click', async function() {
+// Show spinner
+filterSpinner.classList.remove('hidden');
+applyFiltersBtn.disabled = true;
+try {
+// Simulate API call delay
+await new Promise(resolve => setTimeout(resolve, 800));
+// Get selected filters
+const selectedCategories = Array.from(document.querySelectorAll('.custom-checkbox input[type="checkbox"]:checked')).length;
+const priceRange = document.querySelector('input[type="range"]').value;
+const sortOption = document.querySelector('input[name="sort"]:checked').closest('label').textContent.trim();
+const inStock = document.querySelector('.custom-checkbox input[type="checkbox"]:checked[value="inStock"]') ? true : false;
+// Update products count (for demo purposes)
+const filteredCount = Math.floor(Math.random() * 5) + 4;
+// Show success message
+showToast(`تم تطبيق الفلاتر بنجاح - ${filteredCount} منتجات مطابقة`);
+} catch (error) {
+showToast('حدث خطأ أثناء تطبيق الفلاتر');
+} finally {
+// Hide spinner
+filterSpinner.classList.add('hidden');
+applyFiltersBtn.disabled = false;
+}
+});
+// Toggle user options based on login status
+const isLoggedIn = false; // This should be determined by your authentication logic
+const guestOptions = document.querySelector('.guest-options');
+const userOptions = document.querySelector('.user-options');
+if (guestOptions && userOptions) {
+if (isLoggedIn) {
+guestOptions.classList.add('hidden');
+userOptions.classList.remove('hidden');
+} else {
+guestOptions.classList.remove('hidden');
+userOptions.classList.add('hidden');
+}
+}
+// Language toggle
+const languageToggle = document.getElementById('languageToggle');
+const htmlElement = document.documentElement;
+languageToggle.addEventListener('change', function() {
+if (this.checked) {
+htmlElement.setAttribute('dir', 'ltr');
+htmlElement.setAttribute('lang', 'en');
+} else {
+htmlElement.setAttribute('dir', 'rtl');
+htmlElement.setAttribute('lang', 'ar');
+}
+});
+// Mobile filter toggle
+const mobileFilterToggle = document.getElementById('mobileFilterToggle');
+const filterSidebar = document.getElementById('filterSidebar');
+if (mobileFilterToggle && filterSidebar) {
+mobileFilterToggle.addEventListener('click', function() {
+filterSidebar.classList.toggle('hidden');
+});
+}
+// Custom radio buttons
+const radioButtons = document.querySelectorAll('.custom-radio input[type="radio"]');
+radioButtons.forEach(radio => {
+radio.addEventListener('change', function() {
+// Reset all
+document.querySelectorAll('.custom-radio span span').forEach(span => {
+span.style.opacity = '0';
+});
+// Set selected
+if (this.checked) {
+this.nextElementSibling.querySelector('span').style.opacity = '1';
+}
+});
+// Initialize
+if (radio.checked) {
+radio.nextElementSibling.querySelector('span').style.opacity = '1';
+}
+});
+// Product modal
+const previewButtons = document.querySelectorAll('[data-product-id]');
+const productModal = document.getElementById('productModal');
+const closeModal = document.getElementById('closeModal');
+const modalOverlay = document.getElementById('modalOverlay');
+previewButtons.forEach(button => {
+button.addEventListener('click', function() {
+productModal.classList.add('active');
+document.body.style.overflow = 'hidden';
+});
+});
+if (closeModal) {
+closeModal.addEventListener('click', function() {
+productModal.classList.remove('active');
+document.body.style.overflow = '';
+});
+}
+if (modalOverlay) {
+modalOverlay.addEventListener('click', function() {
+productModal.classList.remove('active');
+document.body.style.overflow = '';
+});
+}
+// Size options
+const sizeOptions = document.querySelectorAll('.size-option');
+sizeOptions.forEach(option => {
+option.addEventListener('click', function() {
+sizeOptions.forEach(opt => {
+opt.classList.remove('bg-primary/10', 'border-primary', 'text-primary', 'font-medium');
+opt.classList.add('border-gray-300', 'text-gray-700');
+});
+this.classList.remove('border-gray-300', 'text-gray-700');
+this.classList.add('bg-primary/10', 'border-primary', 'text-primary', 'font-medium');
+});
+});
+});
+</script>
+</body>
+</html>
