@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronRight, Upload, X, FileImage, ShoppingCart, Check, AlertCircle } from 'lucide-react'
 import { addToCart } from '@/lib/cart'
 import { formatPrice } from '@/lib/pricing'
@@ -230,9 +231,9 @@ export default function CustomProductPage() {
 
             {/* Left: product preview */}
             <div className="space-y-4">
-              <div className="bg-white rounded-2xl border border-border aspect-square flex flex-col items-center justify-center gap-3 overflow-hidden">
+              <div className="relative bg-white rounded-2xl border border-border aspect-square flex flex-col items-center justify-center gap-3 overflow-hidden">
                 {customMode === 'photo' && photoPreview ? (
-                  <img src={photoPreview} alt="preview" className="w-full h-full object-contain p-6" />
+                  <Image src={photoPreview} alt="preview" fill unoptimized className="object-contain p-6" />
                 ) : (
                   <>
                     <div className="text-8xl">{product.icon}</div>

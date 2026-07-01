@@ -73,8 +73,10 @@ export default function StudyFlashcardsPage() {
 }
 
 function StudyMode({ set, onExit }: { set: FlashcardSetRow; onExit: () => void }) {
-  const parsed = flashcardSetSchema.safeParse({ title: set.title, cards: set.cards })
-  const allCards: Flashcard[] = parsed.success ? parsed.data.cards : []
+  const allCards: Flashcard[] = useMemo(() => {
+    const parsed = flashcardSetSchema.safeParse({ title: set.title, cards: set.cards })
+    return parsed.success ? parsed.data.cards : []
+  }, [set.title, set.cards])
 
   const topics = useMemo(
     () => Array.from(new Set(allCards.map((c) => c.category).filter((c): c is string => !!c))),

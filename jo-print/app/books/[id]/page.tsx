@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { addToCart } from '@/lib/cart'
 
 interface Book {
@@ -74,7 +75,11 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
 function BookCoverLarge({ book }: { book: Book }) {
   const gradient = SUBJECT_COLORS[book.subject] ?? SUBJECT_COLORS.default
   if (book.cover_url) {
-    return <img src={book.cover_url} alt={book.title} className="w-full h-full object-cover rounded-2xl shadow-xl" />
+    return (
+      <div className="relative w-full h-full rounded-2xl shadow-xl overflow-hidden">
+        <Image src={book.cover_url} alt={book.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover" />
+      </div>
+    )
   }
   return (
     <div className={`w-full h-full bg-gradient-to-br ${gradient} rounded-2xl shadow-xl flex flex-col items-center justify-center text-white p-6`}>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Search, Star, BookOpen, Download, ShoppingCart, Heart, Filter, X, ChevronDown, Tag } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
 import { addToCart } from '@/lib/cart'
@@ -79,7 +80,7 @@ function BookCover({ book }: { book: Book }) {
   return (
     <div className={`w-full aspect-[3/4] rounded-lg flex flex-col items-center justify-center ${color} relative overflow-hidden`}>
       {book.cover_url
-        ? <img src={book.cover_url} alt={book.title} className="w-full h-full object-cover" />
+        ? <Image src={book.cover_url} alt={book.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover" />
         : <>
             <BookOpen size={32} className="text-gray-300 mb-2" />
             <span className="text-xs text-gray-400 px-2 text-center font-medium leading-tight">{book.subject}</span>
