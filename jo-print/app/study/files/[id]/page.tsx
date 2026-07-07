@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import {
@@ -43,16 +43,16 @@ export default function StudyFileDetailPage() {
   const [actionBusy, setActionBusy] = useState<string | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
 
-  function loadFile() {
+  const loadFile = useCallback(() => {
     setLoading(true)
     setError(null)
     studyGet<StudyFileRow>(`/api/study/files/${fileId}`)
       .then(setFile)
       .catch((err) => setError(errorMessage(err)))
       .finally(() => setLoading(false))
-  }
+  }, [fileId])
 
-  useEffect(() => { loadFile() /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [fileId])
+  useEffect(() => { loadFile() }, [loadFile])
 
   const ready = file?.processing_status === 'ready'
 

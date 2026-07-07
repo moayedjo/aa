@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation'
 import { Star, MapPin, GraduationCap, CheckCircle, Wifi, Users, ArrowRight, MessageCircle, Calendar, BookOpen, Clock, ChevronRight } from 'lucide-react'
 import { formatPrice } from '@/lib/pricing'
@@ -139,9 +140,9 @@ export default function TeacherProfilePage() {
             <div className="bg-white rounded-2xl border border-border p-6">
               <div className="flex items-start gap-5">
                 {/* Avatar */}
-                <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary shrink-0 overflow-hidden">
+                <div className="relative w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-2xl font-bold text-primary shrink-0 overflow-hidden">
                   {teacher.photo
-                    ? <img src={teacher.photo} alt={teacher.name} className="w-full h-full object-cover" />
+                    ? <Image src={teacher.photo} alt={teacher.name} fill sizes="80px" className="object-cover" />
                     : <span>{getInitials(teacher.name)}</span>
                   }
                 </div>
