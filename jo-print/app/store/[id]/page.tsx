@@ -5,6 +5,11 @@ import { useParams, notFound } from 'next/navigation'
 import type { Product } from '@/lib/types'
 import { formatPrice } from '@/lib/pricing'
 import AddToCartButton from '@/components/store/AddToCartButton'
+import ProductRequirementsForm from '@/components/store/ProductRequirementsForm'
+import {
+  getProductRequirements, validateRequirements, requirementsToOptions,
+  EMPTY_REQUIREMENT_VALUES, type RequirementValues,
+} from '@/lib/productRequirements'
 import Link from 'next/link'
 import { ChevronRight } from 'lucide-react'
 
@@ -14,6 +19,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true)
   const [missing, setMissing] = useState(false)
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
+  const [reqValues, setReqValues] = useState<RequirementValues>(EMPTY_REQUIREMENT_VALUES)
 
   useEffect(() => {
     fetch('/api/products')
@@ -51,6 +57,8 @@ export default function ProductPage() {
 
   if (missing) notFound()
   if (!product) return null
+
+  const requirements = getProductRequirements(product.name, product.nameEn)
 
   return (
     <div className="py-10 px-4">
@@ -105,7 +113,18 @@ export default function ProductPage() {
               </div>
             ))}
 
-            <AddToCartButton product={product} selectedOptions={selectedOptions} />
+            <ProductRequirementsForm
+              requirements={requirements}
+              values={reqValues}
+              onChange={setReqValues}
+            />
+
+            <AddToCartButton
+              product={product}
+              selectedOptions={selectedOptions}
+              extraOptions={requirementsToOptions(requirements, reqValues)}
+              validate={() => validateRequirements(requirements, reqValues)}
+            />
           </div>
         </div>
       </div>

@@ -125,6 +125,10 @@ export default function CheckoutPage() {
           couponCode:      appliedCoupon?.code ?? null,
           notes:           form.notes || null,
           idempotencyKey,
+          // ملفات التصميم المرفوعة مع منتجات المتجر — تُربط بالطلب على الخادم
+          fileIds: cart
+            .map(item => item.options?._fileId)
+            .filter((v): v is string => Boolean(v)),
           // Send items so server can look up prices — client prices are IGNORED by the API
           items: cart.map(item => ({
             productId: item.productId,

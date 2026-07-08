@@ -60,9 +60,21 @@ export default function CartPage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-gray-900 truncate">{item.name}</h3>
                   {item.options && (
-                    <p className="text-xs text-gray-400 mt-0.5">
-                      {Object.values(item.options).join(' · ')}
-                    </p>
+                    <div className="text-xs text-gray-500 mt-0.5 space-y-0.5">
+                      {Object.entries(item.options)
+                        .filter(([k]) => !k.startsWith('_') && k !== 'ملف التصميم')
+                        .map(([k, v]) => (
+                          <p key={k} className="truncate">
+                            <span className="text-gray-400">{k}:</span> {v}
+                          </p>
+                        ))}
+                      {item.options['ملف التصميم'] && (
+                        <p className="flex items-center gap-1 text-green-700">
+                          <span aria-hidden>📎</span>
+                          <span className="truncate">{item.options['ملف التصميم']}</span>
+                        </p>
+                      )}
+                    </div>
                   )}
                   <p className="text-primary font-bold mt-1">{formatPrice(item.price)}</p>
                 </div>
