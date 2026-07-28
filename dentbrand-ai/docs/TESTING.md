@@ -180,7 +180,50 @@ with brand colors, fonts and a logo.
     user gets 404 on the design; the design list on the workspace page
     shows the new designs.
 
+## RLS tests (Phase 05)
+
+`supabase/tests/phase05_rls_tests.sql` — version immutability (owners
+cannot update or delete history), export record inserts, soft delete via
+update, and isolation for outsiders and viewers.
+
+## Manual testing steps — Phase 05
+
+Prereq: migrations 0001–0005 + seed.sql applied; a design created in
+Phase 04 testing.
+
+1. **Autosave**: edit text → "Unsaved changes" → after ~2s "Saving…" then
+   "All changes saved" with no clicks; reload → the edit persisted.
+2. **Failed save is visible**: go offline (devtools) → edit → status shows
+   "Save failed … — retrying" in red; go online → autosave recovers to
+   "All changes saved".
+3. **Local recovery**: edit, then close the tab within 2s (accept the
+   browser warning before autosave fires) → reopen the design → the
+   recovery banner appears → "Restore them" brings the edit back and
+   autosave persists it. "Discard" leaves the server state.
+4. **Undo/redo**: make several edits → Ctrl+Z steps back, Ctrl+Shift+Z /
+   Ctrl+Y forward; header buttons match; undone state autosaves.
+5. **Versions**: press "Save version" → v1 appears; keep editing (10
+   autosaves) → a checkpoint version appears; press Restore on an older
+   version → canvas returns to that state AND a "Before restore" version
+   of the newer state exists — nothing is lost.
+6. **Duplicate**: My designs → Duplicate → "Copy of …" appears with the
+   same content.
+7. **Trash**: Trash a design → it leaves the list and `/editor/{id}`
+   redirects to Trash; Restore brings it back; as owner/admin,
+   "Delete forever" (confirmation required) removes it permanently — as
+   editor the button is absent.
+8. **Export PNG**: on a design with all slots filled → Export PNG
+   downloads a file; verify it is exactly 1080×1350 and matches the
+   canvas (colors, layout, fonts).
+9. **Arabic export**: export an Arabic design → text is RTL with the
+   Arabic brand font, matching the editor.
+10. **Missing assets block export**: on a design with an empty image slot
+    (or no logo uploaded) → Export shows "Export blocked: …" naming the
+    slot, no file downloads, and a failed row appears in design_exports.
+11. **Dimensions guard**: exported PNGs record completed rows with
+    1080×1350 in design_exports.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 05: export/recovery tests;
+Each phase adds its own section here (Phase 06: AI copy tests;
 Phase 12: E2E suite).

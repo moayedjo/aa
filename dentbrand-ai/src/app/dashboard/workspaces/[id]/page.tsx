@@ -217,6 +217,12 @@ export default async function WorkspacePage({
               </Link>
             )}
             <Link
+              href={`/dashboard/workspaces/${id}/designs`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              My designs
+            </Link>
+            <Link
               href={`/dashboard/workspaces/${id}/templates`}
               className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
             >

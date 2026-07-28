@@ -309,3 +309,80 @@ APPROVE PHASE 03 AND CONTINUE TO PHASE 04
 ```
 APPROVE PHASE 04 AND CONTINUE TO PHASE 05
 ```
+
+---
+
+## 2026-07-28 — PHASE 05
+
+**Phase**: 05 (Autosave, Recovery and Export)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Autosave: 2s-debounced saves on every change; a design is only marked
+  saved after server confirmation; failed saves show a persistent red
+  status and auto-retry every 5s.
+- Local recovery: throttled draft in localStorage per design, cleared on
+  every confirmed save, offered via banner on reopen only when newer than
+  the server state (schema-validated before applying).
+- Version history: immutable design_versions (checkpoint every 10
+  autosaves, manual "Save version", automatic pre-restore snapshot);
+  restore never destroys work; history panel in the editor.
+- Undo/redo with coalescing (800ms window per layer), 50-step cap,
+  Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y shortcuts + header buttons.
+- Duplicate design; soft delete (Trash) with restore; permanent delete
+  for owner/admin only (with confirmation, requires prior trash).
+- My Designs page (`…/designs`) with trash view; editor redirects away
+  from trashed designs; workspace page links.
+- PNG export from the Konva stage at real canvas dimensions
+  (pixelRatio compensates the visual scale), with pre-export validation:
+  fonts loaded (document.fonts.check per text layer), image/logo assets
+  present AND loaded — problems block export with a clear message; output
+  dimensions verified against the canvas; every attempt (success or
+  failure + reason) recorded in design_exports.
+
+**Changed files**
+
+- New: migration 0005, `supabase/tests/phase05_rls_tests.sql`,
+  `src/lib/designs/export.ts`, `src/components/editor/stage-ref.ts`,
+  `src/components/editor/history-panel.tsx`,
+  `src/components/designs/design-actions.tsx`, My Designs page.
+- Modified: designs queries (+versions/trash), designs actions
+  (+7 actions), editor store (history/assets/recovery support), editor
+  canvas (stage ref, asset load reporting), editor shell (autosave,
+  recovery banner, undo/redo, export), editor page, workspace page, docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000005_phase05_versions_exports.sql`
+(design_versions, design_exports, deleted_at + RLS; versions immutable).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success; designs route compiled ✅
+- Phase 05 RLS SQL tests written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 05 (11 steps).
+
+**Known issues**
+
+- Undo history is client-session only (clears on reload) — persisted
+  history lives in design_versions.
+- Font validation depends on document.fonts.check; system-fallback
+  rendering differences are covered by the quality checklist during QA.
+- Arabic filename slugs in export keep Arabic characters; some OSes may
+  transliterate on save.
+
+**Deferred items**
+
+- AI copy (Phase 06); AI images + crop/position UI (Phase 07);
+  usage counters for exports (Phase 08 reads design_exports).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 05 AND CONTINUE TO PHASE 06
+```

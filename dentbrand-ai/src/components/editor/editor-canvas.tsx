@@ -13,6 +13,7 @@ import {
 import type Konva from "konva";
 
 import { useEditorStore } from "@/stores/editor-store";
+import { stageRef } from "@/components/editor/stage-ref";
 import type { DesignLayer } from "@/lib/designs/schema";
 
 /**
@@ -68,6 +69,9 @@ export function EditorCanvas() {
     >
       {scale > 0 && (
         <Stage
+          ref={(node) => {
+            stageRef.current = node;
+          }}
           width={canvas.width * scale}
           height={canvas.height * scale}
           scaleX={scale}
@@ -218,8 +222,17 @@ function AssetImage({
   common: CommonProps;
 }) {
   const assetUrls = useEditorStore((s) => s.assetUrls);
+  const setAssetLoaded = useEditorStore((s) => s.setAssetLoaded);
   const url = layer.src ? assetUrls[layer.src] : undefined;
-  const image = useHtmlImage(url);
+  const { image, failed } = useHtmlImage(url);
+
+  // Export validation needs to know whether each referenced asset loaded.
+  const src = layer.src;
+  useEffect(() => {
+    if (!src) return;
+    if (image) setAssetLoaded(src, true);
+    else if (failed || !url) setAssetLoaded(src, false);
+  }, [src, url, image, failed, setAssetLoaded]);
 
   if (!image) {
     // Placeholder box for empty or still-loading image slots.
@@ -293,24 +306,33 @@ function AssetImage({
   );
 }
 
-function useHtmlImage(url: string | undefined): HTMLImageElement | null {
+function useHtmlImage(url: string | undefined): {
+  image: HTMLImageElement | null;
+  failed: boolean;
+} {
   const [loaded, setLoaded] = useState<{
     url: string;
-    image: HTMLImageElement;
+    image: HTMLImageElement | null;
+    failed: boolean;
   } | null>(null);
 
   useEffect(() => {
     if (!url) return;
     const element = new window.Image();
     element.crossOrigin = "anonymous";
-    element.onload = () => setLoaded({ url, image: element });
+    element.onload = () => setLoaded({ url, image: element, failed: false });
+    element.onerror = () => setLoaded({ url, image: null, failed: true });
     element.src = url;
     return () => {
       element.onload = null;
+      element.onerror = null;
     };
   }, [url]);
 
   // Deriving from the current url avoids showing a stale image after the
   // source changes or clears.
-  return url && loaded?.url === url ? loaded.image : null;
+  if (url && loaded?.url === url) {
+    return { image: loaded.image, failed: loaded.failed };
+  }
+  return { image: null, failed: false };
 }

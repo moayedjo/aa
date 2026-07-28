@@ -169,3 +169,43 @@ option · Reason · Consequences · Date.
 - **Consequences**: Phase 05 replaces the manual flow with autosave built
   on the same `saveDesign` action.
 - **Date**: 2026-07-28
+
+## D-011 — Server-side version snapshots; client-side PNG export
+
+- **Decision**: Version snapshots (`createDesignVersion`, and the
+  pre-restore snapshot inside `restoreDesignVersion`) read the design's
+  stored JSON server-side rather than trusting client payloads. PNG export
+  renders client-side from the Konva stage with validation (fonts, assets,
+  output dimensions) and is logged to `design_exports`.
+- **Context**: Phase 05 requires versions/restore and validated export;
+  the editor's canvas already exists in the browser, while history must be
+  tamper-proof.
+- **Options considered**: (1) client-sent version snapshots, (2) server-side
+  headless rendering for export, (3) server-side snapshots + client-side
+  validated export.
+- **Selected option**: (3).
+- **Reason**: History integrity needs the server; a headless render farm
+  is heavy for MVP while the browser canvas is exactly what the user sees
+  ("export matches editor" by construction), with dimension verification
+  guarding the scale math.
+- **Consequences**: Export requires the design open in the editor; server-
+  side rendering can be revisited if bulk/off-screen export is ever needed.
+- **Date**: 2026-07-28
+
+## D-012 — Recovery drafts in localStorage keyed per design
+
+- **Decision**: While editing, a throttled recovery draft is written to
+  localStorage (`dentbrand-recovery-{designId}`); it is cleared on every
+  confirmed save and offered on load only when newer than the server's
+  `updated_at`.
+- **Context**: Phase 05 requires a local recovery copy so a crash between
+  edits and autosave loses nothing.
+- **Options considered**: (1) IndexedDB, (2) localStorage, (3) none
+  (rely on 2s autosave window).
+- **Selected option**: (2).
+- **Reason**: Design JSON is small (KBs); localStorage is synchronous,
+  simple and sufficient. The draft is validated with the design schema
+  before being applied.
+- **Consequences**: Recovery is per-browser/per-device by nature; storage
+  quota errors are swallowed (autosave remains the primary safety net).
+- **Date**: 2026-07-28

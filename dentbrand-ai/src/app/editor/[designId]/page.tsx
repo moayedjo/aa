@@ -1,7 +1,12 @@
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
-import { getDesign, getAssetUrlMap, parseDesign } from "@/lib/designs/queries";
+import {
+  getDesign,
+  getDesignVersions,
+  getAssetUrlMap,
+  parseDesign,
+} from "@/lib/designs/queries";
 import { getMyWorkspaceRole } from "@/lib/workspaces/queries";
 import { getBrandKit } from "@/lib/brand-kit/queries";
 import { EditorShell } from "@/components/editor/editor-shell";
@@ -26,15 +31,21 @@ export default async function EditorPage({
     redirect(`/dashboard/workspaces/${design.workspace_id}`);
   }
 
+  // Trashed designs are restored from My Designs, not edited directly.
+  if (design.deleted_at) {
+    redirect(`/dashboard/workspaces/${design.workspace_id}/designs?view=trash`);
+  }
+
   const parsed = parseDesign(design);
   if (!parsed.ok) {
     // Corrupted design data must be visible, not silently "fixed".
     throw new Error(`This design's data is invalid: ${parsed.error}`);
   }
 
-  const [assetUrls, brandKit] = await Promise.all([
+  const [assetUrls, brandKit, versions] = await Promise.all([
     getAssetUrlMap(parsed.json),
     getBrandKit(design.workspace_id),
+    getDesignVersions(design.id),
   ]);
 
   const brandColors = [
@@ -62,6 +73,8 @@ export default async function EditorPage({
         design={parsed.json}
         assetUrls={assetUrls}
         brandColors={[...new Set(brandColors)]}
+        versions={versions}
+        serverUpdatedAt={design.updated_at}
       />
     </>
   );

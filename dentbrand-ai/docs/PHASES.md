@@ -10,8 +10,8 @@ build ahead, never create future tables/routes/dependencies.
 | 01 | Auth, Workspaces and Security | ✅ Complete — approved |
 | 02 | Activation Onboarding and Brand Kit | ✅ Complete — approved |
 | 03 | Vertical Content and Templates | ✅ Complete — approved |
-| 04 | First Design Flow and Editor Foundation | ✅ Complete — awaiting approval |
-| 05 | Autosave, Recovery and Export | ⛔ Not started |
+| 04 | First Design Flow and Editor Foundation | ✅ Complete — approved |
+| 05 | Autosave, Recovery and Export | ✅ Complete — awaiting approval |
 | 06 | AI Copy | ⛔ Not started |
 | 07 | AI Images and Credit Safety | ⛔ Not started |
 | 08 | Credits and Usage Transparency | ⛔ Not started |

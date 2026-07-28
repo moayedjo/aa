@@ -12,6 +12,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000002_phase02_brand_kit.sql` | 02 | brand_kits, workspace_industry_settings, private brand-assets storage bucket + policies |
 | `20260728000003_phase03_verticals_templates.sql` | 03 | industry_verticals, services, content_goals, template_categories, templates, template_versions, template_services + dental catalog seed |
 | `20260728000004_phase04_design_projects.sql` | 04 | design_projects, design_assets, private design-assets storage bucket + policies |
+| `20260728000005_phase05_versions_exports.sql` | 05 | design_versions (immutable), design_exports, deleted_at soft delete on design_projects |
 
 ## Phase 01 schema
 
@@ -167,6 +168,29 @@ Private; 5 MB; PNG/JPEG/WebP. Paths are `{workspace_id}/{design_id}/…`;
 members read, owner/admin/editor upload, owner/admin delete. Assets are
 served via short-lived signed URLs resolved server-side per editor load.
 
+## Phase 05 schema
+
+### `design_versions`
+
+Immutable snapshots of a design's working state: `design_id`, `version`
+(unique per design), `kind` (`checkpoint` = automatic every N autosaves,
+`manual` = user pressed "Save version", `pre-restore` = automatic snapshot
+taken before any restore), `design_json`, `created_by`. **No update or
+delete policies** — history cannot be rewritten. Restore always snapshots
+the current state first, so restoring never destroys work.
+
+### `design_exports`
+
+One row per export attempt (successes AND failures — the Export Success
+Rate metric needs both): `design_id`, `workspace_id`, `format` (png),
+`width`, `height`, `status`, optional `error`, `created_by`.
+
+### Soft delete
+
+`design_projects.deleted_at` — set = in Trash (hidden from lists, editor
+redirects away), null = active. Restore clears it; permanent delete is a
+real DELETE restricted to owner/admin by RLS.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -177,13 +201,14 @@ policy checks. `supabase/tests/phase03_rls_tests.sql` — catalog readability,
 published-only visibility for normal users, admin capabilities, and version
 immutability. `supabase/tests/phase04_rls_tests.sql` — design isolation,
 viewer read-only enforcement, editor write rights, asset isolation, and
-documented storage checks. Run in the Supabase SQL editor; all files roll
-back their fixtures.
+documented storage checks. `supabase/tests/phase05_rls_tests.sql` —
+design-version immutability (no update/delete even for owners), export
+inserts, soft delete, and outsider/viewer isolation. Run in the Supabase
+SQL editor; all files roll back their fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 05:
-design_versions, design_exports · Phase 06–07: prompt_templates, prompt_versions, ai_generations ·
+Phase 06–07: prompt_templates, prompt_versions, ai_generations ·
 Phase 08: credit_wallets, credit_ledger, usage_counters · Phase 09:
 plans, subscriptions, billing_customers, webhook_events · Phase 10–11:
 support_requests, design_ratings, product_events, admin_audit_logs.

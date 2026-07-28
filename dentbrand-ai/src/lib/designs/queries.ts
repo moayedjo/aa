@@ -17,6 +17,17 @@ export interface DesignProject {
   created_by: string;
   created_at: string;
   updated_at: string;
+  deleted_at: string | null;
+}
+
+export interface DesignVersion {
+  id: string;
+  design_id: string;
+  version: number;
+  kind: "checkpoint" | "manual" | "pre-restore";
+  design_json: unknown;
+  created_by: string;
+  created_at: string;
 }
 
 export async function getDesign(id: string): Promise<DesignProject | null> {
@@ -30,6 +41,7 @@ export async function getDesign(id: string): Promise<DesignProject | null> {
   return data;
 }
 
+/** Active (non-trashed) designs, most recently edited first. */
 export async function getWorkspaceDesigns(
   workspaceId: string
 ): Promise<DesignProject[]> {
@@ -38,8 +50,39 @@ export async function getWorkspaceDesigns(
     .from("design_projects")
     .select("*")
     .eq("workspace_id", workspaceId)
+    .is("deleted_at", null)
     .order("updated_at", { ascending: false });
   if (error) throw new Error(`Failed to load designs: ${error.message}`);
+  return data ?? [];
+}
+
+export async function getTrashedDesigns(
+  workspaceId: string
+): Promise<DesignProject[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("design_projects")
+    .select("*")
+    .eq("workspace_id", workspaceId)
+    .not("deleted_at", "is", null)
+    .order("deleted_at", { ascending: false });
+  if (error) throw new Error(`Failed to load trash: ${error.message}`);
+  return data ?? [];
+}
+
+/** Version history, newest first (JSON omitted — restore works server-side). */
+export async function getDesignVersions(
+  designId: string,
+  limit = 20
+): Promise<Omit<DesignVersion, "design_json">[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("design_versions")
+    .select("id, design_id, version, kind, created_by, created_at")
+    .eq("design_id", designId)
+    .order("version", { ascending: false })
+    .limit(limit);
+  if (error) throw new Error(`Failed to load versions: ${error.message}`);
   return data ?? [];
 }
 

@@ -154,6 +154,261 @@ export async function saveDesign(
   return {};
 }
 
+async function loadDesignForEdit(designIdInput: unknown) {
+  const idParsed = z.string().uuid().safeParse(designIdInput);
+  if (!idParsed.success) return { error: "Invalid design" as const };
+
+  const supabase = await createClient();
+  const { data: design } = await supabase
+    .from("design_projects")
+    .select("id, workspace_id, name, design_json, deleted_at")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+  if (!design) return { error: "Design not found" as const };
+
+  const { user, role } = await requireDesignEditor(design.workspace_id);
+  if (!user) return { error: "You must be logged in" as const };
+  if (!role || !EDIT_ROLES.includes(role)) {
+    return { error: "You do not have permission to edit this design" as const };
+  }
+  return { supabase, design, user, role };
+}
+
+async function nextVersionNumber(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  designId: string
+): Promise<number> {
+  const { data } = await supabase
+    .from("design_versions")
+    .select("version")
+    .eq("design_id", designId)
+    .order("version", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (data?.version ?? 0) + 1;
+}
+
+/**
+ * Snapshots the design's CURRENT server-side state as an immutable
+ * version. Server-side by design: a corrupted client can't poison history.
+ */
+export async function createDesignVersion(
+  designIdInput: unknown,
+  kindInput: unknown
+): Promise<DesignActionResult> {
+  const kindParsed = z
+    .enum(["checkpoint", "manual"])
+    .safeParse(kindInput ?? "checkpoint");
+  if (!kindParsed.success) return { error: "Invalid version kind" };
+
+  const loaded = await loadDesignForEdit(designIdInput);
+  if ("error" in loaded) return { error: loaded.error };
+  const { supabase, design, user } = loaded;
+
+  const version = await nextVersionNumber(supabase, design.id);
+  const { error } = await supabase.from("design_versions").insert({
+    design_id: design.id,
+    version,
+    kind: kindParsed.data,
+    design_json: design.design_json,
+    created_by: user.id,
+  });
+  if (error) return { error: `Could not save version: ${error.message}` };
+  return {};
+}
+
+/**
+ * Restores a previous version. The current state is snapshotted first
+ * (kind 'pre-restore'), so a restore never destroys work.
+ */
+export async function restoreDesignVersion(
+  designIdInput: unknown,
+  versionInput: unknown
+): Promise<DesignActionResult> {
+  const versionParsed = z.number().int().min(1).safeParse(versionInput);
+  if (!versionParsed.success) return { error: "Invalid version" };
+
+  const loaded = await loadDesignForEdit(designIdInput);
+  if ("error" in loaded) return { error: loaded.error };
+  const { supabase, design, user } = loaded;
+
+  const { data: target } = await supabase
+    .from("design_versions")
+    .select("design_json")
+    .eq("design_id", design.id)
+    .eq("version", versionParsed.data)
+    .maybeSingle();
+  if (!target) return { error: "Version not found" };
+
+  const validated = validateDesignJson(target.design_json);
+  if (!validated.ok) {
+    return { error: `That version is not restorable: ${validated.error}` };
+  }
+
+  const preRestoreVersion = await nextVersionNumber(supabase, design.id);
+  const { error: snapshotError } = await supabase
+    .from("design_versions")
+    .insert({
+      design_id: design.id,
+      version: preRestoreVersion,
+      kind: "pre-restore",
+      design_json: design.design_json,
+      created_by: user.id,
+    });
+  if (snapshotError) {
+    return { error: `Could not snapshot current state: ${snapshotError.message}` };
+  }
+
+  const { error } = await supabase
+    .from("design_projects")
+    .update({ design_json: validated.design })
+    .eq("id", design.id);
+  if (error) return { error: `Restore failed: ${error.message}` };
+
+  revalidatePath(`/editor/${design.id}`);
+  return {};
+}
+
+/** Copies a design (name "Copy of …") and returns to the designs list. */
+export async function duplicateDesign(
+  designIdInput: unknown
+): Promise<DesignActionResult> {
+  const idParsed = z.string().uuid().safeParse(designIdInput);
+  if (!idParsed.success) return { error: "Invalid design" };
+
+  const supabase = await createClient();
+  const { data: source } = await supabase
+    .from("design_projects")
+    .select("*")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+  if (!source) return { error: "Design not found" };
+
+  const { user, role } = await requireDesignEditor(source.workspace_id);
+  if (!user) return { error: "You must be logged in" };
+  if (!role || !EDIT_ROLES.includes(role)) {
+    return { error: "You do not have permission to duplicate designs" };
+  }
+
+  const { error } = await supabase.from("design_projects").insert({
+    workspace_id: source.workspace_id,
+    template_id: source.template_id,
+    template_version: source.template_version,
+    name: `Copy of ${source.name}`.slice(0, 140),
+    language: source.language,
+    design_json: source.design_json,
+    created_by: user.id,
+  });
+  if (error) return { error: `Could not duplicate: ${error.message}` };
+
+  revalidatePath(`/dashboard/workspaces/${source.workspace_id}/designs`);
+  revalidatePath(`/dashboard/workspaces/${source.workspace_id}`);
+  return {};
+}
+
+/** Soft delete — the design moves to Trash and stops appearing in lists. */
+export async function trashDesign(
+  designIdInput: unknown
+): Promise<DesignActionResult> {
+  const loaded = await loadDesignForEdit(designIdInput);
+  if ("error" in loaded) return { error: loaded.error };
+  const { supabase, design } = loaded;
+
+  const { error } = await supabase
+    .from("design_projects")
+    .update({ deleted_at: new Date().toISOString() })
+    .eq("id", design.id);
+  if (error) return { error: `Could not move to trash: ${error.message}` };
+
+  revalidatePath(`/dashboard/workspaces/${design.workspace_id}/designs`);
+  revalidatePath(`/dashboard/workspaces/${design.workspace_id}`);
+  return {};
+}
+
+export async function restoreDesignFromTrash(
+  designIdInput: unknown
+): Promise<DesignActionResult> {
+  const loaded = await loadDesignForEdit(designIdInput);
+  if ("error" in loaded) return { error: loaded.error };
+  const { supabase, design } = loaded;
+
+  const { error } = await supabase
+    .from("design_projects")
+    .update({ deleted_at: null })
+    .eq("id", design.id);
+  if (error) return { error: `Could not restore: ${error.message}` };
+
+  revalidatePath(`/dashboard/workspaces/${design.workspace_id}/designs`);
+  revalidatePath(`/dashboard/workspaces/${design.workspace_id}`);
+  return {};
+}
+
+/** Permanent delete — owner/admin only (RLS enforces this too). */
+export async function deleteDesignForever(
+  designIdInput: unknown
+): Promise<DesignActionResult> {
+  const idParsed = z.string().uuid().safeParse(designIdInput);
+  if (!idParsed.success) return { error: "Invalid design" };
+
+  const supabase = await createClient();
+  const { data: design } = await supabase
+    .from("design_projects")
+    .select("id, workspace_id, deleted_at")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+  if (!design) return { error: "Design not found" };
+  if (!design.deleted_at) {
+    return { error: "Move the design to trash before deleting it forever" };
+  }
+
+  const { role } = await requireDesignEditor(design.workspace_id);
+  if (role !== "owner" && role !== "admin") {
+    return { error: "Only workspace owners and admins can delete forever" };
+  }
+
+  const { error } = await supabase
+    .from("design_projects")
+    .delete()
+    .eq("id", design.id);
+  if (error) return { error: `Could not delete: ${error.message}` };
+
+  revalidatePath(`/dashboard/workspaces/${design.workspace_id}/designs`);
+  return {};
+}
+
+const recordExportSchema = z.object({
+  designId: z.string().uuid(),
+  width: z.number().int().min(1).max(8000),
+  height: z.number().int().min(1).max(8000),
+  status: z.enum(["completed", "failed"]),
+  error: z.string().max(500).optional(),
+});
+
+/** Logs an export attempt (success and failure both count — metrics). */
+export async function recordExport(
+  input: unknown
+): Promise<DesignActionResult> {
+  const parsed = recordExportSchema.safeParse(input);
+  if (!parsed.success) return { error: "Invalid export record" };
+
+  const loaded = await loadDesignForEdit(parsed.data.designId);
+  if ("error" in loaded) return { error: loaded.error };
+  const { supabase, design, user } = loaded;
+
+  const { error } = await supabase.from("design_exports").insert({
+    design_id: design.id,
+    workspace_id: design.workspace_id,
+    format: "png",
+    width: parsed.data.width,
+    height: parsed.data.height,
+    status: parsed.data.status,
+    error: parsed.data.error ?? null,
+    created_by: user.id,
+  });
+  if (error) return { error: `Could not record export: ${error.message}` };
+  return {};
+}
+
 const registerAssetSchema = z.object({
   workspaceId: z.string().uuid(),
   designId: z.string().uuid(),

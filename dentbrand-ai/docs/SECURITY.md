@@ -98,6 +98,18 @@ Platform-admin status lives exclusively in the `user_roles` table.
 - Locked (non-editable) layers are enforced in the store's single update
   path — and the saved JSON is Zod-validated server-side on every save.
 
+## Versions, trash and export (Phase 05)
+
+- Version history is append-only: `design_versions` has no update/delete
+  policies for any role, and version snapshots are taken **server-side**
+  from the stored design, so a compromised client cannot poison history.
+- Restore always writes a `pre-restore` snapshot before changing anything.
+- Trash is a soft delete (`deleted_at`); permanent deletion requires
+  owner/admin (RLS-enforced) and a prior trash step in the action layer.
+- Export runs client-side from already-authorized signed URLs; export
+  attempts (including failures and their reasons) are recorded in
+  `design_exports` for the quality metrics.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.
