@@ -66,3 +66,35 @@ option · Reason · Consequences · Date.
 - **Consequences**: The trigger is part of the security surface and is
   documented in SECURITY.md.
 - **Date**: 2026-07-28
+
+## D-005 — Interim typed config for industry services (Phase 02)
+
+- **Decision**: Onboarding's industry/service selection reads from a typed
+  config (`src/lib/industries/config.ts`); selections are stored as stable
+  string keys in `workspace_industry_settings.selected_services`.
+- **Context**: Phase 02 requires industry and service selection, but the
+  database-backed `industry_verticals` / `services` tables are explicitly
+  Phase 03 — creating them early violates the phase gate.
+- **Options considered**: (1) create the Phase 03 tables early, (2) typed
+  config now, promoted to DB seed data in Phase 03, (3) free-text services.
+- **Selected option**: (2).
+- **Reason**: Respects the phase plan; keys stay stable so Phase 03 can
+  migrate without touching stored workspace selections.
+- **Consequences**: Phase 03 must seed the DB from this config and switch
+  reads to the database.
+- **Date**: 2026-07-28
+
+## D-006 — Analytics via structured log transport until Phase 11
+
+- **Decision**: `src/lib/analytics/track.ts` emits structured server-side
+  JSON logs for onboarding events; no PostHog dependency yet.
+- **Context**: Phase 02 requires onboarding analytics events, but the full
+  PostHog/Sentry setup is Phase 11 scope and its dependency would be
+  installed early.
+- **Options considered**: (1) install PostHog now, (2) no analytics,
+  (3) an internal `trackEvent` abstraction with a log transport.
+- **Selected option**: (3).
+- **Reason**: Events exist and are queryable in server logs from day one;
+  Phase 11 swaps the transport without touching call sites.
+- **Consequences**: No dashboards until Phase 11.
+- **Date**: 2026-07-28

@@ -47,6 +47,27 @@ Platform-admin status lives exclusively in the `user_roles` table.
 - Triggers that write to protected tables are `security definer` with a
   pinned `search_path`.
 
+## Brand assets storage (Phase 02)
+
+- The `brand-assets` bucket is **private**; logos are only reachable via
+  short-lived signed URLs created for authorized users.
+- Object paths are namespaced `{workspace_id}/…`; storage policies derive
+  the workspace from the first path segment: members read, owner/admin
+  write/delete. A forged path targeting another workspace fails at the
+  storage layer regardless of client code.
+- Bucket-level limits: 2 MB max, image mime types only (also validated
+  client-side before upload and re-checked by Supabase).
+- `saveLogoPath` re-validates that the stored path is inside the caller's
+  workspace folder, so a brand kit can never point at another workspace's
+  file.
+
+## Brand Kit authorization (Phase 02)
+
+- Reads: any workspace member. Writes: owner/admin only — enforced by RLS
+  and re-checked in server actions (`requireEditor`).
+- The onboarding page redirects non-owner/admin members away; RLS remains
+  the real boundary.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

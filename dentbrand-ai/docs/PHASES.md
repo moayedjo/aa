@@ -7,8 +7,8 @@ build ahead, never create future tables/routes/dependencies.
 | Phase | Name | Status |
 |---|---|---|
 | 00 | Bootstrap and Architecture | ✅ Complete (delivered together with 01 as its prerequisite) |
-| 01 | Auth, Workspaces and Security | ✅ Complete — awaiting approval |
-| 02 | Activation Onboarding and Brand Kit | ⛔ Not started |
+| 01 | Auth, Workspaces and Security | ✅ Complete — approved |
+| 02 | Activation Onboarding and Brand Kit | ✅ Complete — awaiting approval |
 | 03 | Vertical Content and Templates | ⛔ Not started |
 | 04 | First Design Flow and Editor Foundation | ⛔ Not started |
 | 05 | Autosave, Recovery and Export | ⛔ Not started |

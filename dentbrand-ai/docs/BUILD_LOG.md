@@ -79,3 +79,72 @@ apply via Supabase SQL editor or CLI before manual testing.
 ```
 APPROVE PHASE 01 AND CONTINUE TO PHASE 02
 ```
+
+---
+
+## 2026-07-28 — PHASE 02
+
+**Phase**: 02 (Activation Onboarding and Brand Kit)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Onboarding wizard at `/onboarding/[workspaceId]` with seven steps:
+  identity (business name + logo upload), colors, fonts, contact,
+  language & industry, services, review & finish.
+- `brand_kits` and `workspace_industry_settings` tables with owner/admin
+  write RLS; private `brand-assets` storage bucket (2 MB, images only)
+  with workspace-scoped path policies; logos served via signed URLs.
+- Live preview panel (RTL + Arabic sample content when Arabic is chosen),
+  brand completion score (`lib/brand-kit/score.ts`), save-progress resume
+  (`onboarding_step`), Brand Kit summary card on the workspace page,
+  post-create redirect into onboarding.
+- Analytics events (`onboarding_started/step_completed/logo_uploaded/
+  completed`) via a structured-log transport (D-006).
+- Industry/services from typed config as Phase 03 seed precursor (D-005).
+
+**Changed files**
+
+- New: `supabase/migrations/20260728000002_phase02_brand_kit.sql`,
+  `supabase/tests/phase02_rls_tests.sql`, `src/lib/industries/config.ts`,
+  `src/lib/validation/brand-kit.ts`, `src/lib/brand-kit/*`
+  (actions, queries, score, upload), `src/lib/analytics/track.ts`,
+  `src/app/onboarding/[workspaceId]/page.tsx`,
+  `src/components/onboarding/*` (wizard, live-preview, 7 steps).
+- Modified: `src/types/database.ts`, `src/lib/supabase/proxy.ts`
+  (protect `/onboarding`), `src/lib/workspaces/actions.ts` (redirect to
+  onboarding), `src/app/dashboard/workspaces/[id]/page.tsx` (Brand Kit
+  card), docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000002_phase02_brand_kit.sql` (2 tables,
+RLS, storage bucket + 4 storage policies). Apply after 0001.
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success; `/onboarding/[workspaceId]` compiled ✅
+- RLS SQL tests for Phase 02 written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 02 (12 steps).
+
+**Known issues**
+
+- Fonts are stored by name; actual font loading in previews/exports is
+  Phase 03/05 scope, so the live preview uses system fallbacks.
+- Wizard chrome is English (LTR); the *content* language + RTL preview are
+  implemented. Full Arabic UI localization is tracked for a later phase.
+
+**Deferred items**
+
+- Templates, editor, AI, credits, billing (later phases).
+- Member invitations UI; promoting industry config to DB (Phase 03).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 02 AND CONTINUE TO PHASE 03
+```

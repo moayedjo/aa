@@ -8,6 +8,14 @@ import {
   getWorkspaceMembers,
 } from "@/lib/workspaces/queries";
 import {
+  getBrandKit,
+  getIndustrySettings,
+  getLogoSignedUrl,
+} from "@/lib/brand-kit/queries";
+import { computeBrandCompletion } from "@/lib/brand-kit/score";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -31,10 +39,22 @@ export default async function WorkspacePage({
     notFound();
   }
 
-  const [members, myRole] = await Promise.all([
+  const [members, myRole, brandKit, settings] = await Promise.all([
     getWorkspaceMembers(id),
     getMyWorkspaceRole(id),
+    getBrandKit(id),
+    getIndustrySettings(id),
   ]);
+  const logoSignedUrl = await getLogoSignedUrl(brandKit?.logo_path ?? null);
+  const completion = computeBrandCompletion(brandKit, settings);
+  const canEditBrand = myRole === "owner" || myRole === "admin";
+  const brandColors = [
+    brandKit?.primary_color,
+    brandKit?.secondary_color,
+    brandKit?.accent_color,
+    brandKit?.background_color,
+    brandKit?.text_color,
+  ].filter((c): c is string => !!c);
 
   return (
     <div className="space-y-6">
@@ -81,8 +101,75 @@ export default async function WorkspacePage({
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Brand Kit</CardTitle>
+          <CardDescription>
+            {brandKit?.onboarding_completed_at
+              ? `Brand completion: ${completion.score}%`
+              : `Onboarding in progress — ${completion.score}% complete`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center gap-4">
+            {logoSignedUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element -- short-lived signed URL
+              <img
+                src={logoSignedUrl}
+                alt={`${brandKit?.business_name ?? workspace.name} logo`}
+                className="h-12 w-12 rounded border object-contain"
+              />
+            ) : (
+              <div className="flex h-12 w-12 items-center justify-center rounded border text-xs text-muted-foreground">
+                No logo
+              </div>
+            )}
+            <div className="text-sm">
+              <p className="font-medium">
+                {brandKit?.business_name ?? "Business name not set"}
+              </p>
+              <p className="text-muted-foreground">
+                {settings
+                  ? `${settings.industry_key} · ${settings.selected_services.length} services`
+                  : "Industry not selected yet"}
+              </p>
+            </div>
+          </div>
+
+          {brandColors.length > 0 && (
+            <div className="flex gap-1.5" aria-label="Brand colors">
+              {brandColors.map((color, index) => (
+                <span
+                  key={`${color}-${index}`}
+                  title={color}
+                  className="h-6 w-6 rounded-full border"
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
+          )}
+
+          {completion.missing.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              Missing: {completion.missing.join(", ")}
+            </p>
+          )}
+
+          {canEditBrand && (
+            <Link
+              href={`/onboarding/${id}`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              {brandKit?.onboarding_completed_at
+                ? "Edit Brand Kit"
+                : "Continue onboarding"}
+            </Link>
+          )}
+        </CardContent>
+      </Card>
+
       <p className="text-sm text-muted-foreground">
-        Brand Kit and design tools arrive in the next phases.
+        Templates and design tools arrive in the next phases.
       </p>
     </div>
   );

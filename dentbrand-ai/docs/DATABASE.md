@@ -9,6 +9,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | Migration | Phase | Contents |
 |---|---|---|
 | `20260728000001_phase01_auth_workspaces.sql` | 01 | enums, profiles, user_roles, workspaces, workspace_members, helper functions, triggers, RLS |
+| `20260728000002_phase02_brand_kit.sql` | 02 | brand_kits, workspace_industry_settings, private brand-assets storage bucket + policies |
 
 ## Phase 01 schema
 
@@ -59,16 +60,49 @@ insert, the `on_workspace_created` trigger adds the creator to
 
 Anonymous (`anon`) has no policies on any table → sees nothing.
 
+## Phase 02 schema
+
+### `brand_kits`
+
+One per workspace (`workspace_id` unique → workspaces, cascade). Brand
+identity gathered during onboarding: `business_name`, `logo_path` (into
+the brand-assets bucket), five hex-checked colors (`primary_color`,
+`secondary_color`, `accent_color`, `background_color`, `text_color`),
+`arabic_font`, `english_font`, contact info (`phone`, `website`,
+`address`), `default_language` (`ar`/`en`), onboarding progress
+(`onboarding_step`, `onboarding_completed_at`), timestamps.
+
+### `workspace_industry_settings`
+
+One per workspace: `industry_key` (default `dental`) and
+`selected_services text[]`. Service keys reference the typed config in
+`src/lib/industries/config.ts` until Phase 03 introduces the
+database-backed verticals/services tables (keys stay stable).
+
+### RLS (both tables)
+
+select: workspace members + platform admin · insert/update: workspace
+owner/admin · delete: owner. Anonymous: nothing.
+
+### Storage — `brand-assets` bucket
+
+Private; 2 MB limit; PNG/JPEG/SVG/WebP only. Object paths are
+`{workspace_id}/…`; policies derive the workspace from the first path
+segment: members read, owner/admin write/delete. Logos are served via
+short-lived signed URLs only.
+
 ## Tests
 
-`supabase/tests/phase01_rls_tests.sql` — documented SQL tests covering
-workspace isolation, member/profile visibility, forged inserts,
-self-granted platform admin, and anonymous access. Run in the Supabase SQL
-editor; the file rolls back its fixtures.
+`supabase/tests/phase01_rls_tests.sql` — workspace isolation,
+member/profile visibility, forged inserts, self-granted platform admin,
+anonymous access. `supabase/tests/phase02_rls_tests.sql` — brand kit /
+industry settings read vs. write role gates, plus documented storage
+policy checks. Run in the Supabase SQL editor; both files roll back their
+fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 02: brand_kits, workspace_industry_settings · Phase 03:
+Phase 03:
 industry_verticals, services, content_goals, template_categories,
 templates, template_services, template_versions · Phase 04–05:
 design_projects, design_versions, design_assets, design_exports ·

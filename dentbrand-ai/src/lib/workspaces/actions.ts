@@ -39,5 +39,6 @@ export async function createWorkspace(
   }
 
   revalidatePath("/dashboard");
-  redirect(`/dashboard/workspaces/${data.id}`);
+  // New workspaces go straight into brand onboarding.
+  redirect(`/onboarding/${data.id}`);
 }
