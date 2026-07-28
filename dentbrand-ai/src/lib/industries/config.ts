@@ -1,11 +1,10 @@
 /**
  * Industry vertical configuration.
  *
- * INTERIM (Phase 02): typed config so onboarding can offer industry and
- * service selection. Phase 03 introduces the database-backed
- * industry_verticals / services tables and this file becomes seed data.
- * Service keys stored in workspace_industry_settings.selected_services
- * reference the `key` values below and stay stable across that migration.
+ * Since Phase 03 the runtime source of truth is the database
+ * (industry_verticals / services, seeded in migration 0003). This file
+ * remains as the seed reference and for the approved font lists; keys here
+ * must stay in sync with the seed data.
  */
 
 export interface IndustryService {

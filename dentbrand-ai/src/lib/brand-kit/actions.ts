@@ -6,7 +6,6 @@ import { z } from "zod";
 
 import { createClient } from "@/lib/supabase/server";
 import { trackEvent } from "@/lib/analytics/track";
-import { isValidServiceKey } from "@/lib/industries/config";
 import {
   logoPathSchema,
   onboardingStepSchema,
@@ -70,7 +69,8 @@ export async function saveOnboardingStep(
     return { error: "Only workspace owners and admins can edit the Brand Kit" };
   }
 
-  // Industry settings live in their own table.
+  // Industry settings live in their own table; selections are validated
+  // against the database-backed catalog (Phase 03).
   if (input.step === "language" || input.step === "services") {
     if (input.step === "services") {
       const { data: settings } = await supabase
@@ -79,12 +79,24 @@ export async function saveOnboardingStep(
         .eq("workspace_id", workspaceId)
         .maybeSingle();
       const industryKey = settings?.industry_key ?? "dental";
-      const invalid = input.services.filter(
-        (s) => !isValidServiceKey(industryKey, s)
-      );
+
+      const { data: vertical } = await supabase
+        .from("industry_verticals")
+        .select("id")
+        .eq("key", industryKey)
+        .maybeSingle();
+      if (!vertical) return { error: "Unknown industry" };
+
+      const { data: validServices } = await supabase
+        .from("services")
+        .select("key")
+        .eq("vertical_id", vertical.id);
+      const validKeys = new Set((validServices ?? []).map((s) => s.key));
+      const invalid = input.services.filter((s) => !validKeys.has(s));
       if (invalid.length > 0) {
         return { error: `Unknown services: ${invalid.join(", ")}` };
       }
+
       const { error } = await supabase
         .from("workspace_industry_settings")
         .upsert(
@@ -93,6 +105,15 @@ export async function saveOnboardingStep(
         );
       if (error) return { error: `Could not save services: ${error.message}` };
     } else {
+      const { data: vertical } = await supabase
+        .from("industry_verticals")
+        .select("id, is_available")
+        .eq("key", input.industryKey)
+        .maybeSingle();
+      if (!vertical?.is_available) {
+        return { error: "This industry is not available yet" };
+      }
+
       const { error } = await supabase
         .from("workspace_industry_settings")
         .upsert(

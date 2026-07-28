@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 
-import type { BrandKit, WorkspaceIndustrySettings } from "@/types/database";
+import type {
+  BrandKit,
+  IndustryVertical,
+  Service,
+  WorkspaceIndustrySettings,
+} from "@/types/database";
 import { computeBrandCompletion } from "@/lib/brand-kit/score";
 import { LivePreview } from "@/components/onboarding/live-preview";
 import { IdentityStep } from "@/components/onboarding/step-identity";
@@ -50,6 +55,9 @@ interface WizardProps {
   settings: WorkspaceIndustrySettings | null;
   logoSignedUrl: string | null;
   initialStep: number;
+  /** Database-backed catalog (Phase 03). */
+  verticals: IndustryVertical[];
+  services: Service[];
 }
 
 export function OnboardingWizard({
@@ -59,6 +67,8 @@ export function OnboardingWizard({
   settings,
   logoSignedUrl,
   initialStep,
+  verticals,
+  services,
 }: WizardProps) {
   const [stepIndex, setStepIndex] = useState(
     Math.min(Math.max(initialStep, 0), STEPS.length - 1)
@@ -120,8 +130,8 @@ export function OnboardingWizard({
         {stepIndex === 1 && <ColorsStep {...stepProps} />}
         {stepIndex === 2 && <FontsStep {...stepProps} />}
         {stepIndex === 3 && <ContactStep {...stepProps} />}
-        {stepIndex === 4 && <LanguageStep {...stepProps} />}
-        {stepIndex === 5 && <ServicesStep {...stepProps} />}
+        {stepIndex === 4 && <LanguageStep {...stepProps} verticals={verticals} />}
+        {stepIndex === 5 && <ServicesStep {...stepProps} services={services} />}
         {stepIndex === 6 && (
           <ReviewStep
             workspaceId={workspaceId}

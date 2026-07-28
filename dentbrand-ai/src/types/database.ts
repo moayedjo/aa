@@ -73,3 +73,75 @@ export interface WorkspaceIndustrySettings {
   created_at: string;
   updated_at: string;
 }
+
+export type TemplateStatus =
+  | "draft"
+  | "testing"
+  | "approved"
+  | "published"
+  | "archived";
+
+export interface IndustryVertical {
+  id: string;
+  key: string;
+  label_en: string;
+  label_ar: string;
+  is_available: boolean;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface Service {
+  id: string;
+  vertical_id: string;
+  key: string;
+  label_en: string;
+  label_ar: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface ContentGoal {
+  id: string;
+  vertical_id: string;
+  key: string;
+  label_en: string;
+  label_ar: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface TemplateCategory {
+  id: string;
+  vertical_id: string;
+  key: string;
+  label_en: string;
+  label_ar: string;
+  sort_order: number;
+  created_at: string;
+}
+
+export interface Template {
+  id: string;
+  vertical_id: string;
+  category_id: string | null;
+  name: string;
+  description: string | null;
+  status: TemplateStatus;
+  current_version: number;
+  supported_languages: string[];
+  canvas_width: number;
+  canvas_height: number;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TemplateVersion {
+  id: string;
+  template_id: string;
+  version: number;
+  template_json: unknown;
+  created_by: string | null;
+  created_at: string;
+}

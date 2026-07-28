@@ -3,7 +3,6 @@ import { z } from "zod";
 import {
   APPROVED_ARABIC_FONTS,
   APPROVED_ENGLISH_FONTS,
-  INDUSTRY_VERTICALS,
 } from "@/lib/industries/config";
 
 const hexColor = z
@@ -55,14 +54,11 @@ export const contactStepSchema = z.object({
   address: z.string().trim().max(300, "Address is too long").optional(),
 });
 
-const industryKeys = INDUSTRY_VERTICALS.filter((v) => v.available).map(
-  (v) => v.key
-) as [string, ...string[]];
-
 export const languageStepSchema = z.object({
   step: z.literal("language"),
   defaultLanguage: z.enum(["ar", "en"]),
-  industryKey: z.enum(industryKeys, { message: "Choose an available industry" }),
+  // Availability is validated against the industry_verticals table.
+  industryKey: z.string().min(2).max(40),
 });
 
 export const servicesStepSchema = z.object({

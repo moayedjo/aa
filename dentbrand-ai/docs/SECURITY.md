@@ -68,6 +68,20 @@ Platform-admin status lives exclusively in the `user_roles` table.
 - The onboarding page redirects non-owner/admin members away; RLS remains
   the real boundary.
 
+## Templates and admin surface (Phase 03)
+
+- `/admin/*` is gated server-side by `isPlatformAdmin()` (user_roles
+  lookup); every admin action re-checks it, and RLS blocks all catalog and
+  template writes for non-admins regardless of routing.
+- Normal users can only select `published` templates; drafts and their
+  versions are invisible at the database level.
+- `template_versions` has **no update/delete policies** — versions are
+  immutable even to admins. Publishing re-validates the current version's
+  JSON with Zod; invalid JSON cannot be published, and invalid stored JSON
+  is skipped (never rendered) by user-facing queries.
+- All template JSON is Zod-validated server-side before insert; unknown
+  `{{variables}}` are rejected.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

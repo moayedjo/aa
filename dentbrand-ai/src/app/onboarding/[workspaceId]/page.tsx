@@ -7,6 +7,7 @@ import {
   getIndustrySettings,
   getLogoSignedUrl,
 } from "@/lib/brand-kit/queries";
+import { getServices, getVerticalByKey, getVerticals } from "@/lib/industries/queries";
 import { OnboardingWizard } from "@/components/onboarding/wizard";
 
 export const metadata: Metadata = { title: "Set up your brand" };
@@ -31,11 +32,18 @@ export default async function OnboardingPage({
     redirect(`/dashboard/workspaces/${workspaceId}`);
   }
 
-  const [brandKit, settings] = await Promise.all([
+  const [brandKit, settings, verticals] = await Promise.all([
     getBrandKit(workspaceId),
     getIndustrySettings(workspaceId),
+    getVerticals(),
   ]);
   const logoSignedUrl = await getLogoSignedUrl(brandKit?.logo_path ?? null);
+
+  const industryKey = settings?.industry_key ?? "dental";
+  const vertical =
+    verticals.find((v) => v.key === industryKey) ??
+    (await getVerticalByKey("dental"));
+  const services = vertical ? await getServices(vertical.id) : [];
 
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 p-6">
@@ -53,6 +61,8 @@ export default async function OnboardingPage({
         settings={settings}
         logoSignedUrl={logoSignedUrl}
         initialStep={brandKit?.onboarding_step ?? 0}
+        verticals={verticals}
+        services={services}
       />
     </main>
   );

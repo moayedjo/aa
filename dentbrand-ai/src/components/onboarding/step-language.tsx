@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type { StepProps } from "@/components/onboarding/wizard";
 import { saveOnboardingStep } from "@/lib/brand-kit/actions";
-import { INDUSTRY_VERTICALS } from "@/lib/industries/config";
+import type { IndustryVertical } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -16,7 +16,14 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-export function LanguageStep({ workspaceId, brand, update, onSaved, onBack }: StepProps) {
+export function LanguageStep({
+  workspaceId,
+  brand,
+  update,
+  onSaved,
+  onBack,
+  verticals,
+}: StepProps & { verticals: IndustryVertical[] }) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [language, setLanguage] = useState<"ar" | "en">(brand.defaultLanguage);
@@ -86,11 +93,11 @@ export function LanguageStep({ workspaceId, brand, update, onSaved, onBack }: St
         <fieldset className="space-y-2">
           <legend className="text-sm font-medium">Industry</legend>
           <div className="flex flex-wrap gap-2">
-            {INDUSTRY_VERTICALS.map((vertical) => (
+            {verticals.map((vertical) => (
               <button
                 key={vertical.key}
                 type="button"
-                disabled={!vertical.available}
+                disabled={!vertical.is_available}
                 onClick={() => setIndustryKey(vertical.key)}
                 className={cn(
                   "rounded-md border px-4 py-2 text-sm font-medium transition-colors disabled:opacity-50",
@@ -99,7 +106,7 @@ export function LanguageStep({ workspaceId, brand, update, onSaved, onBack }: St
                     : "hover:bg-accent"
                 )}
               >
-                {vertical.labelEn} · {vertical.labelAr}
+                {vertical.label_en} · {vertical.label_ar}
               </button>
             ))}
           </div>

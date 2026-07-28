@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import type { StepProps } from "@/components/onboarding/wizard";
 import { saveOnboardingStep } from "@/lib/brand-kit/actions";
-import { getIndustry } from "@/lib/industries/config";
+import type { Service } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -16,13 +16,17 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-export function ServicesStep({ workspaceId, brand, update, onSaved, onBack }: StepProps) {
+export function ServicesStep({
+  workspaceId,
+  brand,
+  update,
+  onSaved,
+  onBack,
+  services,
+}: StepProps & { services: Service[] }) {
   const [serverError, setServerError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [selected, setSelected] = useState<string[]>(brand.services);
-
-  const industry = getIndustry(brand.industryKey);
-  const services = industry?.services ?? [];
 
   const toggle = (key: string) =>
     setSelected((prev) =>
@@ -80,9 +84,9 @@ export function ServicesStep({ workspaceId, brand, update, onSaved, onBack }: St
                     : "hover:bg-accent"
                 )}
               >
-                <span className="block font-medium">{service.labelEn}</span>
+                <span className="block font-medium">{service.label_en}</span>
                 <span className="block text-xs opacity-80" dir="rtl" lang="ar">
-                  {service.labelAr}
+                  {service.label_ar}
                 </span>
               </button>
             );

@@ -98,3 +98,40 @@ option · Reason · Consequences · Date.
   Phase 11 swaps the transport without touching call sites.
 - **Consequences**: No dashboards until Phase 11.
 - **Date**: 2026-07-28
+
+## D-007 — HTML/CSS preview renderer before the Konva editor
+
+- **Decision**: Phase 03's brand preview renders template JSON as
+  absolutely-positioned HTML/CSS scaled with a CSS transform
+  (`TemplatePreview`), not React Konva.
+- **Context**: Phase 03 requires brand-applied template previews and
+  Arabic/English testing, but the editor (React Konva) is explicitly
+  Phase 04 scope.
+- **Options considered**: (1) pull Konva forward into Phase 03,
+  (2) static thumbnail images, (3) HTML/CSS renderer over the same
+  resolved-template data.
+- **Selected option**: (3).
+- **Reason**: Faithful enough to judge branding/layout/RTL, zero new
+  dependencies, and the resolver (`resolveTemplate`) is reused by the
+  Phase 04 editor unchanged. Stored canvas dimensions are never altered —
+  scaling is visual only, matching the editor rules.
+- **Consequences**: Minor fidelity differences (text wrapping) versus the
+  future canvas; previews load approved Google Fonts at runtime in the
+  browser, while export-grade font embedding/validation remains Phase 05.
+- **Date**: 2026-07-28
+
+## D-008 — Template status transitions enforced in the action layer
+
+- **Decision**: The template lifecycle (draft ↔ testing ↔ approved →
+  published → archived → draft) is enforced in `updateTemplateStatus`;
+  publishing re-validates the current version's JSON.
+- **Context**: The spec requires draft/testing/approved/published/archived
+  states and that only valid templates reach users.
+- **Options considered**: (1) free status changes, (2) DB trigger,
+  (3) action-layer transition table + Zod re-validation on publish.
+- **Selected option**: (3).
+- **Reason**: Keeps the rule next to the admin workflow with clear error
+  messages; RLS already restricts who can change status at all.
+- **Consequences**: Direct service-role writes bypass the transition
+  table — acceptable, as service-role usage is audited (SECURITY.md).
+- **Date**: 2026-07-28

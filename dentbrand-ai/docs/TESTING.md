@@ -88,7 +88,59 @@ Prereq: migrations 0001 + 0002 applied, signed-in owner of a workspace.
     `onboarding_step_completed` (per step), `onboarding_logo_uploaded`,
     and `onboarding_completed` events.
 
+## RLS tests (Phase 03)
+
+`supabase/tests/phase03_rls_tests.sql` — catalog readable by all
+authenticated users; normal users see published templates only (drafts and
+their versions invisible); normal users cannot write; admin sees drafts and
+can change status; **nobody** (admin included) can update an existing
+template version.
+
+## Template Quality Checklist (Phase 03)
+
+Before publishing any template, verify in the admin preview (both EN and
+AR) and after Phase 04+ in the real editor/export:
+
+- [ ] Arabic text renders RTL with correct alignment
+- [ ] English text renders LTR with correct alignment
+- [ ] Short headline (1–2 words) doesn't break the layout
+- [ ] Longest allowed headline (maxCharacters) fits without clipping
+- [ ] Horizontal logo fits the logo slot; square logo fits too
+- [ ] Light brand colors keep text readable; dark brand colors too
+- [ ] Portrait photo and product/service photo both work in image slots
+- [ ] Long contact info (phone + website) doesn't overflow the footer
+- [ ] Layer ids unique; editable/locked flags correct; zIndex order sane
+- [ ] JSON validates (the admin editor blocks saving otherwise)
+
+Export-related items (PNG at real dimensions, Arabic font embedding) are
+verified from Phase 05 when export exists.
+
+## Manual testing steps — Phase 03
+
+Prereq: migrations 0001–0003 applied, `supabase/seed.sql` run, one
+platform admin (set via SQL: `update user_roles set role='platform_admin'
+where user_id='…'`), one normal user with an onboarded workspace.
+
+1. **Gallery**: workspace page → "Browse templates" → five templates
+   render with YOUR brand colors, logo, business name and contacts.
+2. **Language toggle**: switch العربية ↔ English → previews flip RTL/LTR
+   with Arabic/English sample copy.
+3. **Published-only**: in admin, move a template from published → archived
+   → it disappears from the user gallery (refresh); move back via
+   archived → draft → … → published.
+4. **Admin gate**: as a normal user, `/admin/templates` redirects to
+   `/dashboard`.
+5. **Admin CRUD**: create a template from the starter JSON → it appears as
+   draft; edit JSON with an unknown `{{variable}}` → save is rejected with
+   the Zod error; fix it → saves as v2 and version history shows v1 + v2.
+6. **Status flow**: draft → testing → approved → published works; illegal
+   jumps (draft → published) are rejected.
+7. **Immutability**: in SQL, try updating an old template_versions row as
+   any user → 0 rows updated.
+8. **Onboarding still works**: the wizard's industry and services steps now
+   load from the database (same options as before).
+
 ## Future phases
 
-Each phase adds its own section here (Phase 03: template quality checklist;
-Phase 05: export/recovery tests; Phase 12: E2E suite).
+Each phase adds its own section here (Phase 05: export/recovery tests;
+Phase 12: E2E suite).

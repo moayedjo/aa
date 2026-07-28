@@ -148,3 +148,87 @@ RLS, storage bucket + 4 storage policies). Apply after 0001.
 ```
 APPROVE PHASE 02 AND CONTINUE TO PHASE 03
 ```
+
+---
+
+## 2026-07-28 — PHASE 03
+
+**Phase**: 03 (Vertical Content and Templates)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Database-backed vertical structure: industry_verticals, services,
+  content_goals, template_categories (dental catalog seeded in migration
+  0003 with keys matching the Phase 02 config).
+- Template system: templates (status lifecycle draft → testing → approved
+  → published → archived), immutable template_versions (no update/delete
+  policies, even for admins), template_services links.
+- Template JSON Schema (Zod, schemaVersion 1): canvas, six layer types,
+  editable/locked flags, zIndex, maxCharacters limits, per-language static
+  text, fixed `{{variable}}` set; validated before every save and render.
+- Resolver (`resolveTemplate`) substituting brand + sample content per
+  language (RTL/LTR + start/end alignment resolution).
+- Five production dental templates in `supabase/seed.sql` (Service
+  Spotlight, Special Offer, Dental Tip, Booking Reminder, Seasonal
+  Greeting) — all validated against the schema in CI-style script run.
+- User template gallery (`/dashboard/workspaces/[id]/templates`) with
+  brand-applied previews and EN/AR toggle.
+- Admin section (`/admin/templates`) gated by platform_admin: list,
+  create (starter JSON), edit metadata/services, JSON editing that creates
+  new immutable versions, status transitions with publish-time
+  re-validation, live sample-brand preview (EN/AR), version history.
+- Onboarding switched to the DB catalog (industry + services steps and
+  server-side validation) — completes D-005.
+
+**Changed files**
+
+- New: migration 0003, `supabase/seed.sql`,
+  `supabase/tests/phase03_rls_tests.sql`, `src/lib/templates/*` (schema,
+  resolve, queries, admin-actions), `src/lib/industries/queries.ts`,
+  `src/lib/auth/queries.ts`, `src/components/templates/*` (preview,
+  font-links), `src/components/admin/*` (new-template-form,
+  template-editor), `/admin` layout + template pages, workspace templates
+  page.
+- Modified: types, onboarding page/wizard/steps (DB catalog),
+  brand-kit actions (DB validation), validation schema, industries config
+  (now seed reference), workspace page (templates card), docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000003_phase03_verticals_templates.sql`
+(1 enum, 7 tables, RLS, dental catalog seed). Then run `supabase/seed.sql`
+for the five templates.
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success; gallery + 3 admin routes compiled ✅
+- Seed validation script: all 5 template JSONs pass the Zod schema ✅
+- Phase 03 RLS SQL tests written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 03 (8 steps) +
+Template Quality Checklist.
+
+**Known issues**
+
+- Preview fidelity: HTML/CSS renderer approximates the future Konva canvas
+  (D-007); text wrapping may differ slightly.
+- Preview fonts load from Google Fonts at runtime in the browser;
+  export-grade font embedding/validation is Phase 05.
+- Template Quality Checklist items relating to export (real-size PNG,
+  Arabic font export) can only be fully verified from Phase 05.
+
+**Deferred items**
+
+- Create-design-from-template flow and the Konva editor (Phase 04).
+- Content-goal-based template recommendation (Phase 10 uses content_goals
+  seeded now).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 03 AND CONTINUE TO PHASE 04
+```

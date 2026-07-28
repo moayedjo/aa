@@ -10,6 +10,7 @@ in a new migration. Tables are created only in the phase that needs them.
 |---|---|---|
 | `20260728000001_phase01_auth_workspaces.sql` | 01 | enums, profiles, user_roles, workspaces, workspace_members, helper functions, triggers, RLS |
 | `20260728000002_phase02_brand_kit.sql` | 02 | brand_kits, workspace_industry_settings, private brand-assets storage bucket + policies |
+| `20260728000003_phase03_verticals_templates.sql` | 03 | industry_verticals, services, content_goals, template_categories, templates, template_versions, template_services + dental catalog seed |
 
 ## Phase 01 schema
 
@@ -91,20 +92,63 @@ Private; 2 MB limit; PNG/JPEG/SVG/WebP only. Object paths are
 segment: members read, owner/admin write/delete. Logos are served via
 short-lived signed URLs only.
 
+## Phase 03 schema
+
+### Catalog: `industry_verticals`, `services`, `content_goals`, `template_categories`
+
+Vertical-scoped reference data (`key`, `label_en`, `label_ar`,
+`sort_order`; verticals add `is_available`). The dental vertical and its
+services/goals/categories are seeded by migration 0003 with keys matching
+the Phase 02 interim config, so stored workspace selections stay valid.
+Read: all authenticated users. Write: platform admins only.
+
+### `templates`
+
+`vertical_id`, optional `category_id`, `name`, `description`, `status`
+(enum `template_status`: draft → testing → approved → published →
+archived), `current_version`, `supported_languages`, canvas dimensions,
+`created_by`, timestamps. RLS: normal users see `published` rows only;
+platform admins see and manage everything.
+
+### `template_versions`
+
+Immutable JSON snapshots: `template_id`, `version`
+(unique per template), `template_json` (validated against the Zod schema
+in `src/lib/templates/schema.ts` before every insert), `created_by`.
+**No update or delete policies exist — not even for admins.** Edits create
+a new version and move `templates.current_version`. Designs (Phase 04+)
+reference `template_id` + `version`, so published designs never change
+under a template update.
+
+### `template_services`
+
+Join table linking templates to the services they suit. Read:
+authenticated; write: platform admins.
+
+### Template JSON (schemaVersion 1)
+
+`canvas` (width/height/backgroundColor), `layers` (text, image, shape,
+logo, icon, group — each with position, size, zIndex, `editable` flag),
+`supportedLanguages`. Strings may use `{{variables}}` from a fixed allowed
+set (brand: colors, fonts, logoUrl, businessName, phone, website; content:
+headline, bodyText, cta, generatedImage). Text layers carry
+`maxCharacters` limits; static text can be `{en, ar}` pairs. Five seeded
+production templates live in `supabase/seed.sql`.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
 member/profile visibility, forged inserts, self-granted platform admin,
 anonymous access. `supabase/tests/phase02_rls_tests.sql` — brand kit /
 industry settings read vs. write role gates, plus documented storage
-policy checks. Run in the Supabase SQL editor; both files roll back their
+policy checks. `supabase/tests/phase03_rls_tests.sql` — catalog readability,
+published-only visibility for normal users, admin capabilities, and version
+immutability. Run in the Supabase SQL editor; all files roll back their
 fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 03:
-industry_verticals, services, content_goals, template_categories,
-templates, template_services, template_versions · Phase 04–05:
+Phase 04–05:
 design_projects, design_versions, design_assets, design_exports ·
 Phase 06–07: prompt_templates, prompt_versions, ai_generations ·
 Phase 08: credit_wallets, credit_ledger, usage_counters · Phase 09:

@@ -168,8 +168,25 @@ export default async function WorkspacePage({
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Templates</CardTitle>
+          <CardDescription>
+            Browse published templates previewed with your brand.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link
+            href={`/dashboard/workspaces/${id}/templates`}
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
+            Browse templates
+          </Link>
+        </CardContent>
+      </Card>
+
       <p className="text-sm text-muted-foreground">
-        Templates and design tools arrive in the next phases.
+        Design creation and the editor arrive in the next phases.
       </p>
     </div>
   );
