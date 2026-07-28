@@ -223,7 +223,47 @@ Phase 04 testing.
 11. **Dimensions guard**: exported PNGs record completed rows with
     1080×1350 in design_exports.
 
+## RLS tests (Phase 06)
+
+`supabase/tests/phase06_rls_tests.sql` — prompts invisible to user
+sessions (readable by platform admins only), generation logs isolated per
+workspace and append-only, prompt versions immutable even for admins.
+
+## Manual testing steps — Phase 06
+
+Prereq: migrations 0001–0006 + seed.sql applied; `GEMINI_API_KEY` and
+`SUPABASE_SERVICE_ROLE_KEY` set server-side; an English and an Arabic
+design open in the editor.
+
+1. **Key safety**: check the browser network tab and bundles — no Gemini
+   key anywhere; AI requests only hit your own server actions.
+2. **Generate (EN)**: in the editor's AI copy panel pick a service, goal
+   and tone → Generate → 3 headlines, body, 3 CTAs, caption + hashtags,
+   image prompt appear; an ai_generations row exists with prompt version,
+   model and duration.
+3. **Generate (AR)**: on the Arabic design → output is Arabic (hashtags
+   included), imagePrompt stays English.
+4. **Apply**: click Apply on a headline → the canvas headline updates and
+   autosaves; same for body and CTA. Text longer than the layer's
+   maxCharacters is clipped on apply.
+5. **Partial regeneration**: "Shorten" on body → only bodyText changes;
+   headlines/caption stay; a partial ai_generations row is logged.
+6. **Keep previous result**: after regenerating, the Results dropdown
+   offers "Previous result n" — selecting it brings the old pack back;
+   after a page reload, previous full packs still appear (loaded from
+   ai_generations).
+7. **Offer honesty**: generate with no offer details → output contains no
+   prices/discounts; with "20% off in July" → the offer appears verbatim.
+8. **Safe failure**: temporarily unset GEMINI_API_KEY (or disconnect) →
+   Generate shows a clean error, the design is untouched, a failed row is
+   logged with the error; the canvas keeps working.
+9. **Viewer**: viewers have no editor access (Phase 04) — AI is
+   automatically out of reach; verify the action also rejects them
+   directly if called.
+10. **Medical disclaimer**: generate for a treatment-heavy topic → the
+    disclaimer hint appears when medicalDisclaimerNeeded is true.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 06: AI copy tests;
-Phase 12: E2E suite).
+Each phase adds its own section here (Phase 07: AI image + credit safety
+tests; Phase 12: E2E suite).

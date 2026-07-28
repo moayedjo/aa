@@ -8,7 +8,13 @@ import {
   parseDesign,
 } from "@/lib/designs/queries";
 import { getMyWorkspaceRole } from "@/lib/workspaces/queries";
-import { getBrandKit } from "@/lib/brand-kit/queries";
+import { getBrandKit, getIndustrySettings } from "@/lib/brand-kit/queries";
+import {
+  getContentGoals,
+  getServices,
+  getVerticalByKey,
+} from "@/lib/industries/queries";
+import { getRecentCopyGenerations } from "@/lib/ai/queries";
 import { EditorShell } from "@/components/editor/editor-shell";
 import { FontLinks } from "@/components/templates/font-links";
 
@@ -42,11 +48,22 @@ export default async function EditorPage({
     throw new Error(`This design's data is invalid: ${parsed.error}`);
   }
 
-  const [assetUrls, brandKit, versions] = await Promise.all([
-    getAssetUrlMap(parsed.json),
-    getBrandKit(design.workspace_id),
-    getDesignVersions(design.id),
-  ]);
+  const [assetUrls, brandKit, versions, settings, copyGenerations] =
+    await Promise.all([
+      getAssetUrlMap(parsed.json),
+      getBrandKit(design.workspace_id),
+      getDesignVersions(design.id),
+      getIndustrySettings(design.workspace_id),
+      getRecentCopyGenerations(design.id),
+    ]);
+
+  const vertical = await getVerticalByKey(settings?.industry_key ?? "dental");
+  const [services, goals] = vertical
+    ? await Promise.all([
+        getServices(vertical.id),
+        getContentGoals(vertical.id),
+      ])
+    : [[], []];
 
   const brandColors = [
     brandKit?.primary_color,
@@ -75,6 +92,9 @@ export default async function EditorPage({
         brandColors={[...new Set(brandColors)]}
         versions={versions}
         serverUpdatedAt={design.updated_at}
+        services={services}
+        goals={goals}
+        copyGenerations={copyGenerations}
       />
     </>
   );

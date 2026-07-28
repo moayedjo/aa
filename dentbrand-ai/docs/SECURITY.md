@@ -110,6 +110,25 @@ Platform-admin status lives exclusively in the `user_roles` table.
   attempts (including failures and their reasons) are recorded in
   `design_exports` for the quality metrics.
 
+## AI copy (Phase 06)
+
+- `GEMINI_API_KEY` is server-only (no `NEXT_PUBLIC_` prefix; used inside
+  `src/lib/ai/gemini.ts`, a `server-only` module). Provider error bodies
+  are never forwarded to the client.
+- Prompts are platform IP: RLS hides `prompt_templates`/`prompt_versions`
+  from every user session. The generation actions read the current prompt
+  version through `createAdminClient()` — the second audited service-role
+  usage (after none in Phases 01–05). Prompt versions are immutable.
+- All AI output is Zod-validated (`aiCopySchema` / per-field schemas)
+  before it is stored or returned; invalid output is retried once, then
+  logged as a failed generation with a safe error.
+- Generation runs never write to `design_json`. Applying copy is an
+  explicit user action into an editable text layer, clipped to the
+  layer's `maxCharacters` — an AI failure cannot corrupt a design.
+- `ai_generations` is append-only (no update/delete policies) and
+  workspace-isolated; inputs stored there are the sanitized request
+  fields only.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

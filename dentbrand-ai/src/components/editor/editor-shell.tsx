@@ -23,6 +23,9 @@ import {
   HistoryPanel,
   type VersionSummary,
 } from "@/components/editor/history-panel";
+import { CopyPanel } from "@/components/editor/copy-panel";
+import type { CopyGeneration } from "@/lib/ai/queries";
+import type { ContentGoal, Service } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { cn } from "@/lib/utils";
@@ -58,6 +61,9 @@ interface EditorShellProps {
   versions: VersionSummary[];
   /** Server row's updated_at — re-initializes state after restores. */
   serverUpdatedAt: string;
+  services: Service[];
+  goals: ContentGoal[];
+  copyGenerations: CopyGeneration[];
 }
 
 export function EditorShell({
@@ -70,6 +76,9 @@ export function EditorShell({
   brandColors,
   versions,
   serverUpdatedAt,
+  services,
+  goals,
+  copyGenerations,
 }: EditorShellProps) {
   const initialize = useEditorStore((s) => s.initialize);
   const saveState = useEditorStore((s) => s.saveState);
@@ -391,6 +400,12 @@ export function EditorShell({
         </main>
         <aside className="w-80 shrink-0 space-y-5 overflow-y-auto border-l p-4">
           <PropertiesPanel brandColors={brandColors} />
+          <CopyPanel
+            designId={designId}
+            services={services}
+            goals={goals}
+            previousGenerations={copyGenerations}
+          />
           <HistoryPanel designId={designId} versions={versions} />
         </aside>
       </div>

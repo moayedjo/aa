@@ -386,3 +386,83 @@ APPROVE PHASE 04 AND CONTINUE TO PHASE 05
 ```
 APPROVE PHASE 05 AND CONTINUE TO PHASE 06
 ```
+
+---
+
+## 2026-07-28 — PHASE 06
+
+**Phase**: 06 (AI Copy)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Gemini server integration: direct REST (`generateContent`) with JSON
+  response mode, 30s timeout, one retry on invalid output, normalized
+  errors, server-only API key (D-013).
+- Structured output Zod-validated (`aiCopySchema`): 3 headline options,
+  body, caption, 3 CTA options, hashtags, English image prompt,
+  medicalDisclaimerNeeded.
+- Database-backed, versioned, vertical-scoped prompts (dental seed:
+  `social-copy` + `social-copy-field` v1) embedding the content rules
+  (no diagnosis/guarantees/fabricated prices/discounts/reviews/
+  superlatives; supplied info only; char limits; caption ≠ design text).
+  Prompts hidden from user sessions; read via service role (D-014).
+- ai_generations append-only log (prompt version, model, duration,
+  sanitized input, validated output, status/error).
+- Editor AI panel: service/goal/tone/offer/instructions form; results
+  with per-option Apply into editable layers (clipped to maxCharacters);
+  partial regeneration per field (more options, shorten, rewrite,
+  professional, friendly); previous results dropdown backed by both
+  client history and ai_generations; caption+hashtags copy-to-clipboard;
+  disclaimer hint; image prompt surfaced for Phase 07.
+- Character limits travel from the design's own layers into the prompt
+  and are re-enforced on apply. AI failures never touch design_json.
+- Analytics events: ai_copy_generated / ai_copy_field_regenerated /
+  ai_copy_failed.
+
+**Changed files**
+
+- New: migration 0006, `supabase/tests/phase06_rls_tests.sql`,
+  `src/lib/ai/*` (gemini, copy-schema, actions, queries),
+  `src/components/editor/copy-panel.tsx`.
+- Modified: editor page + shell (panel wiring), analytics event union,
+  `.env.example` (GEMINI_API_KEY/GEMINI_MODEL), docs.
+
+**Dependencies added**: none (REST via fetch — D-013).
+
+**Database migrations**: `20260728000006_phase06_ai_copy.sql`
+(prompt_templates, prompt_versions, ai_generations + dental prompt seed).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success ✅
+- Phase 06 RLS SQL tests written; require a live Supabase project.
+- Live Gemini calls require a real GEMINI_API_KEY — verify via manual
+  steps.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 06 (10 steps).
+
+**Known issues**
+
+- Character limits are instructed to the model and enforced on apply;
+  the model may still occasionally overshoot in the displayed options
+  (apply clips them).
+- Field regeneration logs partial outputs; only full packs appear in the
+  reload-persistent "previous results" list (by design).
+- Generation requires SUPABASE_SERVICE_ROLE_KEY at runtime for prompt
+  reads (D-014).
+
+**Deferred items**
+
+- AI images, credit reservation/refund/idempotency (Phase 07 — the
+  imagePrompt field is already produced); prompt admin UI (Phase 11);
+  per-generation credit costs (Phase 08).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 06 AND CONTINUE TO PHASE 07
+```

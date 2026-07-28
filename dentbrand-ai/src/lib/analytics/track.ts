@@ -12,7 +12,10 @@ export type AnalyticsEvent =
   | "onboarding_started"
   | "onboarding_step_completed"
   | "onboarding_logo_uploaded"
-  | "onboarding_completed";
+  | "onboarding_completed"
+  | "ai_copy_generated"
+  | "ai_copy_field_regenerated"
+  | "ai_copy_failed";
 
 export interface AnalyticsProps {
   workspaceId?: string;

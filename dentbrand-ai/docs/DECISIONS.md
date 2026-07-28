@@ -209,3 +209,36 @@ option · Reason · Consequences · Date.
 - **Consequences**: Recovery is per-browser/per-device by nature; storage
   quota errors are swallowed (autosave remains the primary safety net).
 - **Date**: 2026-07-28
+
+## D-013 — Gemini via direct REST fetch, no SDK
+
+- **Decision**: `src/lib/ai/gemini.ts` calls the Gemini
+  `generateContent` REST endpoint with `fetch` (JSON response mime type,
+  30s timeout, normalized errors) instead of adding the Google SDK.
+- **Context**: Phase 06 needs server-side text generation; the code
+  quality rules say avoid unnecessary dependencies.
+- **Options considered**: (1) @google/genai SDK, (2) direct REST.
+- **Selected option**: (2).
+- **Reason**: One endpoint, one call shape; fetch keeps the dependency
+  tree flat and the error surface fully under our control.
+- **Consequences**: If later phases need streaming or multimodal
+  features, revisiting the SDK is a contained change inside gemini.ts.
+- **Date**: 2026-07-28
+
+## D-014 — Prompts hidden from user sessions; read via service role
+
+- **Decision**: RLS restricts prompt tables to platform admins; the
+  generation server actions read the current prompt version with the
+  audited service-role client.
+- **Context**: Generation runs under the user's session, but prompts are
+  platform IP that any authenticated user could otherwise harvest via
+  the Supabase REST API.
+- **Options considered**: (1) authenticated read policy on prompts,
+  (2) hardcode prompts in source, (3) admin-only RLS + service-role read.
+- **Selected option**: (3).
+- **Reason**: Keeps prompts database-backed and versioned (spec
+  requirement) without exposing them; service-role usage stays inside one
+  audited server module path.
+- **Consequences**: Generation requires SUPABASE_SERVICE_ROLE_KEY at
+  runtime; documented in SECURITY.md.
+- **Date**: 2026-07-28

@@ -13,6 +13,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000003_phase03_verticals_templates.sql` | 03 | industry_verticals, services, content_goals, template_categories, templates, template_versions, template_services + dental catalog seed |
 | `20260728000004_phase04_design_projects.sql` | 04 | design_projects, design_assets, private design-assets storage bucket + policies |
 | `20260728000005_phase05_versions_exports.sql` | 05 | design_versions (immutable), design_exports, deleted_at soft delete on design_projects |
+| `20260728000006_phase06_ai_copy.sql` | 06 | prompt_templates, prompt_versions (immutable), ai_generations + dental prompt seed |
 
 ## Phase 01 schema
 
@@ -191,6 +192,28 @@ Rate metric needs both): `design_id`, `workspace_id`, `format` (png),
 redirects away), null = active. Restore clears it; permanent delete is a
 real DELETE restricted to owner/admin by RLS.
 
+## Phase 06 schema
+
+### `prompt_templates` / `prompt_versions`
+
+Vertical-scoped, versioned AI prompts (`key`, `kind`, `current_version`;
+versions hold `system_prompt` + `user_prompt_template` with
+`{{placeholders}}`). **RLS hides prompts from all user sessions** —
+platform admins manage them; the generation server action reads the
+current version via the audited service-role client. Versions are
+immutable (no update/delete policies). Two dental prompts are seeded:
+`social-copy` (full pack) and `social-copy-field` (single-field
+regenerate/transform).
+
+### `ai_generations`
+
+Append-only log of every AI call: workspace/design, `kind` (copy),
+prompt template + version used, language, sanitized `input`, validated
+`output` (null on failure), `status`, `error`, `model`, `duration_ms`,
+`created_by`. Members read their workspace's rows; editors insert; no
+update/delete. Successful full packs double as the "previous results"
+history in the editor.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -203,8 +226,11 @@ immutability. `supabase/tests/phase04_rls_tests.sql` — design isolation,
 viewer read-only enforcement, editor write rights, asset isolation, and
 documented storage checks. `supabase/tests/phase05_rls_tests.sql` —
 design-version immutability (no update/delete even for owners), export
-inserts, soft delete, and outsider/viewer isolation. Run in the Supabase
-SQL editor; all files roll back their fixtures.
+inserts, soft delete, and outsider/viewer isolation.
+`supabase/tests/phase06_rls_tests.sql` — prompt invisibility to user
+sessions, generation log isolation and append-only behavior, prompt
+version immutability. Run in the Supabase SQL editor; all files roll back
+their fixtures.
 
 ## Future tables (do NOT create early)
 
