@@ -135,3 +135,37 @@ option · Reason · Consequences · Date.
 - **Consequences**: Direct service-role writes bypass the transition
   table — acceptable, as service-role usage is audited (SECURITY.md).
 - **Date**: 2026-07-28
+
+## D-009 — Designs store internal asset refs, not URLs
+
+- **Decision**: Design JSON persists image/logo sources as
+  `supabase://bucket/path` references; signed URLs are minted server-side
+  on every editor load and never stored.
+- **Context**: Signed URLs expire, and the editor rules forbid loading
+  uncontrolled external URLs into the canvas.
+- **Options considered**: (1) store signed URLs, (2) make buckets public,
+  (3) internal refs + per-load signed URL resolution.
+- **Selected option**: (3).
+- **Reason**: Designs stay valid forever, buckets stay private, and the
+  Zod schema can reject any non-internal source outright.
+- **Consequences**: Every editor load resolves refs to signed URLs
+  (one storage call per unique asset); Phase 05 export reuses the same
+  resolution path.
+- **Date**: 2026-07-28
+
+## D-010 — Manual save in Phase 04; autosave deferred to Phase 05
+
+- **Decision**: The Phase 04 editor persists via an explicit Save button
+  with a visible saved/unsaved/saving/error status and a beforeunload
+  warning; autosave, local recovery, versions, undo/redo stay in Phase 05.
+- **Context**: Phase 05 owns the reliability feature set; Phase 04 only
+  needs the editor foundation, but losing work silently would violate the
+  "failed save must be visible" principle.
+- **Options considered**: (1) no persistence until Phase 05, (2) full
+  autosave early, (3) manual save + status now.
+- **Selected option**: (3).
+- **Reason**: Keeps the phase gate honest while never marking a design
+  saved without server confirmation.
+- **Consequences**: Phase 05 replaces the manual flow with autosave built
+  on the same `saveDesign` action.
+- **Date**: 2026-07-28

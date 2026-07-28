@@ -13,6 +13,7 @@ import {
   getLogoSignedUrl,
 } from "@/lib/brand-kit/queries";
 import { computeBrandCompletion } from "@/lib/brand-kit/score";
+import { getWorkspaceDesigns } from "@/lib/designs/queries";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -39,15 +40,18 @@ export default async function WorkspacePage({
     notFound();
   }
 
-  const [members, myRole, brandKit, settings] = await Promise.all([
+  const [members, myRole, brandKit, settings, designs] = await Promise.all([
     getWorkspaceMembers(id),
     getMyWorkspaceRole(id),
     getBrandKit(id),
     getIndustrySettings(id),
+    getWorkspaceDesigns(id),
   ]);
   const logoSignedUrl = await getLogoSignedUrl(brandKit?.logo_path ?? null);
   const completion = computeBrandCompletion(brandKit, settings);
   const canEditBrand = myRole === "owner" || myRole === "admin";
+  const canCreateDesigns =
+    myRole === "owner" || myRole === "admin" || myRole === "editor";
   const brandColors = [
     brandKit?.primary_color,
     brandKit?.secondary_color,
@@ -170,24 +174,57 @@ export default async function WorkspacePage({
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-lg">Templates</CardTitle>
+          <CardTitle className="text-lg">Designs</CardTitle>
           <CardDescription>
-            Browse published templates previewed with your brand.
+            {designs.length === 0
+              ? "No designs yet — create your first one."
+              : `${designs.length} design${designs.length === 1 ? "" : "s"} in this workspace.`}
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Link
-            href={`/dashboard/workspaces/${id}/templates`}
-            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
-          >
-            Browse templates
-          </Link>
+        <CardContent className="space-y-4">
+          {designs.length > 0 && (
+            <ul className="divide-y">
+              {designs.slice(0, 8).map((design) => (
+                <li
+                  key={design.id}
+                  className="flex items-center justify-between py-2 text-sm"
+                >
+                  {canCreateDesigns ? (
+                    <Link
+                      href={`/editor/${design.id}`}
+                      className="font-medium hover:underline"
+                    >
+                      {design.name}
+                    </Link>
+                  ) : (
+                    <span className="font-medium">{design.name}</span>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    {design.language === "ar" ? "العربية" : "English"} ·{" "}
+                    {new Date(design.updated_at).toLocaleDateString()}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="flex flex-wrap gap-2">
+            {canCreateDesigns && (
+              <Link
+                href={`/dashboard/workspaces/${id}/create`}
+                className={cn(buttonVariants({ size: "sm" }))}
+              >
+                Create design
+              </Link>
+            )}
+            <Link
+              href={`/dashboard/workspaces/${id}/templates`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              Browse templates
+            </Link>
+          </div>
         </CardContent>
       </Card>
-
-      <p className="text-sm text-muted-foreground">
-        Design creation and the editor arrive in the next phases.
-      </p>
     </div>
   );
 }

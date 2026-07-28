@@ -113,7 +113,14 @@ export default async function WorkspaceTemplatesPage({
       )}
 
       <p className="text-sm text-muted-foreground">
-        Creating a design from a template arrives in the next phase.
+        Ready to use one?{" "}
+        <Link
+          href={`/dashboard/workspaces/${id}/create`}
+          className="underline hover:text-foreground"
+        >
+          Start the guided create flow
+        </Link>
+        .
       </p>
     </div>
   );

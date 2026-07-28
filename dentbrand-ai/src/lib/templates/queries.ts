@@ -87,6 +87,24 @@ export async function getAllTemplates(): Promise<Template[]> {
   return data ?? [];
 }
 
+/** service_ids per template, in one query (for gallery/create-flow filters). */
+export async function getTemplateServicesMap(
+  templateIds: string[]
+): Promise<Record<string, string[]>> {
+  if (templateIds.length === 0) return {};
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("template_services")
+    .select("template_id, service_id")
+    .in("template_id", templateIds);
+  if (error) throw new Error(`Failed to load template services: ${error.message}`);
+  const map: Record<string, string[]> = {};
+  for (const row of data ?? []) {
+    (map[row.template_id] ??= []).push(row.service_id);
+  }
+  return map;
+}
+
 export async function getTemplateServiceIds(
   templateId: string
 ): Promise<string[]> {

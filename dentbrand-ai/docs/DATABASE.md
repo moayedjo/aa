@@ -11,6 +11,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000001_phase01_auth_workspaces.sql` | 01 | enums, profiles, user_roles, workspaces, workspace_members, helper functions, triggers, RLS |
 | `20260728000002_phase02_brand_kit.sql` | 02 | brand_kits, workspace_industry_settings, private brand-assets storage bucket + policies |
 | `20260728000003_phase03_verticals_templates.sql` | 03 | industry_verticals, services, content_goals, template_categories, templates, template_versions, template_services + dental catalog seed |
+| `20260728000004_phase04_design_projects.sql` | 04 | design_projects, design_assets, private design-assets storage bucket + policies |
 
 ## Phase 01 schema
 
@@ -135,6 +136,37 @@ headline, bodyText, cta, generatedImage). Text layers carry
 `maxCharacters` limits; static text can be `{en, ar}` pairs. Five seeded
 production templates live in `supabase/seed.sql`.
 
+## Phase 04 schema
+
+### `design_projects`
+
+A workspace's designs: `workspace_id`, **immutable template reference**
+(`template_id` + `template_version` pin the exact snapshot the design was
+created from), `name`, `language` (`ar`/`en`), `design_json` (the concrete
+working state — validated against `src/lib/designs/schema.ts` on save),
+`created_by`, timestamps. RLS: members read; owner/admin/editor
+create/update; owner/admin delete (viewers are read-only).
+
+### `design_assets`
+
+Uploaded design images: `workspace_id`, optional `design_id`,
+`storage_path` (into the design-assets bucket), `kind`, `mime_type`,
+`created_by`. Same read isolation; editors create; owner/admin delete.
+
+### Design JSON (schemaVersion 1)
+
+Same layer vocabulary as templates but fully resolved: no `{{variables}}`,
+hex colors, plain strings, and image/logo sources restricted to internal
+`supabase://bucket/path` references (never external URLs). Groups are
+flattened at creation; `editable` flags carry over so locked layers stay
+locked in the editor.
+
+### Storage — `design-assets` bucket
+
+Private; 5 MB; PNG/JPEG/WebP. Paths are `{workspace_id}/{design_id}/…`;
+members read, owner/admin/editor upload, owner/admin delete. Assets are
+served via short-lived signed URLs resolved server-side per editor load.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -143,14 +175,15 @@ anonymous access. `supabase/tests/phase02_rls_tests.sql` — brand kit /
 industry settings read vs. write role gates, plus documented storage
 policy checks. `supabase/tests/phase03_rls_tests.sql` — catalog readability,
 published-only visibility for normal users, admin capabilities, and version
-immutability. Run in the Supabase SQL editor; all files roll back their
-fixtures.
+immutability. `supabase/tests/phase04_rls_tests.sql` — design isolation,
+viewer read-only enforcement, editor write rights, asset isolation, and
+documented storage checks. Run in the Supabase SQL editor; all files roll
+back their fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 04–05:
-design_projects, design_versions, design_assets, design_exports ·
-Phase 06–07: prompt_templates, prompt_versions, ai_generations ·
+Phase 05:
+design_versions, design_exports · Phase 06–07: prompt_templates, prompt_versions, ai_generations ·
 Phase 08: credit_wallets, credit_ledger, usage_counters · Phase 09:
 plans, subscriptions, billing_customers, webhook_events · Phase 10–11:
 support_requests, design_ratings, product_events, admin_audit_logs.

@@ -1,0 +1,68 @@
+import { notFound, redirect } from "next/navigation";
+import type { Metadata } from "next";
+
+import { getDesign, getAssetUrlMap, parseDesign } from "@/lib/designs/queries";
+import { getMyWorkspaceRole } from "@/lib/workspaces/queries";
+import { getBrandKit } from "@/lib/brand-kit/queries";
+import { EditorShell } from "@/components/editor/editor-shell";
+import { FontLinks } from "@/components/templates/font-links";
+
+export const metadata: Metadata = { title: "Editor" };
+
+export default async function EditorPage({
+  params,
+}: {
+  params: Promise<{ designId: string }>;
+}) {
+  const { designId } = await params;
+
+  // RLS: designs in foreign workspaces are invisible → 404.
+  const design = await getDesign(designId);
+  if (!design) notFound();
+
+  // Viewers get the workspace page, not the editor.
+  const role = await getMyWorkspaceRole(design.workspace_id);
+  if (role !== "owner" && role !== "admin" && role !== "editor") {
+    redirect(`/dashboard/workspaces/${design.workspace_id}`);
+  }
+
+  const parsed = parseDesign(design);
+  if (!parsed.ok) {
+    // Corrupted design data must be visible, not silently "fixed".
+    throw new Error(`This design's data is invalid: ${parsed.error}`);
+  }
+
+  const [assetUrls, brandKit] = await Promise.all([
+    getAssetUrlMap(parsed.json),
+    getBrandKit(design.workspace_id),
+  ]);
+
+  const brandColors = [
+    brandKit?.primary_color,
+    brandKit?.secondary_color,
+    brandKit?.accent_color,
+    brandKit?.background_color,
+    brandKit?.text_color,
+    "#ffffff",
+    "#000000",
+  ].filter((c): c is string => !!c);
+
+  const fonts = [brandKit?.arabic_font, brandKit?.english_font].filter(
+    (f): f is string => !!f
+  );
+
+  return (
+    <>
+      <FontLinks fonts={fonts} />
+      <EditorShell
+        designId={design.id}
+        workspaceId={design.workspace_id}
+        designName={design.name}
+        language={design.language}
+        design={parsed.json}
+        assetUrls={assetUrls}
+        brandColors={[...new Set(brandColors)]}
+      />
+    </>
+  );
+}

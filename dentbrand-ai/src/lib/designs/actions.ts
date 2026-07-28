@@ -1,0 +1,192 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+import { z } from "zod";
+
+import { createClient } from "@/lib/supabase/server";
+import { validateTemplateJson } from "@/lib/templates/schema";
+import { buildInitialDesignJson } from "@/lib/designs/create";
+import { validateDesignJson } from "@/lib/designs/schema";
+import { getBrandKit } from "@/lib/brand-kit/queries";
+
+export interface DesignActionResult {
+  error?: string;
+}
+
+const EDIT_ROLES = ["owner", "admin", "editor"];
+
+async function requireDesignEditor(workspaceId: string) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { supabase, user: null, role: null as string | null };
+
+  const { data } = await supabase
+    .from("workspace_members")
+    .select("role")
+    .eq("workspace_id", workspaceId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  return { supabase, user, role: data?.role ?? null };
+}
+
+const createDesignSchema = z.object({
+  workspaceId: z.string().uuid(),
+  templateId: z.string().uuid(),
+  language: z.enum(["ar", "en"]),
+  name: z.string().trim().min(1).max(140),
+});
+
+/**
+ * Creates a design project from a published template: pins the template's
+ * current version, applies the Brand Kit, and pre-fills sample content.
+ * Redirects to the editor on success.
+ */
+export async function createDesign(
+  input: unknown
+): Promise<DesignActionResult> {
+  const parsed = createDesignSchema.safeParse(input);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
+  }
+  const { workspaceId, templateId, language, name } = parsed.data;
+
+  const { supabase, user, role } = await requireDesignEditor(workspaceId);
+  if (!user) return { error: "You must be logged in" };
+  if (!role || !EDIT_ROLES.includes(role)) {
+    return { error: "Viewers cannot create designs" };
+  }
+
+  // RLS hides unpublished templates from normal users.
+  const { data: template, error: templateError } = await supabase
+    .from("templates")
+    .select("id, status, current_version, supported_languages")
+    .eq("id", templateId)
+    .maybeSingle();
+  if (templateError || !template) return { error: "Template not found" };
+  if (template.status !== "published") {
+    return { error: "This template is not available" };
+  }
+  if (!template.supported_languages.includes(language)) {
+    return { error: "This template does not support the selected language" };
+  }
+
+  const { data: version } = await supabase
+    .from("template_versions")
+    .select("template_json, version")
+    .eq("template_id", templateId)
+    .eq("version", template.current_version)
+    .maybeSingle();
+  if (!version) return { error: "Template version not found" };
+
+  const validated = validateTemplateJson(version.template_json);
+  if (!validated.ok) {
+    return { error: "Template is invalid and cannot be used right now" };
+  }
+
+  const brandKit = await getBrandKit(workspaceId);
+  const designJson = buildInitialDesignJson(
+    validated.template,
+    brandKit,
+    language
+  );
+
+  const designValidated = validateDesignJson(designJson);
+  if (!designValidated.ok) {
+    return { error: `Could not prepare design: ${designValidated.error}` };
+  }
+
+  const { data: design, error } = await supabase
+    .from("design_projects")
+    .insert({
+      workspace_id: workspaceId,
+      template_id: templateId,
+      template_version: version.version,
+      name,
+      language,
+      design_json: designValidated.design,
+      created_by: user.id,
+    })
+    .select("id")
+    .single();
+  if (error) return { error: `Could not create design: ${error.message}` };
+
+  revalidatePath(`/dashboard/workspaces/${workspaceId}`);
+  redirect(`/editor/${design.id}`);
+}
+
+/**
+ * Persists the design's working state. The design is only "saved" when
+ * this returns without error — callers must surface failures.
+ */
+export async function saveDesign(
+  designIdInput: unknown,
+  designJsonInput: unknown
+): Promise<DesignActionResult> {
+  const idParsed = z.string().uuid().safeParse(designIdInput);
+  if (!idParsed.success) return { error: "Invalid design" };
+
+  const validated = validateDesignJson(designJsonInput);
+  if (!validated.ok) return { error: `Invalid design data: ${validated.error}` };
+
+  const supabase = await createClient();
+  const { data: design } = await supabase
+    .from("design_projects")
+    .select("workspace_id")
+    .eq("id", idParsed.data)
+    .maybeSingle();
+  if (!design) return { error: "Design not found" };
+
+  const { role } = await requireDesignEditor(design.workspace_id);
+  if (!role || !EDIT_ROLES.includes(role)) {
+    return { error: "You do not have permission to edit this design" };
+  }
+
+  const { error } = await supabase
+    .from("design_projects")
+    .update({ design_json: validated.design })
+    .eq("id", idParsed.data);
+  if (error) return { error: `Save failed: ${error.message}` };
+
+  return {};
+}
+
+const registerAssetSchema = z.object({
+  workspaceId: z.string().uuid(),
+  designId: z.string().uuid(),
+  storagePath: z.string().min(3).max(500),
+  mimeType: z.enum(["image/png", "image/jpeg", "image/webp"]),
+});
+
+/** Records an uploaded design image (after a client-side storage upload). */
+export async function registerDesignAsset(
+  input: unknown
+): Promise<DesignActionResult> {
+  const parsed = registerAssetSchema.safeParse(input);
+  if (!parsed.success) return { error: "Invalid asset" };
+  const { workspaceId, designId, storagePath, mimeType } = parsed.data;
+
+  if (!storagePath.startsWith(`${workspaceId}/`)) {
+    return { error: "Invalid asset path" };
+  }
+
+  const { supabase, user, role } = await requireDesignEditor(workspaceId);
+  if (!user) return { error: "You must be logged in" };
+  if (!role || !EDIT_ROLES.includes(role)) {
+    return { error: "You do not have permission to upload images" };
+  }
+
+  const { error } = await supabase.from("design_assets").insert({
+    workspace_id: workspaceId,
+    design_id: designId,
+    storage_path: storagePath,
+    mime_type: mimeType,
+    created_by: user.id,
+  });
+  if (error) return { error: `Could not register asset: ${error.message}` };
+
+  return {};
+}

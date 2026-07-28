@@ -140,6 +140,46 @@ where user_id='…'`), one normal user with an onboarded workspace.
 8. **Onboarding still works**: the wizard's industry and services steps now
    load from the database (same options as before).
 
+## RLS tests (Phase 04)
+
+`supabase/tests/phase04_rls_tests.sql` — outsiders can't see or touch
+designs; viewers read but can't write or create; owners/editors write;
+design_assets isolated; documented storage checks for the design-assets
+bucket.
+
+## Manual testing steps — Phase 04
+
+Prereq: migrations 0001–0004 + seed.sql applied; an onboarded workspace
+with brand colors, fonts and a logo.
+
+1. **Create flow**: workspace page → "Create design" → pick a service, a
+   goal, and a template (previews show your brand) → optional name →
+   "Create design" → the editor opens with a pre-filled design.
+2. **Brand applied**: canvas shows your colors, fonts, business name,
+   phone/website and logo without any manual step.
+3. **Edit text**: select the headline → type in the properties panel →
+   canvas updates live; the character counter blocks input past
+   maxCharacters; font size and alignment work.
+4. **Colors**: change a text/shape color via brand swatches and the custom
+   picker.
+5. **Replace image**: select the image slot → upload a JPG → it renders in
+   the slot (cover); "Fit inside" switches to contain; files over 5 MB or
+   wrong types are rejected.
+6. **Move layers**: drag the headline — it moves and X/Y update. Select a
+   locked layer (e.g. footer band): drag does nothing, panel shows the
+   locked notice, dashed selection outline appears.
+7. **RTL**: create a second design with العربية → Arabic sample text
+   renders right-aligned RTL with the Arabic brand font.
+8. **Responsive canvas**: resize the window — the canvas scales visually;
+   saved JSON still stores 1080×1350 coordinates.
+9. **Save**: edit → "Unsaved changes" appears → Save → "All changes
+   saved"; reload the editor → edits persisted. Closing the tab with
+   unsaved changes triggers the browser warning.
+10. **Permissions**: a viewer member sees designs listed but has no
+    Create button and `/editor/{id}` redirects them; another workspace's
+    user gets 404 on the design; the design list on the workspace page
+    shows the new designs.
+
 ## Future phases
 
 Each phase adds its own section here (Phase 05: export/recovery tests;

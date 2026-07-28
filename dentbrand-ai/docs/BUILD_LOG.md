@@ -232,3 +232,80 @@ Template Quality Checklist.
 ```
 APPROVE PHASE 03 AND CONTINUE TO PHASE 04
 ```
+
+---
+
+## 2026-07-28 — PHASE 04
+
+**Phase**: 04 (First Design Flow and Editor Foundation)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Guided create flow (`/dashboard/workspaces/[id]/create`): service →
+  content goal → brand-previewed template picker (EN/AR) → named design.
+- `createDesign` pins template_id + template_version, applies the Brand
+  Kit automatically (colors, fonts, business info, logo as internal
+  storage ref), fills sample content, flattens groups, validates and
+  stores the design, then opens the editor.
+- design_projects + design_assets tables with viewer-read-only RLS;
+  private design-assets bucket (5 MB, images) with editor-write policies.
+- Design JSON schema (Zod): fully resolved values; image sources
+  restricted to internal `supabase://` refs — external URLs impossible.
+- React Konva editor (`/editor/[designId]`): responsive Stage at real
+  export dimensions (visual scale only), text/image/shape/logo/icon
+  rendering, RTL text via Konva `direction`, cover/contain image
+  fitting, layer selection (canvas + layers panel), drag-to-move for
+  editable layers, locked layers immovable with lock notice, properties
+  panel (text with maxCharacters counter, font size, alignment, brand
+  color swatches + custom picker, image replace via upload, fit toggle,
+  X/Y), Zustand store with a single guarded update path.
+- Manual save with saved/unsaved/saving/error status, retry, and
+  beforeunload warning (D-010). Web font loading re-render for canvas.
+- Workspace page now lists designs with editor links + Create button;
+  `/editor` and `/admin` added to protected route prefixes.
+
+**Changed files**
+
+- New: migration 0004, `supabase/tests/phase04_rls_tests.sql`,
+  `src/lib/designs/*` (schema, create, queries, actions, upload),
+  `src/stores/editor-store.ts`, create page,
+  `src/components/create-flow/create-flow.tsx`, editor page,
+  `src/components/editor/*` (shell, canvas, layers-panel,
+  properties-panel).
+- Modified: templates queries (services map), workspace page (designs
+  card), templates gallery footer, proxy, docs.
+
+**Dependencies added**: konva, react-konva, zustand (approved stack).
+
+**Database migrations**: `20260728000004_phase04_design_projects.sql`
+(2 tables, RLS, design-assets bucket + 3 storage policies).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success; create + editor routes compiled ✅
+- Phase 04 RLS SQL tests written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 04 (10 steps).
+
+**Known issues**
+
+- Undo/redo, autosave, versions, recovery, export: Phase 05 by design.
+- Image crop/zoom UI: Phase 05/07 scope (cover/contain fitting exists).
+- Konva RTL relies on canvas bidi text support — verify on target
+  browsers during Phase 05 QA alongside export checks.
+
+**Deferred items**
+
+- Autosave + recovery + versions + undo/redo + trash + My Designs + PNG
+  export (Phase 05); AI copy (Phase 06); icon set rendering (icon layers
+  currently render as colored placeholders — no seeded template uses one).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 04 AND CONTINUE TO PHASE 05
+```

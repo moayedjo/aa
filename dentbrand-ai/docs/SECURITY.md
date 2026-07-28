@@ -82,6 +82,22 @@ Platform-admin status lives exclusively in the `user_roles` table.
 - All template JSON is Zod-validated server-side before insert; unknown
   `{{variables}}` are rejected.
 
+## Designs and editor (Phase 04)
+
+- Designs are workspace-isolated by RLS; viewers are read-only at the
+  database level, and the editor route additionally redirects them.
+- Design JSON only accepts **internal** asset references
+  (`supabase://brand-assets/…` or `supabase://design-assets/…`) — external
+  image URLs are rejected by the Zod schema, so uncontrolled URLs can
+  never enter the canvas. Signed URLs are minted server-side per load and
+  never persisted.
+- Uploads go to the private `design-assets` bucket under
+  `{workspace_id}/{design_id}/…`; storage RLS restricts writes to
+  owner/admin/editor of that workspace. `registerDesignAsset` re-validates
+  the path prefix.
+- Locked (non-editable) layers are enforced in the store's single update
+  path — and the saved JSON is Zod-validated server-side on every save.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.
