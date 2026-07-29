@@ -263,7 +263,47 @@ design open in the editor.
 10. **Medical disclaimer**: generate for a treatment-heavy topic → the
     disclaimer hint appears when medicalDisclaimerNeeded is true.
 
+## RLS tests (Phase 07)
+
+`supabase/tests/phase07_rls_tests.sql` — reservation (pending) creation,
+idempotency-key uniqueness, creator can confirm their own pending row,
+completed rows immutable, outsiders cannot finish someone else's
+reservation.
+
+## Manual testing steps — Phase 07
+
+Prereq: migrations 0001–0007 + seed.sql applied; `GEMINI_API_KEY` set; a
+design with an editable image slot open in the editor.
+
+1. **Cost disclosure**: the AI image panel shows "Uses 1 image credit"
+   before you generate anything.
+2. **Generate**: enter a scene → Generate → progress text appears → the
+   image lands in the slot on the canvas and in the history grid; the
+   design autosaves.
+3. **Stored before use**: check the design-assets bucket — the file exists
+   under `{workspace}/{design}/ai-*.png`; the canvas URL is a signed
+   Supabase URL, never a provider URL.
+4. **Content rules**: generated images contain no text, no logos, no
+   watermark, and leave clear space for the overlay.
+5. **Keep previous image**: generate a second image → the first stays in
+   the history grid; "Use" puts it back into the slot.
+6. **Failed generation is free**: temporarily set an invalid
+   `GEMINI_API_KEY` → Generate → clean error, canvas untouched; in SQL the
+   `ai_generations` row is `failed` (not `completed`), and the server log
+   shows `reservation_refunded`.
+7. **No double charge**: while a generation is in flight, click Generate
+   again → "already in progress" rather than a second reservation. After
+   success, replaying the same idempotency key returns the same image
+   with no new row.
+8. **Reload persistence**: refresh the editor → previously generated
+   images still appear in the history grid (loaded from ai_generations).
+9. **Export**: a design using a generated image exports to PNG with the
+   image present (Phase 05 export validation blocks on missing assets).
+10. **Permissions**: a viewer cannot reach the editor; calling the action
+    directly as a non-editor returns a permission error with no
+    reservation created.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 07: AI image + credit safety
-tests; Phase 12: E2E suite).
+Each phase adds its own section here (Phase 08: credit ledger tests;
+Phase 12: E2E suite).

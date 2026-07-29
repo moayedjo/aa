@@ -466,3 +466,83 @@ APPROVE PHASE 05 AND CONTINUE TO PHASE 06
 ```
 APPROVE PHASE 06 AND CONTINUE TO PHASE 07
 ```
+
+---
+
+## 2026-07-28 — PHASE 07
+
+**Phase**: 07 (AI Images and Credit Safety)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Gemini-compatible image generation (server-only, 60s timeout,
+  normalized errors) returning inline image bytes.
+- Image Prompt Builder: user/AI scene + server-appended composition and
+  safety rules — no text, no logos, no watermark, no graphic procedures,
+  no fake before/after, negative space for the overlay (D-016).
+- Full credit-safe lifecycle: validate → balance check → reserve
+  (pending `ai_generations` row) → generate → **store in Supabase Storage**
+  → confirm. Any failure marks the reservation failed and refunds it; a
+  failed generation never consumes a final credit (D-015).
+- Idempotency: one key per submission, unique partial index; duplicates
+  return the original result instead of charging twice, and concurrent
+  duplicates lose the unique-violation race safely.
+- Generated images are registered as `design_assets` (kind `generated`)
+  and enter the canvas only as internal `supabase://` refs.
+- Editor image panel: slot picker, prompt (pre-filled from the latest AI
+  copy `imagePrompt`), cost disclosure before generating, in-flight
+  status, history grid of previous images with "Use" (keep previous
+  image), apply → autosave.
+- Analytics: ai_image_generated / ai_image_failed.
+
+**Changed files**
+
+- New: migration 0007, `supabase/tests/phase07_rls_tests.sql`,
+  `src/lib/ai/image-prompt.ts`, `src/lib/ai/image-actions.ts`,
+  `src/lib/credits/reservation.ts`,
+  `src/components/editor/image-panel.tsx`.
+- Modified: `src/lib/ai/gemini.ts` (image model + generateImage),
+  `src/lib/ai/queries.ts` (image history), editor page + shell,
+  analytics event union, `.env.example`, docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000007_phase07_ai_images.sql` — extends
+ai_generations (image kind, pending status, idempotency_key, asset_path),
+design_assets `generated` kind, and the finish-own-pending RLS policy.
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success ✅
+- Phase 07 RLS SQL tests written; require a live Supabase project.
+- Live image generation requires a real GEMINI_API_KEY — manual steps.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 07 (10 steps).
+
+**Known issues**
+
+- Credit balances are not enforced yet: `checkImageCredit` grants every
+  request until Phase 08 implements wallets/ledger behind the same
+  abstraction (D-015). The reservation/refund/idempotency ordering is
+  complete and testable now.
+- Crop/position of generated images uses the Phase 04 cover/contain
+  fitting; a dedicated crop UI is still open.
+- Image model availability varies by API key; `GEMINI_IMAGE_MODEL`
+  overrides the default.
+
+**Deferred items**
+
+- Credit wallet, append-only ledger, usage counters, low-balance
+  warnings, rate limits (Phase 08).
+- Alternatives-per-generation (multiple images per request) — deferred as
+  "where economically reasonable"; history already keeps every result.
+
+**Recommended next command**
+
+```
+APPROVE PHASE 07 AND CONTINUE TO PHASE 08
+```

@@ -14,6 +14,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000004_phase04_design_projects.sql` | 04 | design_projects, design_assets, private design-assets storage bucket + policies |
 | `20260728000005_phase05_versions_exports.sql` | 05 | design_versions (immutable), design_exports, deleted_at soft delete on design_projects |
 | `20260728000006_phase06_ai_copy.sql` | 06 | prompt_templates, prompt_versions (immutable), ai_generations + dental prompt seed |
+| `20260728000007_phase07_ai_images.sql` | 07 | ai_generations gains image kind, pending status, idempotency key, asset_path; generated design assets; reservation-finish policy |
 
 ## Phase 01 schema
 
@@ -214,6 +215,24 @@ prompt template + version used, language, sanitized `input`, validated
 update/delete. Successful full packs double as the "previous results"
 history in the editor.
 
+## Phase 07 schema (extends Phase 06)
+
+`ai_generations` is extended rather than duplicated:
+
+- `kind` now accepts `image` alongside `copy`.
+- `status` now accepts `pending` — **a pending row IS the credit
+  reservation**. It becomes `completed` (charge confirmed) or `failed`
+  (reservation refunded); it is never deleted.
+- `idempotency_key` with a unique partial index: a duplicate submission
+  cannot create a second reservation, so it cannot be charged twice.
+- `asset_path` holds the stored image's path in the design-assets bucket.
+- `design_assets.kind` now accepts `generated` next to `upload`.
+
+New RLS policy `ai_generations: finish own pending` lets the creator move
+**their own pending row** to completed/failed while they still hold an
+editor role. Completed and failed rows remain immutable (the `using`
+clause only matches `pending`), so charge/refund history is final.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -229,7 +248,10 @@ design-version immutability (no update/delete even for owners), export
 inserts, soft delete, and outsider/viewer isolation.
 `supabase/tests/phase06_rls_tests.sql` — prompt invisibility to user
 sessions, generation log isolation and append-only behavior, prompt
-version immutability. Run in the Supabase SQL editor; all files roll back
+version immutability. `supabase/tests/phase07_rls_tests.sql` —
+reservation creation, idempotency-key uniqueness, confirm-own-pending,
+immutability of completed rows, and outsiders unable to finish someone
+else's reservation. Run in the Supabase SQL editor; all files roll back
 their fixtures.
 
 ## Future tables (do NOT create early)

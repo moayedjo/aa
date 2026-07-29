@@ -14,7 +14,10 @@ import {
   getServices,
   getVerticalByKey,
 } from "@/lib/industries/queries";
-import { getRecentCopyGenerations } from "@/lib/ai/queries";
+import {
+  getRecentCopyGenerations,
+  getRecentImageGenerations,
+} from "@/lib/ai/queries";
 import { EditorShell } from "@/components/editor/editor-shell";
 import { FontLinks } from "@/components/templates/font-links";
 
@@ -48,14 +51,21 @@ export default async function EditorPage({
     throw new Error(`This design's data is invalid: ${parsed.error}`);
   }
 
-  const [assetUrls, brandKit, versions, settings, copyGenerations] =
-    await Promise.all([
-      getAssetUrlMap(parsed.json),
-      getBrandKit(design.workspace_id),
-      getDesignVersions(design.id),
-      getIndustrySettings(design.workspace_id),
-      getRecentCopyGenerations(design.id),
-    ]);
+  const [
+    assetUrls,
+    brandKit,
+    versions,
+    settings,
+    copyGenerations,
+    imageGenerations,
+  ] = await Promise.all([
+    getAssetUrlMap(parsed.json),
+    getBrandKit(design.workspace_id),
+    getDesignVersions(design.id),
+    getIndustrySettings(design.workspace_id),
+    getRecentCopyGenerations(design.id),
+    getRecentImageGenerations(design.id),
+  ]);
 
   const vertical = await getVerticalByKey(settings?.industry_key ?? "dental");
   const [services, goals] = vertical
@@ -95,6 +105,7 @@ export default async function EditorPage({
         services={services}
         goals={goals}
         copyGenerations={copyGenerations}
+        imageGenerations={imageGenerations}
       />
     </>
   );

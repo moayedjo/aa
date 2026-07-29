@@ -242,3 +242,44 @@ option · Reason · Consequences · Date.
 - **Consequences**: Generation requires SUPABASE_SERVICE_ROLE_KEY at
   runtime; documented in SECURITY.md.
 - **Date**: 2026-07-28
+
+## D-015 — The pending generation row is the credit reservation
+
+- **Decision**: Phase 07 implements the full reservation lifecycle using a
+  `pending` row in `ai_generations` (with `idempotency_key`), and puts the
+  wallet/ledger writes behind `src/lib/credits/reservation.ts`, whose
+  internals Phase 08 fills in.
+- **Context**: Phase 07 must guarantee "a failed generation never consumes
+  a final credit" and "a duplicate request does not charge twice", but
+  `credit_wallets` / `credit_ledger` are explicitly Phase 08 tables.
+- **Options considered**: (1) create the Phase 08 credit tables early,
+  (2) skip credit safety until Phase 08, (3) reservation lifecycle now
+  against a credits abstraction that Phase 08 implements.
+- **Selected option**: (3).
+- **Reason**: The safety-critical ordering (reserve → generate → store →
+  confirm, refund on failure) and the idempotency guarantee are proven and
+  testable now; Phase 08 adds balances and the append-only ledger without
+  touching a single call site.
+- **Consequences**: Until Phase 08, `checkImageCredit` grants every
+  request and confirm/refund emit structured logs instead of ledger rows.
+  Phase 08 must replace those three function bodies and enforce real
+  balances.
+- **Date**: 2026-07-28
+
+## D-016 — Composition and safety rules appended server-side
+
+- **Decision**: `buildImagePrompt` always appends the no-text/no-logo/
+  no-watermark/no-graphic-procedure/negative-space rules to whatever scene
+  the user or AI copy supplies.
+- **Context**: The image rules are product requirements, not user
+  preferences; a client-editable prompt could drop them.
+- **Options considered**: (1) put the rules in the UI placeholder text,
+  (2) store them in a prompt version row, (3) append them server-side in
+  code on every request.
+- **Selected option**: (3).
+- **Reason**: They cannot be bypassed, and they apply to prompts coming
+  from AI copy and from free-text alike. (Phase 11's prompt admin can
+  later promote them to a versioned row if they need tuning without a
+  deploy.)
+- **Consequences**: Changing the rules needs a deploy until then.
+- **Date**: 2026-07-28

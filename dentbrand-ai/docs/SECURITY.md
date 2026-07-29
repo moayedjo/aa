@@ -129,6 +129,33 @@ Platform-admin status lives exclusively in the `user_roles` table.
   workspace-isolated; inputs stored there are the sanitized request
   fields only.
 
+## AI images and credit safety (Phase 07)
+
+- Generated images are **stored in Supabase Storage before the client ever
+  sees them**. The action returns an internal `supabase://design-assets/…`
+  ref plus a short-lived signed URL; no external or provider URL can enter
+  the canvas (the design schema rejects anything else).
+- The image prompt sent to the provider is always
+  `user scene + server-side composition rules` (no text, no logos, no
+  watermarks, no graphic procedures, no fake before/after, negative space).
+  The rules are appended in `buildImagePrompt` and cannot be stripped by
+  the client.
+- **Credit safety**: validate → balance check → reserve (pending
+  `ai_generations` row) → generate → store → confirm. Any failure marks
+  the reservation `failed` and refunds it, so a failed generation never
+  consumes a final credit. The wallet/ledger writes behind
+  `src/lib/credits/reservation.ts` are filled in by Phase 08 without
+  changing this flow.
+- **Idempotency**: the client sends one key per submission; a unique
+  partial index on `idempotency_key` makes a duplicate reservation
+  impossible. A repeated request returns the original result instead of
+  charging again, and a concurrent duplicate loses the unique-violation
+  race safely.
+- RLS lets a creator finish only **their own pending** row; completed and
+  failed rows are immutable, so charge/refund history cannot be rewritten.
+- Generation never writes `design_json` — applying an image is an explicit
+  user action, so a failure leaves the design untouched.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

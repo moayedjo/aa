@@ -24,7 +24,8 @@ import {
   type VersionSummary,
 } from "@/components/editor/history-panel";
 import { CopyPanel } from "@/components/editor/copy-panel";
-import type { CopyGeneration } from "@/lib/ai/queries";
+import { ImagePanel } from "@/components/editor/image-panel";
+import type { CopyGeneration, ImageGeneration } from "@/lib/ai/queries";
 import type { ContentGoal, Service } from "@/types/database";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -64,6 +65,7 @@ interface EditorShellProps {
   services: Service[];
   goals: ContentGoal[];
   copyGenerations: CopyGeneration[];
+  imageGenerations: ImageGeneration[];
 }
 
 export function EditorShell({
@@ -79,6 +81,7 @@ export function EditorShell({
   services,
   goals,
   copyGenerations,
+  imageGenerations,
 }: EditorShellProps) {
   const initialize = useEditorStore((s) => s.initialize);
   const saveState = useEditorStore((s) => s.saveState);
@@ -405,6 +408,11 @@ export function EditorShell({
             services={services}
             goals={goals}
             previousGenerations={copyGenerations}
+          />
+          <ImagePanel
+            designId={designId}
+            suggestedPrompt={copyGenerations[0]?.copy.imagePrompt ?? ""}
+            previousImages={imageGenerations}
           />
           <HistoryPanel designId={designId} versions={versions} />
         </aside>
