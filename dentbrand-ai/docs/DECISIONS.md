@@ -283,3 +283,46 @@ option · Reason · Consequences · Date.
   deploy.)
 - **Consequences**: Changing the rules needs a deploy until then.
 - **Date**: 2026-07-28
+
+## D-017 — Balance changes only through a security-definer function
+
+- **Decision**: `credit_wallets`/`credit_ledger` have no write RLS
+  policies; the only balance writer is `apply_credit_change`, a
+  security-definer function with `EXECUTE` granted solely to
+  `service_role`. Server actions call it via the audited admin client.
+- **Context**: The core credit invariant is "no balance change without a
+  ledger entry", and users must not be able to grant themselves credits.
+- **Options considered**: (1) RLS write policies + application discipline,
+  (2) a DB trigger keeping balance = sum(ledger), (3) a single
+  security-definer function that writes both atomically, locked to the
+  service role.
+- **Selected option**: (3).
+- **Reason**: Makes the invariant structural (balance and ledger move in
+  one transaction, overspend rejected in-DB), and revoking EXECUTE from
+  end users closes the security-definer escalation hole.
+- **Consequences**: Every credit mutation is a service-role RPC; the admin
+  client is now used by the credits layer as well as prompts (documented
+  in SECURITY.md).
+- **Date**: 2026-07-28
+
+## D-018 — Reserve after the idempotency-guarded generation row
+
+- **Decision**: The image action creates the pending `ai_generations` row
+  first (its unique `idempotency_key` blocks duplicates), THEN calls
+  `reserveImageCredit(workspace, generationId)` to deduct. This completes
+  the D-015 abstraction: `checkImageCredit` stays a read-only pre-flight,
+  the reserve is tied to a real generation id, and refunds/charges key on
+  that id.
+- **Context**: Deducting before the row exists would let a duplicate that
+  later loses the unique-key race leak a credit; deducting only at confirm
+  would allow concurrent overspend.
+- **Options considered**: (1) deduct in `checkImageCredit` pre-insert,
+  (2) deduct only at confirm, (3) reserve immediately after the pending
+  insert.
+- **Selected option**: (3).
+- **Reason**: The reservation is always backed by a real, de-duplicated
+  generation; overspend is impossible and a lost race never leaks credit.
+- **Consequences**: One extra service-role RPC per generation; the image
+  action gained a reserve call (a credit-safety edit within Phase 08's
+  mandate, callers outside the credits system unchanged).
+- **Date**: 2026-07-28

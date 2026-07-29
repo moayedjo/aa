@@ -17,13 +17,17 @@ interface ImagePanelProps {
   /** Image prompt suggested by the latest AI copy result, if any. */
   suggestedPrompt: string;
   previousImages: ImageGeneration[];
+  /** Remaining image credits at load; decremented locally on success. */
+  initialBalance: number | null;
 }
 
 export function ImagePanel({
   designId,
   suggestedPrompt,
   previousImages,
+  initialBalance,
 }: ImagePanelProps) {
+  const [balance, setBalance] = useState<number | null>(initialBalance);
   const layers = useEditorStore((s) => s.layers);
   const updateLayer = useEditorStore((s) => s.updateLayer);
   const addAssetUrl = useEditorStore((s) => s.addAssetUrl);
@@ -86,6 +90,10 @@ export function ImagePanel({
     setHistory((prev) =>
       result.duplicate ? prev : [entry, ...prev].slice(0, 12)
     );
+    // A fresh (non-duplicate) generation consumed one credit.
+    if (!result.duplicate && balance !== null) {
+      setBalance((b) => (b === null ? b : Math.max(0, b - 1)));
+    }
     apply(entry);
   };
 
@@ -101,6 +109,15 @@ export function ImagePanel({
       {notice && (
         <Alert variant="success">
           <AlertDescription>{notice}</AlertDescription>
+        </Alert>
+      )}
+
+      {balance !== null && balance < 1 && (
+        <Alert>
+          <AlertDescription>
+            You&apos;re out of image credits this month. You can still edit and
+            upload your own images.
+          </AlertDescription>
         </Alert>
       )}
 
@@ -149,12 +166,17 @@ export function ImagePanel({
             <Button
               size="sm"
               onClick={generate}
-              disabled={busy || prompt.trim().length < 5}
+              disabled={
+                busy ||
+                prompt.trim().length < 5 ||
+                (balance !== null && balance < 1)
+              }
             >
               {busy ? "Generating…" : "Generate image"}
             </Button>
             <span className="text-xs text-muted-foreground">
               Uses 1 image credit
+              {balance !== null && ` · ${balance} left`}
             </span>
           </div>
           {busy && (

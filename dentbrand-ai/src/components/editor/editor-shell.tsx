@@ -66,6 +66,7 @@ interface EditorShellProps {
   goals: ContentGoal[];
   copyGenerations: CopyGeneration[];
   imageGenerations: ImageGeneration[];
+  imageBalance: number | null;
 }
 
 export function EditorShell({
@@ -82,6 +83,7 @@ export function EditorShell({
   goals,
   copyGenerations,
   imageGenerations,
+  imageBalance,
 }: EditorShellProps) {
   const initialize = useEditorStore((s) => s.initialize);
   const saveState = useEditorStore((s) => s.saveState);
@@ -413,6 +415,7 @@ export function EditorShell({
             designId={designId}
             suggestedPrompt={copyGenerations[0]?.copy.imagePrompt ?? ""}
             previousImages={imageGenerations}
+            initialBalance={imageBalance}
           />
           <HistoryPanel designId={designId} versions={versions} />
         </aside>

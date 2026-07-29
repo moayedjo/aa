@@ -303,7 +303,47 @@ design with an editable image slot open in the editor.
     directly as a non-editor returns a permission error with no
     reservation created.
 
+## RLS tests (Phase 08)
+
+`supabase/tests/phase08_rls_tests.sql` — members read their wallet
+(opens at 12); members cannot update the balance or forge a ledger entry;
+the credit function is not callable by end users; outsiders see nothing;
+`apply_credit_change` deducts + writes a ledger row, rejects overspend,
+and refunds restore the balance with correct `balance_after`.
+
+## Manual testing steps — Phase 08
+
+Prereq: migrations 0001–0008 applied; `GEMINI_API_KEY` and
+`SUPABASE_SERVICE_ROLE_KEY` set; a workspace with a design open.
+
+1. **Opening balance**: a new workspace shows 12 of 12 image credits on
+   the workspace page and the usage page.
+2. **Cost disclosure**: the editor image panel shows "Uses 1 image credit
+   · N left" before generating.
+3. **Spend**: generate an image → balance drops by 1 on the panel and on
+   the usage page; the ledger shows an "Image generation" −1 entry with
+   the running balance.
+4. **Refund on failure**: force a failure (invalid GEMINI_API_KEY) →
+   balance is unchanged after the attempt; the usage page shows the
+   failure counted and, if a reservation had been taken, a matching
+   refund entry (net zero).
+5. **No double charge**: replay the same idempotency key → no second
+   deduction; the ledger has a single reservation for that generation.
+6. **Out of credits**: drain the balance to 0 (SQL or repeated gen) →
+   the panel disables Generate with an out-of-credits message; uploads
+   still work; the action rejects a forced call safely.
+7. **Low-credit warning**: at/under 20% of the allowance, the usage page
+   shows the low-balance banner.
+8. **Integrity**: as a member, try `update credit_wallets set balance=999`
+   in SQL → 0 rows; try calling `apply_credit_change` as a normal user →
+   permission denied.
+9. **Monthly reset**: set `allowance_period` to a past month in SQL, load
+   the editor/usage page → the balance resets to the monthly allowance
+   with an "allowance" ledger entry for the new period.
+10. **Rate limit**: exceed the window cap → generation is refused with a
+    "please wait" message and no reservation is created.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 08: credit ledger tests;
+Each phase adds its own section here (Phase 09: billing/webhook tests;
 Phase 12: E2E suite).

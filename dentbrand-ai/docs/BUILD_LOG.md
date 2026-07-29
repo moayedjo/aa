@@ -546,3 +546,83 @@ design_assets `generated` kind, and the finish-own-pending RLS policy.
 ```
 APPROVE PHASE 07 AND CONTINUE TO PHASE 08
 ```
+
+---
+
+## 2026-07-28 — PHASE 08
+
+**Phase**: 08 (Credits and Usage Transparency)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- credit_wallets, append-only credit_ledger, usage_counters. Balances
+  change only via the security-definer `apply_credit_change` (locks wallet,
+  rejects overspend, writes ledger + balance in one txn); EXECUTE revoked
+  from end users and granted only to service_role (D-017).
+- Monthly reset (`ensure_wallet_period`) — resets to the monthly allowance
+  with one allowance ledger entry; wallets provisioned by trigger (12
+  credits) and backfilled for existing workspaces.
+- Real reservation lifecycle wired into Phase 07's abstraction: reserve
+  after the idempotency-guarded pending row (D-018), refund on failure
+  (nets zero), confirm bumps the usage counter. Ledger-level unique
+  `(reference_generation, entry_type)` blocks double reserve/refund.
+- Usage page (`/dashboard/workspaces/[id]/usage`): balance, monthly
+  allowance, images this/failed, allowance period, full ledger activity
+  with running balance, refund count, low-credit banner, "how credits
+  work" explainer.
+- Real cost disclosure in the editor image panel ("Uses 1 image credit ·
+  N left"), Generate disabled + banner at zero, local decrement on
+  success; Usage card + credit summary on the workspace page.
+- Rate limiting (per-workspace rolling window) on image generation;
+  designs_created usage counter recorded on design creation.
+
+**Changed files**
+
+- New: migration 0008, `supabase/tests/phase08_rls_tests.sql`,
+  `src/lib/credits/queries.ts`, `src/lib/credits/rate-limit.ts`,
+  `src/lib/credits/usage.ts`, usage page.
+- Modified: `src/lib/credits/reservation.ts` (real implementation),
+  `src/lib/ai/image-actions.ts` (rate limit + reserve), image panel +
+  editor shell + editor page (balance), workspace page (usage card),
+  `src/lib/designs/actions.ts` (designs_created), docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000008_phase08_credits.sql` — 3 tables,
+3 security-definer functions (apply_credit_change, ensure_wallet_period,
+increment_usage) with EXECUTE locked to service_role, wallet trigger +
+backfill, RLS (read-only for members).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success ✅
+- Phase 08 RLS SQL tests written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 08 (10 steps).
+
+**Known issues**
+
+- Monthly allowance defaults to 12 for every workspace; per-plan
+  allowances arrive with Paddle plans in Phase 09 (the wallet already has
+  `monthly_allowance` for the plan to set).
+- Reset is lazy (on wallet read via `ensure_wallet_period`), so a workspace
+  that is never opened in a new month resets on its next access — correct
+  for spendable balances, no cron needed.
+- Rate limit fails open on a counting error (the hard credit limit still
+  applies).
+
+**Deferred items**
+
+- Plans, subscriptions, Paddle checkout/webhooks, per-plan allowances
+  (Phase 09); admin credit adjustments with audit (Phase 11 — the
+  `adjustment` ledger type already exists).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 08 AND CONTINUE TO PHASE 09
+```

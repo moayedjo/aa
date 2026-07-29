@@ -14,6 +14,7 @@ import {
 } from "@/lib/brand-kit/queries";
 import { computeBrandCompletion } from "@/lib/brand-kit/score";
 import { getWorkspaceDesigns } from "@/lib/designs/queries";
+import { getWallet } from "@/lib/credits/queries";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -40,13 +41,15 @@ export default async function WorkspacePage({
     notFound();
   }
 
-  const [members, myRole, brandKit, settings, designs] = await Promise.all([
-    getWorkspaceMembers(id),
-    getMyWorkspaceRole(id),
-    getBrandKit(id),
-    getIndustrySettings(id),
-    getWorkspaceDesigns(id),
-  ]);
+  const [members, myRole, brandKit, settings, designs, wallet] =
+    await Promise.all([
+      getWorkspaceMembers(id),
+      getMyWorkspaceRole(id),
+      getBrandKit(id),
+      getIndustrySettings(id),
+      getWorkspaceDesigns(id),
+      getWallet(id),
+    ]);
   const logoSignedUrl = await getLogoSignedUrl(brandKit?.logo_path ?? null);
   const completion = computeBrandCompletion(brandKit, settings);
   const canEditBrand = myRole === "owner" || myRole === "admin";
@@ -229,6 +232,25 @@ export default async function WorkspacePage({
               Browse templates
             </Link>
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Usage &amp; credits</CardTitle>
+          <CardDescription>
+            {wallet
+              ? `${wallet.balance} of ${wallet.monthly_allowance} image credits left this month.`
+              : "Track your image credits and usage."}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Link
+            href={`/dashboard/workspaces/${id}/usage`}
+            className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+          >
+            View usage
+          </Link>
         </CardContent>
       </Card>
     </div>

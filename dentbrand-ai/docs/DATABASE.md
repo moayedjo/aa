@@ -15,6 +15,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000005_phase05_versions_exports.sql` | 05 | design_versions (immutable), design_exports, deleted_at soft delete on design_projects |
 | `20260728000006_phase06_ai_copy.sql` | 06 | prompt_templates, prompt_versions (immutable), ai_generations + dental prompt seed |
 | `20260728000007_phase07_ai_images.sql` | 07 | ai_generations gains image kind, pending status, idempotency key, asset_path; generated design assets; reservation-finish policy |
+| `20260728000008_phase08_credits.sql` | 08 | credit_wallets, credit_ledger (append-only), usage_counters + balance-integrity functions, wallet provisioning trigger |
 
 ## Phase 01 schema
 
@@ -233,6 +234,44 @@ New RLS policy `ai_generations: finish own pending` lets the creator move
 editor role. Completed and failed rows remain immutable (the `using`
 clause only matches `pending`), so charge/refund history is final.
 
+## Phase 08 schema
+
+### `credit_wallets`
+
+One per workspace: `balance` (spendable image credits, `>= 0`),
+`monthly_allowance`, `allowance_period` (`YYYY-MM`). Provisioned by a
+trigger on workspace creation (12 credits) and backfilled for existing
+workspaces. **No RLS write policy** — members read only.
+
+### `credit_ledger` (append-only)
+
+Every balance change: `entry_type` (`allowance` / `reservation` /
+`refund` / `adjustment`), signed `amount`, `balance_after`,
+`reference_generation`, `reason`. A unique index on
+`(reference_generation, entry_type)` makes a second reservation or refund
+for the same generation impossible — the ledger-level idempotency guard.
+Members read only; no insert/update/delete policies.
+
+### `usage_counters`
+
+Per workspace per `YYYY-MM`: `images_generated`, `images_failed`,
+`designs_created`. Members read only.
+
+### Balance-integrity functions (security definer, service-role only)
+
+- `apply_credit_change(workspace, type, amount, ref, reason, actor)` —
+  the ONLY writer of balances: locks the wallet row, rejects overspend
+  (`INSUFFICIENT_CREDITS`), writes the ledger entry and the new balance in
+  one transaction.
+- `ensure_wallet_period(workspace)` — monthly reset: if the period is
+  stale, resets the balance to `monthly_allowance` via one `allowance`
+  entry (image credits do not roll over).
+- `increment_usage(workspace, period, field)` — whitelisted counter bump.
+
+All three have `EXECUTE` revoked from `public`/`anon`/`authenticated` and
+granted only to `service_role`, so end users can never mint credits by
+calling the RPC directly.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -256,7 +295,6 @@ their fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 06–07: prompt_templates, prompt_versions, ai_generations ·
-Phase 08: credit_wallets, credit_ledger, usage_counters · Phase 09:
-plans, subscriptions, billing_customers, webhook_events · Phase 10–11:
-support_requests, design_ratings, product_events, admin_audit_logs.
+Phase 09: plans, subscriptions, billing_customers, webhook_events ·
+Phase 10–11: support_requests, design_ratings, product_events,
+admin_audit_logs.

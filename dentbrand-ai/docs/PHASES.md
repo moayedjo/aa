@@ -13,8 +13,8 @@ build ahead, never create future tables/routes/dependencies.
 | 04 | First Design Flow and Editor Foundation | ✅ Complete — approved |
 | 05 | Autosave, Recovery and Export | ✅ Complete — approved |
 | 06 | AI Copy | ✅ Complete — approved |
-| 07 | AI Images and Credit Safety | ✅ Complete — awaiting approval |
-| 08 | Credits and Usage Transparency | ⛔ Not started |
+| 07 | AI Images and Credit Safety | ✅ Complete — approved |
+| 08 | Credits and Usage Transparency | ✅ Complete — awaiting approval |
 | 09 | Transparent Billing | ⛔ Not started |
 | 10 | Guided Experience and Support | ⛔ Not started |
 | 11 | Admin and Product Analytics | ⛔ Not started |

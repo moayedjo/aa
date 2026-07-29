@@ -9,6 +9,7 @@ import { validateTemplateJson } from "@/lib/templates/schema";
 import { buildInitialDesignJson } from "@/lib/designs/create";
 import { validateDesignJson } from "@/lib/designs/schema";
 import { getBrandKit } from "@/lib/brand-kit/queries";
+import { recordDesignCreated } from "@/lib/credits/usage";
 
 export interface DesignActionResult {
   error?: string;
@@ -113,6 +114,8 @@ export async function createDesign(
     .select("id")
     .single();
   if (error) return { error: `Could not create design: ${error.message}` };
+
+  await recordDesignCreated(workspaceId);
 
   revalidatePath(`/dashboard/workspaces/${workspaceId}`);
   redirect(`/editor/${design.id}`);

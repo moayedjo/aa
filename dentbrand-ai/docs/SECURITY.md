@@ -156,6 +156,30 @@ Platform-admin status lives exclusively in the `user_roles` table.
 - Generation never writes `design_json` — applying an image is an explicit
   user action, so a failure leaves the design untouched.
 
+## Credits and balance integrity (Phase 08)
+
+- A wallet balance NEVER changes without a matching `credit_ledger` entry.
+  `credit_wallets` and `credit_ledger` have **no insert/update/delete
+  policies** — members read only. The sole writer is the security-definer
+  `apply_credit_change` function, which locks the wallet row, rejects
+  overspend (`INSUFFICIENT_CREDITS`), and writes the ledger row + new
+  balance in one transaction.
+- Those functions bypass RLS, so `EXECUTE` is **revoked** from
+  `public`/`anon`/`authenticated` and granted only to `service_role`.
+  End users cannot mint credits by calling the RPC directly — only the
+  server actions (via the audited admin client) can.
+- Idempotency is enforced twice: at the generation level
+  (`ai_generations.idempotency_key`, Phase 07) and at the ledger level
+  (unique `(reference_generation, entry_type)`), so a duplicate can neither
+  reserve nor refund twice.
+- Reserve → confirm/refund: a credit is deducted when the (idempotency-
+  guarded) reservation row exists; a failed generation is refunded with a
+  matching `+cost` entry, netting zero. A successful generation's
+  reservation IS the charge.
+- Rate limiting (`src/lib/credits/rate-limit.ts`) caps generations per
+  workspace per rolling window on top of the hard credit limit, failing
+  open on a counting error so it never blocks legitimate use unfairly.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

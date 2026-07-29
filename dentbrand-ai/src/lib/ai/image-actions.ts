@@ -11,10 +11,12 @@ import {
 } from "@/lib/ai/image-prompt";
 import {
   checkImageCredit,
+  reserveImageCredit,
   confirmImageCharge,
   refundImageReservation,
   IMAGE_GENERATION_COST,
 } from "@/lib/credits/reservation";
+import { checkRateLimit } from "@/lib/credits/rate-limit";
 
 const EDIT_ROLES = ["owner", "admin", "editor"];
 
@@ -105,6 +107,14 @@ export async function generateDesignImage(
     return { error: "This request already failed — start a new generation" };
   }
 
+  // Rate limit before anything expensive.
+  const rate = await checkRateLimit(design.workspace_id, user.id, "image");
+  if (!rate.ok) {
+    return { error: rate.error ?? "Too many requests — please slow down" };
+  }
+
+  // Pre-flight balance check (also rolls the monthly period forward) for a
+  // fast, friendly failure before we create a row.
   const balance = await checkImageCredit(design.workspace_id);
   if (!balance.ok) {
     return { error: balance.error ?? "Not enough image credits" };
@@ -112,7 +122,8 @@ export async function generateDesignImage(
 
   const finalPrompt = buildImagePrompt(prompt);
 
-  // RESERVE: the pending row is the reservation record.
+  // The pending row is the reservation record; the idempotency key's unique
+  // index prevents a duplicate from ever creating a second reservation.
   const { data: reservation, error: reserveError } = await supabase
     .from("ai_generations")
     .insert({
@@ -134,6 +145,18 @@ export async function generateDesignImage(
       return { error: "This generation is already in progress" };
     }
     return { error: "Could not start the generation. Please try again." };
+  }
+
+  // RESERVE the credit now that the generation row (idempotency-guarded)
+  // exists. A failed reserve here means the balance was lost to a race — we
+  // fail the generation without a refund because nothing was deducted.
+  const reserved = await reserveImageCredit(design.workspace_id, reservation.id);
+  if (!reserved.ok) {
+    await supabase
+      .from("ai_generations")
+      .update({ status: "failed", error: reserved.error ?? "No credits" })
+      .eq("id", reservation.id);
+    return { error: reserved.error ?? "Not enough image credits" };
   }
 
   const started = Date.now();

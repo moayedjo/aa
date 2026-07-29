@@ -18,6 +18,7 @@ import {
   getRecentCopyGenerations,
   getRecentImageGenerations,
 } from "@/lib/ai/queries";
+import { getWallet } from "@/lib/credits/queries";
 import { EditorShell } from "@/components/editor/editor-shell";
 import { FontLinks } from "@/components/templates/font-links";
 
@@ -67,6 +68,8 @@ export default async function EditorPage({
     getRecentImageGenerations(design.id),
   ]);
 
+  const wallet = await getWallet(design.workspace_id);
+
   const vertical = await getVerticalByKey(settings?.industry_key ?? "dental");
   const [services, goals] = vertical
     ? await Promise.all([
@@ -106,6 +109,7 @@ export default async function EditorPage({
         goals={goals}
         copyGenerations={copyGenerations}
         imageGenerations={imageGenerations}
+        imageBalance={wallet?.balance ?? null}
       />
     </>
   );
