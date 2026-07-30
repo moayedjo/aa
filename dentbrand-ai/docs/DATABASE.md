@@ -16,6 +16,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000006_phase06_ai_copy.sql` | 06 | prompt_templates, prompt_versions (immutable), ai_generations + dental prompt seed |
 | `20260728000007_phase07_ai_images.sql` | 07 | ai_generations gains image kind, pending status, idempotency key, asset_path; generated design assets; reservation-finish policy |
 | `20260728000008_phase08_credits.sql` | 08 | credit_wallets, credit_ledger (append-only), usage_counters + balance-integrity functions, wallet provisioning trigger |
+| `20260728000009_phase09_billing.sql` | 09 | plans (seeded), billing_customers, subscriptions, webhook_events + apply_plan_allowance |
 
 ## Phase 01 schema
 
@@ -272,6 +273,43 @@ All three have `EXECUTE` revoked from `public`/`anon`/`authenticated` and
 granted only to `service_role`, so end users can never mint credits by
 calling the RPC directly.
 
+## Phase 09 schema
+
+### `plans`
+
+Public catalog (readable by all authenticated; admin-managed): `key`,
+`name`, `price_month_cents`/`price_year_cents`, `currency`,
+`monthly_designs`, `monthly_image_credits`, `member_limit`,
+`paddle_price_id_month`/`_year` (set per environment). Seeded: Starter
+($19/mo, 12 credits), Growth ($49/mo, 36), Pro ($89/mo, 85).
+
+### `billing_customers`
+
+One Paddle customer per workspace (`paddle_customer_id`, `email`). Members
+read; server-side writes only.
+
+### `subscriptions`
+
+One per workspace: `plan_id`, `paddle_subscription_id`, `status`
+(`subscription_status` enum: trialing/active/past_due/paused/canceled/
+expired), `billing_period`, `current_period_end` (renewal date),
+`cancel_at_period_end`. **No user write policy** — a browser redirect can
+never activate a subscription; only the webhook handler (service role)
+writes it. Members read.
+
+### `webhook_events`
+
+Raw Paddle events: `paddle_event_id` (unique → idempotency),
+`event_type`, `raw`, `status` (received/processed/failed), `error`,
+`processed_at`. **No RLS policies at all** — service-role only.
+
+### `apply_plan_allowance(workspace, allowance)`
+
+Security-definer, service-role only: sets the wallet's `monthly_allowance`
+from the plan and tops the balance up to it (never removes bought
+credits). Called by the webhook handler on activation/plan change — the
+Phase 08 ↔ Phase 09 bridge.
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -295,6 +333,5 @@ their fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 09: plans, subscriptions, billing_customers, webhook_events ·
 Phase 10–11: support_requests, design_ratings, product_events,
 admin_audit_logs.

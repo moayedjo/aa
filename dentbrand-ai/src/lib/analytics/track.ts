@@ -17,7 +17,11 @@ export type AnalyticsEvent =
   | "ai_copy_field_regenerated"
   | "ai_copy_failed"
   | "ai_image_generated"
-  | "ai_image_failed";
+  | "ai_image_failed"
+  | "checkout_started"
+  | "subscription_updated"
+  | "subscription_canceled"
+  | "subscription_reactivated";
 
 export interface AnalyticsProps {
   workspaceId?: string;

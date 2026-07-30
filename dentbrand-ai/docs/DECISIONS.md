@@ -326,3 +326,44 @@ option · Reason · Consequences · Date.
   action gained a reserve call (a credit-safety edit within Phase 08's
   mandate, callers outside the credits system unchanged).
 - **Date**: 2026-07-28
+
+## D-019 — Webhooks are the subscription source of truth
+
+- **Decision**: `subscriptions` has no user write policy; only the
+  signature-verified Paddle webhook handler (service role) mutates
+  subscription state. Billing actions launch checkout / call Paddle but
+  never flip our status directly.
+- **Context**: Spec §16 requires that a browser redirect not activate a
+  subscription, that webhooks be verified, stored, uniquely identified,
+  processed once, idempotent, logged, and retryable.
+- **Options considered**: (1) trust the checkout redirect / client,
+  (2) optimistic client update reconciled later, (3) webhook-only writes
+  with a raw event log.
+- **Selected option**: (3).
+- **Reason**: Only server-verified provider events can be trusted for
+  money; the raw `webhook_events` log gives idempotency (unique event id),
+  auditability, and retry safety.
+- **Consequences**: The UI reflects state that may lag the checkout by a
+  few seconds (until the webhook lands) — the billing page tells the user
+  activation is confirmed by the provider, not the redirect.
+- **Date**: 2026-07-30
+
+## D-020 — Paddle via REST + Paddle.js overlay, no SDK
+
+- **Decision**: Server-side Paddle Billing calls use `fetch`
+  (`src/lib/billing/paddle.ts`); the browser opens checkout with Paddle.js
+  loaded on demand from Paddle's CDN, keyed by the public client token.
+- **Context**: Phase 09 needs transactions, cancel/reactivate/change, and
+  webhook signature verification, while the code-quality rules discourage
+  unnecessary dependencies.
+- **Options considered**: (1) @paddle/paddle-node-sdk + @paddle/paddle-js,
+  (2) REST + on-demand Paddle.js.
+- **Selected option**: (2).
+- **Reason**: A handful of endpoints and one HMAC check don't warrant the
+  SDKs; keeping the surface small keeps the dependency tree flat and the
+  error handling under our control. Everything degrades gracefully when
+  Paddle isn't configured.
+- **Consequences**: Paddle price ids live on `plans` rows (set per
+  environment); if a future need (e.g. richer client events) argues for the
+  SDK, it's a contained swap inside these two files.
+- **Date**: 2026-07-30

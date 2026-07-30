@@ -626,3 +626,87 @@ backfill, RLS (read-only for members).
 ```
 APPROVE PHASE 08 AND CONTINUE TO PHASE 09
 ```
+
+---
+
+## 2026-07-30 — PHASE 09
+
+**Phase**: 09 (Transparent Billing)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- plans (seeded Starter/Growth/Pro), billing_customers, subscriptions,
+  webhook_events. Subscriptions have no user write path — webhooks are the
+  source of truth (D-019).
+- Paddle webhook route: reads the raw body, verifies the HMAC
+  `Paddle-Signature` (constant-time, skew window), records every event by
+  unique `event_id` (idempotent), processes once, mirrors subscription
+  state, and returns 500 for transient failures so Paddle retries.
+- Webhook handler applies the plan's monthly allowance to the wallet on
+  activation/plan change via the service-role `apply_plan_allowance`
+  (Phase 08 bridge — tops up, never removes bought credits).
+- Server-side Paddle client (REST) + on-demand Paddle.js overlay (D-020):
+  createTransaction, cancel, reactivate, change price; graceful
+  "not configured" behavior.
+- Billing actions (owner/admin): createCheckout, cancelSubscription,
+  reactivateSubscription, changePlan — they drive Paddle but never flip
+  our status directly.
+- Billing page: plan picker (annual NOT default-selected), current
+  subscription with renewal date, in-app cancel with confirm + reactivate,
+  upgrade/downgrade, past-due banner, refund/cancellation policy. Billing
+  card + link on the workspace page.
+
+**Changed files**
+
+- New: migration 0009, `supabase/tests/phase09_rls_tests.sql`,
+  `src/lib/billing/*` (paddle, webhook, queries, types, actions,
+  checkout-client), `src/app/api/webhooks/paddle/route.ts`,
+  `src/components/billing/*` (plan-picker, manage-subscription), billing
+  page.
+- Modified: analytics event union, workspace page (billing card),
+  `.env.example`, docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000009_phase09_billing.sql` — 4 tables,
+subscription_status enum, `apply_plan_allowance` (service-role only), RLS
+(public plans, member-read billing, webhook_events service-role only),
+plan seed.
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success; `/api/webhooks/paddle` + billing page
+  compiled ✅
+- Phase 09 RLS SQL tests written; require a live Supabase project.
+- Live checkout requires a Paddle sandbox account — manual steps.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 09 (11 steps).
+
+**Known issues**
+
+- Paddle price ids must be set on the `plans` rows for real checkout;
+  without them (and the API/webhook secrets) the UI shows clear
+  "not configured" states rather than failing.
+- Renewal-reminder emails (annual) are noted in the policy copy; the
+  actual Resend email send is wired with the rest of transactional email
+  and is a small follow-up (event + template already flow through the
+  webhook).
+- Billing history line items (individual invoices) are surfaced via
+  Paddle's customer portal; the in-app page shows plan, status, renewal,
+  and the ledger already covers credit-side history.
+
+**Deferred items**
+
+- Guided experience, support requests, feedback, design ratings
+  (Phase 10); admin billing/plan management UI (Phase 11 — plans are
+  admin-writable by RLS already).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 09 AND CONTINUE TO PHASE 10
+```

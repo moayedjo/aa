@@ -180,6 +180,33 @@ Platform-admin status lives exclusively in the `user_roles` table.
   workspace per rolling window on top of the hard credit limit, failing
   open on a counting error so it never blocks legitimate use unfairly.
 
+## Billing and webhooks (Phase 09)
+
+- **Webhooks are the source of truth.** `subscriptions` has no user write
+  policy; only the webhook handler (service role) mutates subscription
+  state. A browser redirect after checkout can never activate or change a
+  subscription — verified by the Phase 09 RLS test.
+- **Signature verification**: the Paddle webhook route reads the RAW body
+  and verifies `Paddle-Signature` (HMAC-SHA256 of `ts:body`) with a
+  constant-time compare and a timestamp-skew window before doing anything.
+  An unverified request is rejected 401.
+- **Exactly-once processing**: every event is recorded in `webhook_events`
+  keyed by Paddle's `event_id` (unique). A duplicate delivery short-circuits
+  as already-handled; a transient processing failure marks the event
+  `failed` and returns 500 so Paddle retries.
+- `webhook_events` has **no RLS policies** — it is service-role only and
+  never exposed to users.
+- **Secrets server-side**: `PADDLE_API_KEY` and `PADDLE_WEBHOOK_SECRET`
+  are server-only (no `NEXT_PUBLIC_`); only the Paddle.js client token
+  (`NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`, designed to be public) reaches the
+  browser.
+- **Allowance bridge**: on activation/plan change the handler calls the
+  service-role `apply_plan_allowance`, which sets the wallet allowance and
+  tops up the balance without ever removing bought credits.
+- **No dark patterns**: cancellation is a first-class in-app action
+  (owner/admin), scheduled at period end with reactivation available; the
+  annual plan is never selected by default.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

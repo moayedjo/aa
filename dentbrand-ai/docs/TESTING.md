@@ -343,7 +343,50 @@ Prereq: migrations 0001–0008 applied; `GEMINI_API_KEY` and
 10. **Rate limit**: exceed the window cap → generation is refused with a
     "please wait" message and no reservation is created.
 
+## RLS tests (Phase 09)
+
+`supabase/tests/phase09_rls_tests.sql` — plans readable by all; members
+read their own subscription/customer but have no write path (redirect
+can't activate billing); `webhook_events` invisible to users; the same
+Paddle event id can't be recorded twice; `apply_plan_allowance` sets the
+allowance and tops up the balance.
+
+## Manual testing steps — Phase 09
+
+Prereq: migrations 0001–0009 applied. For live checkout, a Paddle sandbox
+account with `PADDLE_API_KEY`, `PADDLE_WEBHOOK_SECRET`,
+`NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`, and `paddle_price_id_*` set on the plan
+rows. The data-model and webhook checks work without a live account.
+
+1. **Plans**: `/dashboard/workspaces/[id]/billing` shows Starter/Growth/Pro
+   with monthly prices; the billing toggle defaults to **Monthly** (annual
+   is not preselected).
+2. **Checkout launch**: choose a plan → a Paddle transaction is created
+   and the Paddle.js overlay opens (or, unconfigured, a clear "not
+   configured" message — no crash).
+3. **Redirect does NOT activate**: after the overlay, the subscription is
+   still inactive until the webhook arrives — confirm the billing page does
+   not show "active" from the redirect alone.
+4. **Webhook activation**: send a signed `subscription.activated` event
+   (Paddle sandbox or a signed curl) with `custom_data.workspace_id` →
+   the subscription becomes active, the renewal date appears, and the
+   wallet's monthly allowance updates to the plan's image credits.
+5. **Signature enforced**: POST the webhook with a bad/missing signature →
+   401, no state change.
+6. **Idempotency**: replay the same event id → `webhook_events` keeps one
+   row; no duplicate state change.
+7. **Cancel (in-app)**: click Cancel → confirm → the action calls Paddle;
+   after the webhook, the page shows "cancels at period end" with access
+   until the renewal date and a "Keep my subscription" (reactivate) button.
+8. **Reactivate**: click "Keep my subscription" → cancellation is cleared.
+9. **Upgrade/downgrade**: switch plans → Paddle applies the prorated
+   change; after the webhook the current plan and allowance update.
+10. **Payment failure**: a `subscription.past_due` event → the page shows
+    the overdue banner; access rules follow the status.
+11. **Permissions**: an editor/viewer visiting the billing page is
+    redirected; the billing actions reject non-owner/admin callers.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 09: billing/webhook tests;
+Each phase adds its own section here (Phase 10: support/feedback tests;
 Phase 12: E2E suite).

@@ -244,13 +244,21 @@ export default async function WorkspacePage({
               : "Track your image credits and usage."}
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="flex flex-wrap gap-2">
           <Link
             href={`/dashboard/workspaces/${id}/usage`}
             className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
           >
             View usage
           </Link>
+          {(myRole === "owner" || myRole === "admin") && (
+            <Link
+              href={`/dashboard/workspaces/${id}/billing`}
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }))}
+            >
+              Billing &amp; plans
+            </Link>
+          )}
         </CardContent>
       </Card>
     </div>
