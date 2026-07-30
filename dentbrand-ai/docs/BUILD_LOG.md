@@ -710,3 +710,71 @@ plan seed.
 ```
 APPROVE PHASE 09 AND CONTINUE TO PHASE 10
 ```
+
+---
+
+## 2026-07-30 — PHASE 10
+
+**Phase**: 10 (Guided Experience and Support)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- support_requests, design_ratings, product_events with RLS.
+- In-editor support: a non-blocking floating Help widget
+  (report a problem / get help / feedback) that attaches design +
+  workspace context to the request without navigating away.
+- Design satisfaction rating (1–5) inline in the editor, upsert per user,
+  persists across reloads — never blocks work.
+- Regeneration-reason capture action recording an `ai_regenerated`
+  product event.
+- Funnel measurement: `trackEvent` now persists every event to
+  product_events (fire-and-forget, D-021); added design_created,
+  design_exported, design_rated, support_request_created, ai_regenerated
+  events.
+- Guided experience: First Design Checklist card (brand → design →
+  export, self-hiding when complete) on the workspace page; recommended
+  templates via the create flow's service-first ordering; helpful empty
+  states retained.
+
+**Changed files**
+
+- New: migration 0010, `supabase/tests/phase10_rls_tests.sql`,
+  `src/lib/support/{actions,queries}.ts`,
+  `src/components/support/{support-widget,design-rating,first-design-checklist}.tsx`.
+- Modified: `src/lib/analytics/track.ts` (product_events transport + new
+  events), editor page + shell (support widget + rating), workspace page
+  (checklist), `src/lib/designs/actions.ts` (funnel events), docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000010_phase10_support.sql` — 3 tables,
+RLS (member support/ratings, platform-admin-only product_events).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success ✅
+- Phase 10 RLS SQL tests written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 10 (9 steps).
+
+**Known issues**
+
+- Product-event persistence is fire-and-forget (D-021); a small fraction
+  may be lost in serverless, with the structured log as fallback.
+- Support-request triage/closing is surfaced to admins in Phase 11; Phase
+  10 covers creation + context capture and owner/admin read.
+
+**Deferred items**
+
+- Admin support-ticket management, product KPI dashboards, PostHog/Sentry
+  wiring, admin_audit_logs (Phase 11).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 10 AND CONTINUE TO PHASE 11
+```

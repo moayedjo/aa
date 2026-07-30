@@ -386,7 +386,42 @@ rows. The data-model and webhook checks work without a live account.
 11. **Permissions**: an editor/viewer visiting the billing page is
     redirected; the billing actions reject non-owner/admin callers.
 
+## RLS tests (Phase 10)
+
+`supabase/tests/phase10_rls_tests.sql` — a member opens a support request
+and rates a design; product_events invisible to members; outsiders can
+neither create nor read; the workspace owner reads members' support
+requests; product_events has no user insert path.
+
+## Manual testing steps — Phase 10
+
+Prereq: migrations 0001–0010 applied; a workspace with a design open.
+
+1. **First Design Checklist**: a fresh workspace shows the "Get started"
+   card (brand → design → export); completing each step ticks it, and the
+   card disappears once all three are done.
+2. **Recommended templates**: the create flow lists the workspace's own
+   services first and floats matching templates to the top.
+3. **Helpful empty states**: a workspace with no designs shows the "No
+   designs yet — create your first one" state.
+4. **Support from inside a design**: in the editor, the floating Help
+   button opens a non-blocking panel; send a "Report a problem" → a
+   support_requests row exists with the design id + path in `context`.
+5. **Feedback doesn't interrupt**: the support panel and rating never
+   navigate away or block editing.
+6. **Design rating**: click the stars in the editor → the rating saves
+   (design_ratings), shows "Thanks!", and persists on reload; re-rating
+   updates the same row.
+7. **Regeneration reason**: (where surfaced) regenerating AI records an
+   `ai_regenerated` product event with the reason.
+8. **Funnel events**: creating a design, exporting, rating, and opening a
+   support request each write a `product_events` row (visible to a
+   platform admin / in server logs), so funnel abandonment is measurable.
+9. **Permissions**: an outsider cannot open a support request or read
+   another workspace's requests/ratings; a normal user cannot read
+   product_events.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 10: support/feedback tests;
+Each phase adds its own section here (Phase 11: admin/audit tests;
 Phase 12: E2E suite).

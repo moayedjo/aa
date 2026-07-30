@@ -15,8 +15,8 @@ build ahead, never create future tables/routes/dependencies.
 | 06 | AI Copy | ✅ Complete — approved |
 | 07 | AI Images and Credit Safety | ✅ Complete — approved |
 | 08 | Credits and Usage Transparency | ✅ Complete — approved |
-| 09 | Transparent Billing | ✅ Complete — awaiting approval |
-| 10 | Guided Experience and Support | ⛔ Not started |
+| 09 | Transparent Billing | ✅ Complete — approved |
+| 10 | Guided Experience and Support | ✅ Complete — awaiting approval |
 | 11 | Admin and Product Analytics | ⛔ Not started |
 | 12 | QA and Beta Launch | ⛔ Not started |
 

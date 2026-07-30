@@ -17,6 +17,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000007_phase07_ai_images.sql` | 07 | ai_generations gains image kind, pending status, idempotency key, asset_path; generated design assets; reservation-finish policy |
 | `20260728000008_phase08_credits.sql` | 08 | credit_wallets, credit_ledger (append-only), usage_counters + balance-integrity functions, wallet provisioning trigger |
 | `20260728000009_phase09_billing.sql` | 09 | plans (seeded), billing_customers, subscriptions, webhook_events + apply_plan_allowance |
+| `20260728000010_phase10_support.sql` | 10 | support_requests, design_ratings, product_events + RLS |
 
 ## Phase 01 schema
 
@@ -310,6 +311,28 @@ from the plan and tops the balance up to it (never removes bought
 credits). Called by the webhook handler on activation/plan change — the
 Phase 08 ↔ Phase 09 bridge.
 
+## Phase 10 schema
+
+### `support_requests`
+
+In-product support: `workspace_id`, optional `design_id`, `user_id`,
+`kind` (problem/feedback/help), `message`, `context` jsonb (path, design
+name/id captured at submission), `status`. RLS: any member creates their
+own; the creator + workspace owner/admin + platform admin read.
+
+### `design_ratings`
+
+Satisfaction rating (1–5) per user per design (`unique(design_id,
+user_id)`, upsert), optional comment. RLS: members read their workspace's;
+a member creates/updates their own.
+
+### `product_events`
+
+Funnel/product analytics: `workspace_id?`, `user_id?`, `event_type`,
+`props` jsonb. Written server-side by the analytics transport (service
+role, fire-and-forget); **platform-admin read only** — no user insert
+policy. Powers activation-funnel and KPI views (Phase 11).
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -333,5 +356,4 @@ their fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 10–11: support_requests, design_ratings, product_events,
-admin_audit_logs.
+Phase 11: admin_audit_logs.

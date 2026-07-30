@@ -1,11 +1,14 @@
 import "server-only";
 
+import { createAdminClient } from "@/lib/supabase/admin";
+
 /**
- * Product analytics abstraction.
+ * Product analytics transport.
  *
- * Phase 02 emits structured server-side logs only; the PostHog transport
- * arrives with the full analytics setup in Phase 11 and plugs in here
- * without touching call sites. Never log secrets or free-text user content.
+ * Emits a structured server-side log AND (Phase 10) persists the event to
+ * `product_events` so the activation funnel can be measured. The PostHog
+ * transport arrives in Phase 11 and plugs in here without touching call
+ * sites. Never log secrets or free-text user content.
  */
 
 export type AnalyticsEvent =
@@ -21,7 +24,12 @@ export type AnalyticsEvent =
   | "checkout_started"
   | "subscription_updated"
   | "subscription_canceled"
-  | "subscription_reactivated";
+  | "subscription_reactivated"
+  | "design_created"
+  | "design_exported"
+  | "design_rated"
+  | "ai_regenerated"
+  | "support_request_created";
 
 export interface AnalyticsProps {
   workspaceId?: string;
@@ -39,4 +47,28 @@ export function trackEvent(event: AnalyticsEvent, props: AnalyticsProps): void {
       ts: new Date().toISOString(),
     })
   );
+
+  // Persist for funnel analysis. Fire-and-forget: analytics must never
+  // block or fail a user action.
+  const { workspaceId, userId, ...rest } = props;
+  void persistEvent(event, workspaceId, userId, rest);
+}
+
+async function persistEvent(
+  event: string,
+  workspaceId: string | undefined,
+  userId: string | undefined,
+  props: Record<string, string | number | boolean | undefined>
+): Promise<void> {
+  try {
+    const admin = createAdminClient();
+    await admin.from("product_events").insert({
+      workspace_id: workspaceId ?? null,
+      user_id: userId ?? null,
+      event_type: event,
+      props,
+    });
+  } catch {
+    // Swallow — the structured log above is the durable fallback.
+  }
 }

@@ -15,6 +15,8 @@ import {
 import { computeBrandCompletion } from "@/lib/brand-kit/score";
 import { getWorkspaceDesigns } from "@/lib/designs/queries";
 import { getWallet } from "@/lib/credits/queries";
+import { getFirstDesignChecklist } from "@/lib/support/queries";
+import { FirstDesignChecklistCard } from "@/components/support/first-design-checklist";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
@@ -55,6 +57,11 @@ export default async function WorkspacePage({
   const canEditBrand = myRole === "owner" || myRole === "admin";
   const canCreateDesigns =
     myRole === "owner" || myRole === "admin" || myRole === "editor";
+  const checklist = await getFirstDesignChecklist(
+    id,
+    !!brandKit?.onboarding_completed_at,
+    designs.length
+  );
   const brandColors = [
     brandKit?.primary_color,
     brandKit?.secondary_color,
@@ -77,6 +84,13 @@ export default async function WorkspacePage({
           <p className="text-sm text-muted-foreground">Your role: {myRole}</p>
         )}
       </div>
+
+      <FirstDesignChecklistCard
+        workspaceId={id}
+        checklist={checklist}
+        canEditBrand={canEditBrand}
+        canCreate={canCreateDesigns}
+      />
 
       <Card>
         <CardHeader>

@@ -10,6 +10,7 @@ import { buildInitialDesignJson } from "@/lib/designs/create";
 import { validateDesignJson } from "@/lib/designs/schema";
 import { getBrandKit } from "@/lib/brand-kit/queries";
 import { recordDesignCreated } from "@/lib/credits/usage";
+import { trackEvent } from "@/lib/analytics/track";
 
 export interface DesignActionResult {
   error?: string;
@@ -116,6 +117,7 @@ export async function createDesign(
   if (error) return { error: `Could not create design: ${error.message}` };
 
   await recordDesignCreated(workspaceId);
+  trackEvent("design_created", { workspaceId, userId: user.id });
 
   revalidatePath(`/dashboard/workspaces/${workspaceId}`);
   redirect(`/editor/${design.id}`);
@@ -409,6 +411,12 @@ export async function recordExport(
     created_by: user.id,
   });
   if (error) return { error: `Could not record export: ${error.message}` };
+
+  trackEvent("design_exported", {
+    workspaceId: design.workspace_id,
+    userId: user.id,
+    step: parsed.data.status,
+  });
   return {};
 }
 

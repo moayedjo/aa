@@ -25,6 +25,8 @@ import {
 } from "@/components/editor/history-panel";
 import { CopyPanel } from "@/components/editor/copy-panel";
 import { ImagePanel } from "@/components/editor/image-panel";
+import { SupportWidget } from "@/components/support/support-widget";
+import { DesignRating } from "@/components/support/design-rating";
 import type { CopyGeneration, ImageGeneration } from "@/lib/ai/queries";
 import type { ContentGoal, Service } from "@/types/database";
 import { Button } from "@/components/ui/button";
@@ -67,6 +69,7 @@ interface EditorShellProps {
   copyGenerations: CopyGeneration[];
   imageGenerations: ImageGeneration[];
   imageBalance: number | null;
+  initialRating: number | null;
 }
 
 export function EditorShell({
@@ -84,6 +87,7 @@ export function EditorShell({
   copyGenerations,
   imageGenerations,
   imageBalance,
+  initialRating,
 }: EditorShellProps) {
   const initialize = useEditorStore((s) => s.initialize);
   const saveState = useEditorStore((s) => s.saveState);
@@ -417,8 +421,21 @@ export function EditorShell({
             previousImages={imageGenerations}
             initialBalance={imageBalance}
           />
+          <DesignRating
+            designId={designId}
+            workspaceId={workspaceId}
+            initialRating={initialRating}
+          />
           <HistoryPanel designId={designId} versions={versions} />
         </aside>
+      </div>
+
+      <div className="fixed bottom-4 right-4 z-50">
+        <SupportWidget
+          workspaceId={workspaceId}
+          designId={designId}
+          designName={designName}
+        />
       </div>
     </div>
   );

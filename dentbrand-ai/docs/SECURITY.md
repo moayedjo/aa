@@ -207,6 +207,20 @@ Platform-admin status lives exclusively in the `user_roles` table.
   (owner/admin), scheduled at period end with reactivation available; the
   annual plan is never selected by default.
 
+## Support, feedback and analytics (Phase 10)
+
+- `support_requests`: any workspace member may open one as themselves
+  (RLS `with check user_id = auth.uid() and is_workspace_member`); the
+  creator, workspace owner/admin, and platform admin can read. Design +
+  workspace context is captured server-side into a sanitized `context`
+  shape (path, design name/id) — no free-form client object is trusted.
+- `design_ratings`: a member creates/updates only their own rating
+  (`user_id = auth.uid()`), one per design.
+- `product_events`: **platform-admin read only**, no user insert policy.
+  The analytics transport writes it via the service role (fire-and-forget)
+  so a failure never blocks a user action, with the structured log as the
+  durable fallback. Free-text user content is not stored as event props.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

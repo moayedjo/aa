@@ -367,3 +367,24 @@ option · Reason · Consequences · Date.
   environment); if a future need (e.g. richer client events) argues for the
   SDK, it's a contained swap inside these two files.
 - **Date**: 2026-07-30
+
+## D-021 — trackEvent persists to product_events (fire-and-forget)
+
+- **Decision**: The analytics transport (`src/lib/analytics/track.ts`) now
+  writes each event to `product_events` via the service role in addition
+  to the structured log, without awaiting — a failure is swallowed.
+- **Context**: Phase 10 requires measurable funnel abandonment and a
+  product-events store, but analytics must never block or fail a user
+  action (spec §10 "feedback does not interrupt the core workflow").
+- **Options considered**: (1) await the insert at every call site,
+  (2) a separate explicit `recordProductEvent` at chosen funnel points,
+  (3) fire-and-forget inside the existing `trackEvent`.
+- **Selected option**: (3).
+- **Reason**: Zero call-site churn (all existing `trackEvent` calls now
+  feed the funnel), and the log remains the durable fallback if the async
+  insert is cut short in a serverless environment.
+- **Consequences**: In serverless, a small fraction of events may be lost
+  if the function freezes right after responding; acceptable for
+  analytics, and the log backstops it. Phase 11 can swap in PostHog behind
+  the same function.
+- **Date**: 2026-07-30
