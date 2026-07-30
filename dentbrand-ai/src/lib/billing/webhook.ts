@@ -3,6 +3,7 @@ import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { trackEvent } from "@/lib/analytics/track";
+import { reportError } from "@/lib/monitoring/sentry";
 
 /**
  * Paddle webhook processing. Webhooks are the subscription source of truth
@@ -163,6 +164,7 @@ export async function processPaddleEvent(
     return { ok: true, retry: false };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
+    reportError(error, { where: "paddle_webhook", eventType: event.event_type });
     await markProcessed(admin, event.event_id, message);
     // Processing failed after recording — let Paddle retry.
     return { ok: false, retry: true };

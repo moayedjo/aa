@@ -421,7 +421,42 @@ Prereq: migrations 0001–0010 applied; a workspace with a design open.
    another workspace's requests/ratings; a normal user cannot read
    product_events.
 
+## RLS tests (Phase 11)
+
+`supabase/tests/phase11_rls_tests.sql` — normal users cannot read the
+audit log or call the admin functions; `admin_adjust_credits` changes the
+balance AND writes an audit row atomically; an overspend adjustment is
+rejected leaving neither ledger nor audit row; the platform admin can read
+the audit log.
+
+## Manual testing steps — Phase 11
+
+Prereq: migrations 0001–0011 applied; one platform admin (`update
+user_roles set role='platform_admin' where user_id='…'`), one normal user.
+
+1. **Admin gate**: a normal user visiting any `/admin/*` route is
+   redirected to `/dashboard`; the platform admin sees the admin nav.
+2. **Overview KPIs**: `/admin` shows users, workspaces, active
+   subscriptions, designs, export success rate, AI failure counts, credit
+   refunds, and average design rating, plus a template-performance table
+   (designs & exports per template).
+3. **Workspaces**: `/admin/workspaces` lists workspaces with subscription
+   status + balance; a detail page shows the wallet, subscription, members
+   and recent credit activity.
+4. **Audited credit adjustment**: grant +10 credits with a reason → the
+   balance rises, a ledger `adjustment` entry appears, and `/admin/audit`
+   shows a `credit_adjustment` row with the amount and reason.
+5. **Overspend guard**: try a large negative adjustment → rejected with a
+   below-zero message; no ledger or audit row is written.
+6. **AI usage**: `/admin/ai` lists recent generations with status and
+   failure reasons, so AI/export issues are visible.
+7. **Support**: `/admin/support` lists open tickets; closing one records a
+   `support_ticket_closed` audit row and removes it from the open list.
+8. **Monitoring (optional)**: with `POSTHOG_KEY` set, events reach
+   PostHog; with `SENTRY_DSN` set, a forced webhook-processing error is
+   reported to Sentry. Unset, both degrade to structured logs.
+
 ## Future phases
 
-Each phase adds its own section here (Phase 11: admin/audit tests;
-Phase 12: E2E suite).
+Phase 12 adds the end-to-end QA suite, RTL/accessibility/performance
+passes, and the launch checklist.

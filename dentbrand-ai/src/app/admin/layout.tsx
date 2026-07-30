@@ -17,12 +17,27 @@ export default async function AdminLayout({
     <div className="flex flex-1 flex-col">
       <header className="flex items-center justify-between border-b bg-secondary/50 px-6 py-3">
         <div className="flex items-center gap-4">
-          <Link href="/admin/templates" className="font-bold">
+          <Link href="/admin" className="font-bold">
             DentBrand AI · Admin
           </Link>
-          <nav className="flex gap-3 text-sm text-muted-foreground">
+          <nav className="flex flex-wrap gap-3 text-sm text-muted-foreground">
+            <Link href="/admin" className="hover:underline">
+              Overview
+            </Link>
+            <Link href="/admin/workspaces" className="hover:underline">
+              Workspaces
+            </Link>
             <Link href="/admin/templates" className="hover:underline">
               Templates
+            </Link>
+            <Link href="/admin/ai" className="hover:underline">
+              AI usage
+            </Link>
+            <Link href="/admin/support" className="hover:underline">
+              Support
+            </Link>
+            <Link href="/admin/audit" className="hover:underline">
+              Audit log
             </Link>
             <Link href="/dashboard" className="hover:underline">
               Back to app

@@ -388,3 +388,42 @@ option · Reason · Consequences · Date.
   analytics, and the log backstops it. Phase 11 can swap in PostHog behind
   the same function.
 - **Date**: 2026-07-30
+
+## D-022 — Audited credit adjustments via a single DB function
+
+- **Decision**: The only manual credit-change path is the security-definer
+  `admin_adjust_credits`, which writes the `credit_ledger` entry and the
+  `admin_audit_logs` row in one transaction; `record_admin_action` audits
+  non-financial admin actions. Both are service-role-only.
+- **Context**: Spec §11 requires that credit adjustments have audit
+  records and that platform-admin access is secure.
+- **Options considered**: (1) adjust credits in the action layer + a
+  separate audit insert, (2) a DB trigger on the ledger, (3) one
+  security-definer function doing both atomically, locked to the service
+  role.
+- **Selected option**: (3).
+- **Reason**: Atomicity makes "no unaudited adjustment" structural — a
+  failed adjustment leaves neither row — and revoking EXECUTE from users
+  keeps the security-definer functions unreachable from the client.
+- **Consequences**: All admin money actions go through the admin client;
+  the audit log is the single source for privileged-action history.
+- **Date**: 2026-07-30
+
+## D-023 — PostHog and Sentry wired behind existing seams, no SDKs
+
+- **Decision**: PostHog capture is added inside the existing `trackEvent`
+  transport (fire-and-forget REST to the capture API), and a minimal
+  `reportError` (`src/lib/monitoring/sentry.ts`) POSTs to Sentry's store
+  endpoint from the DSN. Both activate only when their env var is set.
+- **Context**: Phase 11 lists PostHog + Sentry; the code-quality rules
+  discourage unnecessary dependencies, and the analytics abstraction
+  (D-006/D-021) always promised a transport swap here.
+- **Options considered**: (1) posthog-node + @sentry/nextjs,
+  (2) env-guarded REST behind the existing abstractions.
+- **Selected option**: (2).
+- **Reason**: Real, working hooks with zero new dependencies and no
+  call-site churn; both degrade to structured logs / DB when unconfigured.
+- **Consequences**: These are lightweight transports, not the full SDK
+  feature set (no client-side autocapture, no Sentry tracing). A future
+  swap to the official SDKs is contained to these two seams.
+- **Date**: 2026-07-30

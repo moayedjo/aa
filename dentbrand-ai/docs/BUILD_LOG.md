@@ -778,3 +778,70 @@ RLS (member support/ratings, platform-admin-only product_events).
 ```
 APPROVE PHASE 10 AND CONTINUE TO PHASE 11
 ```
+
+---
+
+## 2026-07-30 — PHASE 11
+
+**Phase**: 11 (Admin and Product Analytics)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- admin_audit_logs (platform-admin read only) + two service-role-only
+  functions: `admin_adjust_credits` (ledger entry + audit row atomically,
+  D-022) and `record_admin_action` (non-financial audit).
+- Admin surface (all under the existing isPlatformAdmin-gated layout):
+  overview with KPIs (users, workspaces, active subs, designs, export
+  success rate, AI failures, credit refunds, avg rating) + template
+  performance; workspaces list + detail with audited credit adjustment and
+  recent ledger; AI-usage view (recent generations, statuses, failure
+  reasons); support tickets list with close (audited); audit log view.
+- Monitoring wired behind existing seams (D-023): PostHog capture inside
+  `trackEvent`, `reportError` → Sentry store endpoint, both env-guarded and
+  fire-and-forget; `reportError` used in the webhook failure path.
+
+**Changed files**
+
+- New: migration 0011, `supabase/tests/phase11_rls_tests.sql`,
+  `src/lib/admin/{queries,actions}.ts`, `src/lib/monitoring/sentry.ts`,
+  `src/app/admin/{page,workspaces,workspaces/[id],ai,support,audit}`,
+  `src/components/admin/{credit-adjust-form,close-ticket-button}.tsx`.
+- Modified: `src/app/admin/layout.tsx` (nav), `src/lib/analytics/track.ts`
+  (PostHog transport), `src/lib/billing/webhook.ts` (reportError),
+  `.env.example`, docs.
+
+**Dependencies added**: none.
+
+**Database migrations**: `20260728000011_phase11_admin.sql` — admin_audit_logs
++ RLS (platform-admin read), record_admin_action + admin_adjust_credits
+(service-role only).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm run build` → success; all `/admin/*` routes compiled ✅
+- Phase 11 RLS SQL tests written; require a live Supabase project.
+
+**Manual testing steps**: `docs/TESTING.md` § Phase 11 (8 steps).
+
+**Known issues**
+
+- Verticals/services/prompts/plans management: templates have full admin
+  CRUD; the other catalog tables are admin-writable by RLS but their
+  dedicated edit UIs are a follow-up (read/KPI visibility exists).
+- Monitoring transports are lightweight REST (D-023), not the full
+  PostHog/Sentry SDK feature set.
+
+**Deferred items**
+
+- QA/E2E suite, RTL/accessibility/performance passes, legal pages, backup
+  & incident procedures, beta workspaces (Phase 12).
+
+**Recommended next command**
+
+```
+APPROVE PHASE 11 AND CONTINUE TO PHASE 12
+```

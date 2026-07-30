@@ -18,6 +18,7 @@ in a new migration. Tables are created only in the phase that needs them.
 | `20260728000008_phase08_credits.sql` | 08 | credit_wallets, credit_ledger (append-only), usage_counters + balance-integrity functions, wallet provisioning trigger |
 | `20260728000009_phase09_billing.sql` | 09 | plans (seeded), billing_customers, subscriptions, webhook_events + apply_plan_allowance |
 | `20260728000010_phase10_support.sql` | 10 | support_requests, design_ratings, product_events + RLS |
+| `20260728000011_phase11_admin.sql` | 11 | admin_audit_logs + record_admin_action, admin_adjust_credits (audited) |
 
 ## Phase 01 schema
 
@@ -333,6 +334,23 @@ Funnel/product analytics: `workspace_id?`, `user_id?`, `event_type`,
 role, fire-and-forget); **platform-admin read only** — no user insert
 policy. Powers activation-funnel and KPI views (Phase 11).
 
+## Phase 11 schema
+
+### `admin_audit_logs`
+
+Every privileged action: `actor_id`, `action`, `target_type`,
+`target_id`, `workspace_id?`, `details` jsonb. **Platform-admin read
+only**; no user insert path — rows are written only by security-definer
+functions.
+
+### `record_admin_action(...)` / `admin_adjust_credits(...)`
+
+Service-role-only functions. `admin_adjust_credits` is the ONLY manual
+credit-change path: it calls `apply_credit_change` (ledger entry, overspend
+rejected) AND writes the audit row in one transaction, so a credit
+adjustment can never be unaudited. `record_admin_action` writes audit rows
+for non-financial admin actions (e.g. closing a support ticket).
+
 ## Tests
 
 `supabase/tests/phase01_rls_tests.sql` — workspace isolation,
@@ -356,4 +374,4 @@ their fixtures.
 
 ## Future tables (do NOT create early)
 
-Phase 11: admin_audit_logs.
+(all planned tables now exist.)

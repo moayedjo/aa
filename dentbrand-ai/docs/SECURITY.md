@@ -221,6 +221,27 @@ Platform-admin status lives exclusively in the `user_roles` table.
   so a failure never blocks a user action, with the structured log as the
   durable fallback. Free-text user content is not stored as event props.
 
+## Admin surface and audit (Phase 11)
+
+- Every `/admin/*` route sits under a layout gated by `isPlatformAdmin()`
+  (server-managed `user_roles`); each admin action re-checks it, and the
+  admin read models use the service role only after that gate. RLS
+  independently blocks non-admins from admin-only tables.
+- **Every credit adjustment is audited by construction**: the only manual
+  path is `admin_adjust_credits`, a security-definer function that writes
+  the ledger entry (overspend rejected) AND the `admin_audit_logs` row in
+  one transaction — a failed adjustment leaves neither. Both it and
+  `record_admin_action` have `EXECUTE` revoked from end users and granted
+  only to `service_role`.
+- `admin_audit_logs` is platform-admin read-only with no user insert path.
+- AI and export failures are visible in the admin AI-usage view and the
+  overview KPIs (export success rate, AI failure counts, refund counts),
+  so operational issues surface without database access.
+- **Monitoring**: PostHog (server capture) and Sentry (error reporting)
+  are wired behind the analytics/monitoring abstractions and enabled only
+  when `POSTHOG_KEY` / `SENTRY_DSN` are set — both fire-and-forget, never
+  blocking a request, with structured logs as the durable fallback.
+
 ## Checklist for every future phase
 
 - [ ] New tables: RLS enabled + policies written in the same migration.

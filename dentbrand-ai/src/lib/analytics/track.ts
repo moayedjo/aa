@@ -52,6 +52,37 @@ export function trackEvent(event: AnalyticsEvent, props: AnalyticsProps): void {
   // block or fail a user action.
   const { workspaceId, userId, ...rest } = props;
   void persistEvent(event, workspaceId, userId, rest);
+  void sendToPostHog(event, userId, workspaceId, rest);
+}
+
+/**
+ * PostHog transport (Phase 11). Enabled only when `POSTHOG_KEY` is set;
+ * otherwise a no-op. Fire-and-forget, like the DB persistence.
+ */
+async function sendToPostHog(
+  event: string,
+  userId: string | undefined,
+  workspaceId: string | undefined,
+  props: Record<string, string | number | boolean | undefined>
+): Promise<void> {
+  const apiKey = process.env.POSTHOG_KEY;
+  if (!apiKey) return;
+  const host = process.env.POSTHOG_HOST || "https://app.posthog.com";
+  try {
+    await fetch(`${host}/capture/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: apiKey,
+        event,
+        distinct_id: userId ?? workspaceId ?? "anonymous",
+        properties: { ...props, workspace_id: workspaceId },
+        timestamp: new Date().toISOString(),
+      }),
+    });
+  } catch {
+    // Swallow — DB + log are the durable records.
+  }
 }
 
 async function persistEvent(
