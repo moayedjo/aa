@@ -17,8 +17,8 @@ build ahead, never create future tables/routes/dependencies.
 | 08 | Credits and Usage Transparency | ✅ Complete — approved |
 | 09 | Transparent Billing | ✅ Complete — approved |
 | 10 | Guided Experience and Support | ✅ Complete — approved |
-| 11 | Admin and Product Analytics | ✅ Complete — awaiting approval |
-| 12 | QA and Beta Launch | ⛔ Not started |
+| 11 | Admin and Product Analytics | ✅ Complete — approved |
+| 12 | QA and Beta Launch | ✅ Complete — awaiting approval |
 
 ## Phase gate procedure (every phase)
 

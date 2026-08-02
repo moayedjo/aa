@@ -845,3 +845,76 @@ APPROVE PHASE 10 AND CONTINUE TO PHASE 11
 ```
 APPROVE PHASE 11 AND CONTINUE TO PHASE 12
 ```
+
+---
+
+## 2026-07-30 — PHASE 12
+
+**Phase**: 12 (QA and Beta Launch)
+
+**Status**: COMPLETE — awaiting approval
+
+**Completed work**
+
+- Vitest unit suite (`npm test`) — 35 tests, all green: template & design
+  JSON schemas, brand resolver (RTL/alignment/zIndex), brand score, AI copy
+  schema + image-prompt safety rules, Paddle signature verification, and a
+  guard that every seed template is schema-valid + bilingual (≥10).
+- Extracted the Paddle signature verifier to a pure module
+  (`src/lib/billing/signature.ts`) so it is unit-testable (D-024).
+- Playwright smoke E2E (`e2e/smoke.spec.ts`) + config (Chromium + mobile):
+  landing/CTAs, health, protected-route redirect, legal pages, login form.
+- Grew the template library from 5 → 12 production dental templates in
+  `supabase/seed.sql` (all schema-validated by the suite) — meets 10–15.
+- Legal pages under `(marketing)`: Privacy, Terms, Refund Policy, linked
+  from the landing page and a marketing footer.
+- Ops docs: `docs/RUNBOOK.md` (backup + incident procedures),
+  `docs/SECURITY-REVIEW.md` (pre-launch checklist + launch tasks),
+  `docs/LAUNCH.md` (go/no-go gate + beta cohort plan).
+
+**Changed files**
+
+- New: `vitest.config.ts`, `playwright.config.ts`, `e2e/smoke.spec.ts`,
+  `src/**/*.test.ts` (7 suites), `src/lib/billing/signature.ts`,
+  `src/app/(marketing)/*` (layout + privacy/terms/refund),
+  `docs/{RUNBOOK,SECURITY-REVIEW,LAUNCH}.md`.
+- Modified: `package.json` (test script, vitest + @playwright/test dev
+  deps), `src/lib/billing/paddle.ts` (delegate to signature module),
+  `src/app/page.tsx` (legal links), `supabase/seed.sql` (+7 templates),
+  docs.
+
+**Dependencies added**: vitest, @playwright/test (dev only).
+
+**Database migrations**: none (no new tables — the schema is complete).
+
+**Tests run / results**
+
+- `npm run lint` → 0 errors, 0 warnings ✅
+- `npm run typecheck` → pass ✅
+- `npm test` → 35 passed (7 files) ✅
+- `npm run build` → success; legal pages + all routes compiled ✅
+- Playwright smoke + SQL RLS tests: run against a built app + live DB
+  (documented in TESTING.md / LAUNCH.md).
+
+**Manual testing steps**: `docs/LAUNCH.md` (full journey, RTL, responsive,
+accessibility, performance, Paddle sandbox) + per-phase steps in
+`docs/TESTING.md`.
+
+**Known issues / launch tasks**
+
+- Production CSP header, a production RLS-test run, a backup restore drill,
+  and Paddle sandbox end-to-end are the open launch-gate tasks
+  (`docs/SECURITY-REVIEW.md`).
+- Beta acceptance (five users complete the journey; three willing to pay)
+  is an operational gate requiring real users — plan in `docs/LAUNCH.md`.
+
+**Deferred items**
+
+- None within the MVP scope. Future verticals, mobile app, and social
+  publishing remain out of scope per the product spec.
+
+**Recommended next command**
+
+The 12-phase MVP build is complete. Next steps are operational: complete
+the launch-gate tasks in `docs/SECURITY-REVIEW.md` and run the beta per
+`docs/LAUNCH.md`.

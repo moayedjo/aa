@@ -427,3 +427,25 @@ option · Reason · Consequences · Date.
   feature set (no client-side autocapture, no Sentry tracing). A future
   swap to the official SDKs is contained to these two seams.
 - **Date**: 2026-07-30
+
+## D-024 — Vitest for unit tests; Playwright smoke for E2E
+
+- **Decision**: Add Vitest (`npm test`) as the fast, dependency-light unit
+  suite over pure logic, and a Playwright smoke config/spec for
+  unauthenticated E2E; full authenticated journeys stay manual (per-phase
+  steps + Paddle sandbox).
+- **Context**: Phase 12 requires E2E, export, and RLS test coverage, but
+  the build environment has no live Supabase/Paddle and no seeded users, so
+  a full automated E2E of the paid journey isn't runnable here.
+- **Options considered**: (1) heavy E2E requiring live services in CI,
+  (2) unit tests over pure logic + smoke E2E + documented manual journeys +
+  SQL RLS tests.
+- **Selected option**: (2).
+- **Reason**: Maximizes runnable, regression-catching coverage now (schema,
+  resolver, credit/billing safety, seed-template validity all green) while
+  keeping the service-dependent journeys as documented, repeatable manual
+  passes. The Paddle signature verifier was extracted to a pure module to
+  make it unit-testable.
+- **Consequences**: CI runs `npm test` (fast, no services); Playwright and
+  the SQL RLS tests run in an env with a built app + a live database.
+- **Date**: 2026-07-30

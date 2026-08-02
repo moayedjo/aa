@@ -8,6 +8,32 @@ npm run typecheck   # tsc --noEmit — must pass (strict mode)
 npm run build       # next build — must succeed
 ```
 
+## Unit tests (Vitest)
+
+```bash
+npm test            # vitest run — fast unit suite (no DB, no network)
+```
+
+Covers the critical pure logic: template JSON schema (valid/invalid,
+unknown variables, duplicate ids), design JSON schema (internal-ref-only
+image sources, hex colors), the brand resolver (variable substitution,
+Arabic RTL + alignment, zIndex ordering), brand completion score, AI copy
+schema + image-prompt safety rules, Paddle signature verification
+(HMAC/skew/tamper), and a guard that every `supabase/seed.sql` template is
+schema-valid and bilingual (≥10 templates).
+
+## E2E smoke (Playwright)
+
+```bash
+npm run build && npm start        # in one shell (with Supabase env set)
+npx playwright test               # in another (Chromium + mobile projects)
+```
+
+`e2e/smoke.spec.ts` checks unauthenticated flows that need no seeded data:
+landing + CTAs, `/api/health`, protected-route redirect, legal pages, and
+the login form. Full authenticated journeys are run manually (below) and
+against a Paddle sandbox.
+
 ## RLS tests (Phase 01)
 
 `supabase/tests/phase01_rls_tests.sql` — run in the Supabase SQL editor

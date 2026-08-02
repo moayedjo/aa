@@ -22,6 +22,17 @@ export default function HomePage() {
           Log in
         </Link>
       </div>
+      <nav className="mt-8 flex flex-wrap justify-center gap-4 text-sm text-muted-foreground">
+        <Link href="/privacy" className="hover:underline">
+          Privacy
+        </Link>
+        <Link href="/terms" className="hover:underline">
+          Terms
+        </Link>
+        <Link href="/refund-policy" className="hover:underline">
+          Refund Policy
+        </Link>
+      </nav>
     </main>
   );
 }

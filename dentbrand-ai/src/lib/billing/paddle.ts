@@ -1,6 +1,6 @@
 import "server-only";
 
-import crypto from "node:crypto";
+import { verifyPaddleSignature as verifySignature } from "@/lib/billing/signature";
 
 /**
  * Server-only Paddle Billing client. All keys stay server-side; the
@@ -48,43 +48,16 @@ async function paddleFetch<T>(
   }
 }
 
-/**
- * Verifies a Paddle webhook signature.
- * Header format: `ts=<unix>;h1=<hmac_sha256(ts:rawBody)>`.
- * Constant-time compare; rejects stale timestamps (> 5s skew window is
- * generous here at 5 minutes to tolerate delivery latency).
- */
+/** Verifies a Paddle webhook signature using the configured secret. */
 export function verifyPaddleSignature(
   rawBody: string,
   signatureHeader: string | null
 ): boolean {
-  const secret = process.env.PADDLE_WEBHOOK_SECRET;
-  if (!secret || !signatureHeader) return false;
-
-  const parts = Object.fromEntries(
-    signatureHeader.split(";").map((kv) => {
-      const [k, v] = kv.split("=");
-      return [k, v];
-    })
+  return verifySignature(
+    rawBody,
+    signatureHeader,
+    process.env.PADDLE_WEBHOOK_SECRET
   );
-  const ts = parts["ts"];
-  const h1 = parts["h1"];
-  if (!ts || !h1) return false;
-
-  const maxSkewMs = 5 * 60 * 1000;
-  const eventTime = Number(ts) * 1000;
-  if (!Number.isFinite(eventTime) || Math.abs(Date.now() - eventTime) > maxSkewMs) {
-    return false;
-  }
-
-  const expected = crypto
-    .createHmac("sha256", secret)
-    .update(`${ts}:${rawBody}`)
-    .digest("hex");
-
-  const a = Buffer.from(expected);
-  const b = Buffer.from(h1);
-  return a.length === b.length && crypto.timingSafeEqual(a, b);
 }
 
 // --- Transaction / subscription API -----------------------------------------
