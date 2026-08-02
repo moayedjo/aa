@@ -1,0 +1,251 @@
+# DentBrand AI — Security
+
+## Principles
+
+1. **RLS is the security boundary.** Route protection (proxy redirects,
+   server-side `getUser()` checks) is UX; the database enforces isolation.
+2. **Default deny.** Every table has RLS enabled; access exists only where
+   a policy explicitly grants it.
+3. **Secrets stay server-side.** Only `NEXT_PUBLIC_SUPABASE_URL` and
+   `NEXT_PUBLIC_SUPABASE_ANON_KEY` reach the browser — both are designed
+   to be public and grant nothing without RLS.
+4. **Service role is server-only.** `SUPABASE_SERVICE_ROLE_KEY` is read
+   only inside `src/lib/supabase/admin.ts`, which imports `"server-only"`
+   so any client-side import fails the build. Phase 01 runtime code never
+   uses it.
+5. **All external input is Zod-validated** in server actions before it
+   touches Supabase (`src/lib/validation/`).
+
+## Platform admin
+
+Platform-admin status lives exclusively in the `user_roles` table.
+
+- It is **not** stored in profile fields, auth metadata, or anything a
+  client can write.
+- `user_roles` has **no insert/update/delete policies** — the only way to
+  grant `platform_admin` is via the service role on the server (an audited
+  admin flow arrives in Phase 11).
+- Policies check it via the `is_platform_admin()` security-definer function.
+
+## Workspace isolation
+
+- All Phase 01 policies resolve membership through security-definer helper
+  functions pinned to `search_path = public`, avoiding both RLS recursion
+  and search-path hijacking.
+- A workspace a user doesn't belong to is indistinguishable from a
+  nonexistent one (queries return no rows → UI shows 404).
+- Verified by `supabase/tests/phase01_rls_tests.sql`.
+
+## Auth flow hardening
+
+- Session cookies are refreshed on every request by `src/proxy.ts`.
+- The auth callback restricts `next` redirects to same-origin relative
+  paths (no `//` open-redirect).
+- Login failures return a generic "Invalid email or password".
+- Forgot-password always responds neutrally (no account enumeration).
+- Password minimum 8 chars, max 72 (bcrypt limit).
+- Triggers that write to protected tables are `security definer` with a
+  pinned `search_path`.
+
+## Brand assets storage (Phase 02)
+
+- The `brand-assets` bucket is **private**; logos are only reachable via
+  short-lived signed URLs created for authorized users.
+- Object paths are namespaced `{workspace_id}/…`; storage policies derive
+  the workspace from the first path segment: members read, owner/admin
+  write/delete. A forged path targeting another workspace fails at the
+  storage layer regardless of client code.
+- Bucket-level limits: 2 MB max, image mime types only (also validated
+  client-side before upload and re-checked by Supabase).
+- `saveLogoPath` re-validates that the stored path is inside the caller's
+  workspace folder, so a brand kit can never point at another workspace's
+  file.
+
+## Brand Kit authorization (Phase 02)
+
+- Reads: any workspace member. Writes: owner/admin only — enforced by RLS
+  and re-checked in server actions (`requireEditor`).
+- The onboarding page redirects non-owner/admin members away; RLS remains
+  the real boundary.
+
+## Templates and admin surface (Phase 03)
+
+- `/admin/*` is gated server-side by `isPlatformAdmin()` (user_roles
+  lookup); every admin action re-checks it, and RLS blocks all catalog and
+  template writes for non-admins regardless of routing.
+- Normal users can only select `published` templates; drafts and their
+  versions are invisible at the database level.
+- `template_versions` has **no update/delete policies** — versions are
+  immutable even to admins. Publishing re-validates the current version's
+  JSON with Zod; invalid JSON cannot be published, and invalid stored JSON
+  is skipped (never rendered) by user-facing queries.
+- All template JSON is Zod-validated server-side before insert; unknown
+  `{{variables}}` are rejected.
+
+## Designs and editor (Phase 04)
+
+- Designs are workspace-isolated by RLS; viewers are read-only at the
+  database level, and the editor route additionally redirects them.
+- Design JSON only accepts **internal** asset references
+  (`supabase://brand-assets/…` or `supabase://design-assets/…`) — external
+  image URLs are rejected by the Zod schema, so uncontrolled URLs can
+  never enter the canvas. Signed URLs are minted server-side per load and
+  never persisted.
+- Uploads go to the private `design-assets` bucket under
+  `{workspace_id}/{design_id}/…`; storage RLS restricts writes to
+  owner/admin/editor of that workspace. `registerDesignAsset` re-validates
+  the path prefix.
+- Locked (non-editable) layers are enforced in the store's single update
+  path — and the saved JSON is Zod-validated server-side on every save.
+
+## Versions, trash and export (Phase 05)
+
+- Version history is append-only: `design_versions` has no update/delete
+  policies for any role, and version snapshots are taken **server-side**
+  from the stored design, so a compromised client cannot poison history.
+- Restore always writes a `pre-restore` snapshot before changing anything.
+- Trash is a soft delete (`deleted_at`); permanent deletion requires
+  owner/admin (RLS-enforced) and a prior trash step in the action layer.
+- Export runs client-side from already-authorized signed URLs; export
+  attempts (including failures and their reasons) are recorded in
+  `design_exports` for the quality metrics.
+
+## AI copy (Phase 06)
+
+- `GEMINI_API_KEY` is server-only (no `NEXT_PUBLIC_` prefix; used inside
+  `src/lib/ai/gemini.ts`, a `server-only` module). Provider error bodies
+  are never forwarded to the client.
+- Prompts are platform IP: RLS hides `prompt_templates`/`prompt_versions`
+  from every user session. The generation actions read the current prompt
+  version through `createAdminClient()` — the second audited service-role
+  usage (after none in Phases 01–05). Prompt versions are immutable.
+- All AI output is Zod-validated (`aiCopySchema` / per-field schemas)
+  before it is stored or returned; invalid output is retried once, then
+  logged as a failed generation with a safe error.
+- Generation runs never write to `design_json`. Applying copy is an
+  explicit user action into an editable text layer, clipped to the
+  layer's `maxCharacters` — an AI failure cannot corrupt a design.
+- `ai_generations` is append-only (no update/delete policies) and
+  workspace-isolated; inputs stored there are the sanitized request
+  fields only.
+
+## AI images and credit safety (Phase 07)
+
+- Generated images are **stored in Supabase Storage before the client ever
+  sees them**. The action returns an internal `supabase://design-assets/…`
+  ref plus a short-lived signed URL; no external or provider URL can enter
+  the canvas (the design schema rejects anything else).
+- The image prompt sent to the provider is always
+  `user scene + server-side composition rules` (no text, no logos, no
+  watermarks, no graphic procedures, no fake before/after, negative space).
+  The rules are appended in `buildImagePrompt` and cannot be stripped by
+  the client.
+- **Credit safety**: validate → balance check → reserve (pending
+  `ai_generations` row) → generate → store → confirm. Any failure marks
+  the reservation `failed` and refunds it, so a failed generation never
+  consumes a final credit. The wallet/ledger writes behind
+  `src/lib/credits/reservation.ts` are filled in by Phase 08 without
+  changing this flow.
+- **Idempotency**: the client sends one key per submission; a unique
+  partial index on `idempotency_key` makes a duplicate reservation
+  impossible. A repeated request returns the original result instead of
+  charging again, and a concurrent duplicate loses the unique-violation
+  race safely.
+- RLS lets a creator finish only **their own pending** row; completed and
+  failed rows are immutable, so charge/refund history cannot be rewritten.
+- Generation never writes `design_json` — applying an image is an explicit
+  user action, so a failure leaves the design untouched.
+
+## Credits and balance integrity (Phase 08)
+
+- A wallet balance NEVER changes without a matching `credit_ledger` entry.
+  `credit_wallets` and `credit_ledger` have **no insert/update/delete
+  policies** — members read only. The sole writer is the security-definer
+  `apply_credit_change` function, which locks the wallet row, rejects
+  overspend (`INSUFFICIENT_CREDITS`), and writes the ledger row + new
+  balance in one transaction.
+- Those functions bypass RLS, so `EXECUTE` is **revoked** from
+  `public`/`anon`/`authenticated` and granted only to `service_role`.
+  End users cannot mint credits by calling the RPC directly — only the
+  server actions (via the audited admin client) can.
+- Idempotency is enforced twice: at the generation level
+  (`ai_generations.idempotency_key`, Phase 07) and at the ledger level
+  (unique `(reference_generation, entry_type)`), so a duplicate can neither
+  reserve nor refund twice.
+- Reserve → confirm/refund: a credit is deducted when the (idempotency-
+  guarded) reservation row exists; a failed generation is refunded with a
+  matching `+cost` entry, netting zero. A successful generation's
+  reservation IS the charge.
+- Rate limiting (`src/lib/credits/rate-limit.ts`) caps generations per
+  workspace per rolling window on top of the hard credit limit, failing
+  open on a counting error so it never blocks legitimate use unfairly.
+
+## Billing and webhooks (Phase 09)
+
+- **Webhooks are the source of truth.** `subscriptions` has no user write
+  policy; only the webhook handler (service role) mutates subscription
+  state. A browser redirect after checkout can never activate or change a
+  subscription — verified by the Phase 09 RLS test.
+- **Signature verification**: the Paddle webhook route reads the RAW body
+  and verifies `Paddle-Signature` (HMAC-SHA256 of `ts:body`) with a
+  constant-time compare and a timestamp-skew window before doing anything.
+  An unverified request is rejected 401.
+- **Exactly-once processing**: every event is recorded in `webhook_events`
+  keyed by Paddle's `event_id` (unique). A duplicate delivery short-circuits
+  as already-handled; a transient processing failure marks the event
+  `failed` and returns 500 so Paddle retries.
+- `webhook_events` has **no RLS policies** — it is service-role only and
+  never exposed to users.
+- **Secrets server-side**: `PADDLE_API_KEY` and `PADDLE_WEBHOOK_SECRET`
+  are server-only (no `NEXT_PUBLIC_`); only the Paddle.js client token
+  (`NEXT_PUBLIC_PADDLE_CLIENT_TOKEN`, designed to be public) reaches the
+  browser.
+- **Allowance bridge**: on activation/plan change the handler calls the
+  service-role `apply_plan_allowance`, which sets the wallet allowance and
+  tops up the balance without ever removing bought credits.
+- **No dark patterns**: cancellation is a first-class in-app action
+  (owner/admin), scheduled at period end with reactivation available; the
+  annual plan is never selected by default.
+
+## Support, feedback and analytics (Phase 10)
+
+- `support_requests`: any workspace member may open one as themselves
+  (RLS `with check user_id = auth.uid() and is_workspace_member`); the
+  creator, workspace owner/admin, and platform admin can read. Design +
+  workspace context is captured server-side into a sanitized `context`
+  shape (path, design name/id) — no free-form client object is trusted.
+- `design_ratings`: a member creates/updates only their own rating
+  (`user_id = auth.uid()`), one per design.
+- `product_events`: **platform-admin read only**, no user insert policy.
+  The analytics transport writes it via the service role (fire-and-forget)
+  so a failure never blocks a user action, with the structured log as the
+  durable fallback. Free-text user content is not stored as event props.
+
+## Admin surface and audit (Phase 11)
+
+- Every `/admin/*` route sits under a layout gated by `isPlatformAdmin()`
+  (server-managed `user_roles`); each admin action re-checks it, and the
+  admin read models use the service role only after that gate. RLS
+  independently blocks non-admins from admin-only tables.
+- **Every credit adjustment is audited by construction**: the only manual
+  path is `admin_adjust_credits`, a security-definer function that writes
+  the ledger entry (overspend rejected) AND the `admin_audit_logs` row in
+  one transaction — a failed adjustment leaves neither. Both it and
+  `record_admin_action` have `EXECUTE` revoked from end users and granted
+  only to `service_role`.
+- `admin_audit_logs` is platform-admin read-only with no user insert path.
+- AI and export failures are visible in the admin AI-usage view and the
+  overview KPIs (export success rate, AI failure counts, refund counts),
+  so operational issues surface without database access.
+- **Monitoring**: PostHog (server capture) and Sentry (error reporting)
+  are wired behind the analytics/monitoring abstractions and enabled only
+  when `POSTHOG_KEY` / `SENTRY_DSN` are set — both fire-and-forget, never
+  blocking a request, with structured logs as the durable fallback.
+
+## Checklist for every future phase
+
+- [ ] New tables: RLS enabled + policies written in the same migration.
+- [ ] New server actions: Zod-validate input, re-check auth server-side.
+- [ ] No new env var with a secret is ever prefixed `NEXT_PUBLIC_`.
+- [ ] Any service-role usage goes through `admin.ts` and is documented here.
+- [ ] RLS tests extended in `supabase/tests/`.
