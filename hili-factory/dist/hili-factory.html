@@ -134,6 +134,28 @@ body.capture #loading{display:none}
 .kpi b,.step .tx small,.lbl .t small,#pList li em,.top-specs b{direction:ltr;unicode-bidi:isolate}
 html[dir=rtl] .kpi b,html[dir=rtl] .top-specs b{text-align:start}
 
+/* ---- glass & light: soft highlights, depth, reflections ---- */
+:root{--glass:linear-gradient(150deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.7) 55%,rgba(240,250,246,.72) 100%)}
+.card,.lbl{background:var(--glass);border:1px solid rgba(255,255,255,.75);
+  box-shadow:0 14px 34px -10px rgba(30,60,70,.28),0 2px 6px rgba(30,60,70,.10),inset 0 1px 0 rgba(255,255,255,.95),inset 0 -1px 0 rgba(0,90,70,.06);
+  backdrop-filter:blur(16px) saturate(1.5);-webkit-backdrop-filter:blur(16px) saturate(1.5)}
+.lbl::after{background:rgba(255,255,255,.85)}
+.lbl.active{border-color:rgba(0,168,120,.8);box-shadow:0 0 0 3px rgba(0,168,120,.18),0 14px 34px -10px rgba(0,120,90,.35),inset 0 1px 0 #fff}
+#topbar{background:linear-gradient(180deg,#52626b 0%,#44535b 55%,#3b4950 100%);box-shadow:0 8px 24px -8px rgba(20,40,48,.55),inset 0 1px 0 rgba(255,255,255,.18)}
+#topbar::after{content:"";position:absolute;inset:0 0 auto 0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,0));pointer-events:none}
+.btn,.seg button.on{box-shadow:0 1px 0 rgba(255,255,255,.9) inset,0 2px 5px rgba(30,60,70,.14)}
+.btn.primary{background:linear-gradient(180deg,#22cfa0 0%,#00a878 60%,#009067 100%);box-shadow:0 1px 0 rgba(255,255,255,.45) inset,0 6px 14px -4px rgba(0,140,100,.6)}
+.tour{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 15px;border:0;border-radius:11px;cursor:pointer;color:#fff;font:600 12.5px var(--font);
+  background:linear-gradient(180deg,#56646c 0%,#3b4950 100%);box-shadow:0 1px 0 rgba(255,255,255,.28) inset,0 6px 14px -5px rgba(30,50,58,.7)}
+.tour:hover{filter:brightness(1.1)}
+.tour.on{background:linear-gradient(180deg,#22cfa0 0%,#00a878 60%,#009067 100%);box-shadow:0 1px 0 rgba(255,255,255,.45) inset,0 0 0 3px rgba(0,168,120,.25),0 6px 16px -4px rgba(0,140,100,.7)}
+.step.active .dot{background:linear-gradient(180deg,#22cfa0,#00a878);box-shadow:0 0 0 4px rgba(0,168,120,.2),0 3px 8px rgba(0,140,100,.4)}
+.step.done .dot{background:linear-gradient(180deg,#56646c,#3b4950)}
+.p-icon{background:linear-gradient(180deg,#22cfa0,#00a878);box-shadow:0 4px 10px -2px rgba(0,140,100,.5),inset 0 1px 0 rgba(255,255,255,.5)}
+#pList li{background:rgba(238,244,246,.8);box-shadow:inset 0 1px 0 rgba(255,255,255,.9)}
+.chip.ghost{background:var(--glass);border:1px solid rgba(255,255,255,.75)}
+@media (max-width:640px){.tour span{display:none}.tour{padding:0 11px}}
+
 </style>
 
 <canvas id="stage"></canvas>
@@ -181,12 +203,12 @@ html[dir=rtl] .kpi b,html[dir=rtl] .top-specs b{text-align:start}
     <button id="restart" class="btn" data-i-title="restart">↺</button>
     <div class="seg" id="speed"><button data-s="1" class="on">1×</button><button data-s="2">2×</button><button data-s="4">4×</button></div>
     <span class="gap"></span>
+    <button id="tourBtn" class="tour" type="button"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8a2 2 0 0 1 2-2h2l1.5-2h7L17 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.6"/></svg><span></span></button>
     <div class="seg" id="cams">
       <button data-c="overview" data-i="camOverview"></button>
       <button data-c="warehouse" data-i="camWarehouse"></button>
       <button data-c="line" data-i="camLine"></button>
       <button data-c="follow" data-i="camFollow"></button>
-      <button data-c="tour" data-i="camTour"></button>
     </div>
   </div>
 </section>
@@ -223,7 +245,12 @@ window.HILI_DATA = (function () {
       kicker: 'HILI · HYBRID VTOL CARGO UAV', title: 'Smart Factory — Interactive Assembly Line',
       payload: 'Payload', range: 'Range', cruise: 'Cruise', mtow: 'MTOW', ceiling: 'Ceiling',
       overall: 'Overall progress', elapsed: 'Elapsed', remaining: 'Remaining', parts: 'Parts installed', stage: 'Current stage',
-      camOverview: 'Overview', camWarehouse: 'Warehouse', camLine: 'Line', camFollow: 'Follow', camTour: 'Auto tour',
+      camOverview: 'Overview', camWarehouse: 'Warehouse', camLine: 'Line', camFollow: 'Follow', camTour: 'Camera tour', camTourStop: 'Stop tour', equipment: 'Equipment',
+      info_conveyor_t: 'Material conveyor', info_conveyor_d: 'Carries packed part sets and consumables from the warehouse dispatch gate along the assembly row.',
+      info_bot_t: 'Service robot', info_bot_d: 'Autonomous service robot patrolling the AGV lane and checking cart traffic.',
+      info_drone_t: 'Inspection drone', info_drone_d: 'Aerial drone that circles the line to capture progress footage and safety checks.',
+      info_holo_t: 'Digital twin cube', info_holo_d: 'Hologram station that mirrors the aircraft state for the final inspection team.',
+      info_arm_t: 'Assembly robot arm', info_arm_d: 'Assists the technicians at every station with positioning and fastening tasks.',
       demoNote: 'Demo timings are illustrative until actual procedures are provided',
       hint: 'Drag to orbit · scroll to zoom · click any station, part or vehicle',
       restart: 'Restart', waiting: 'Waiting', running: 'In progress', done: 'Completed', ready: 'Ready for flight',
@@ -244,7 +271,12 @@ window.HILI_DATA = (function () {
       kicker: 'هيلي · طائرة VTOL هجينة لنقل البضائع', title: 'المصنع الذكي — خط التجميع التفاعلي',
       payload: 'الحمولة', range: 'المدى', cruise: 'سرعة الإبحار', mtow: 'الوزن الأقصى', ceiling: 'أقصى ارتفاع',
       overall: 'الإنجاز الكلي', elapsed: 'الوقت المنقضي', remaining: 'الوقت المتبقي', parts: 'القطع المركّبة', stage: 'المرحلة الحالية',
-      camOverview: 'نظرة عامة', camWarehouse: 'المستودع', camLine: 'الخط', camFollow: 'تتبّع', camTour: 'جولة تلقائية',
+      camOverview: 'نظرة عامة', camWarehouse: 'المستودع', camLine: 'الخط', camFollow: 'تتبّع', camTour: 'جولة الكاميرا', camTourStop: 'إيقاف الجولة', equipment: 'معدات',
+      info_conveyor_t: 'سير نقل المواد', info_conveyor_d: 'ينقل أطقم القطع والمستلزمات المعبأة من بوابة الإرسال في المستودع على امتداد خط التجميع.',
+      info_bot_t: 'روبوت الخدمة', info_bot_d: 'روبوت ذاتي القيادة يجول في مسار العربات ويراقب حركتها.',
+      info_drone_t: 'درون التفتيش', info_drone_d: 'طائرة مسيّرة تحلّق فوق الخط لتصوير سير العمل وفحوصات السلامة.',
+      info_holo_t: 'مكعب التوأم الرقمي', info_holo_d: 'محطة هولوغرام تعكس حالة الطائرة لفريق الفحص النهائي.',
+      info_arm_t: 'ذراع روبوتية للتجميع', info_arm_d: 'تساعد الفنيين في كل محطة على التموضع وأعمال الربط.',
       demoNote: 'الأوقات تجريبية توضيحية لحين توفير الإجراءات الفعلية',
       hint: 'اسحب للتدوير · مرّر للتكبير · اضغط على أي محطة أو قطعة أو آلية',
       restart: 'إعادة', waiting: 'بالانتظار', running: 'قيد التنفيذ', done: 'مكتملة', ready: 'جاهزة للطيران',
@@ -329,12 +361,13 @@ window.HILI_DATA = (function () {
   // ---------- timeline ----------
   const STG = 22, XFER = 3, NS = 5, PERIOD = STG + XFER, TOTAL = NS * STG + (NS - 1) * XFER; // 122 s demo time
   const SX = [8, 22, 36, 50, 64];
-  const SPEED = 10; // cart speed (units/s)
+  const SPEED = 10; // cart cruise speed (units/s)
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
   const lerp = (a, b, t) => a + (b - a) * t;
   const sm = (t) => { t = clamp(t, 0, 1); return t * t * (3 - 2 * t); };
   const smr = (t) => { t = clamp(t, 0, 1); return t * t * t * (t * (t * 6 - 15) + 10); };
   const eob = (t) => { t = clamp(t, 0, 1); return 1 + 2.2 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2); };
+  const ease = (u) => { u = clamp(u, 0, 1); return 0.3 * u + 0.7 * sm(u); };   // gentle start / stop for vehicles
   const fmt = (s) => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
   function rng(seed) { return () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
 
@@ -344,49 +377,64 @@ window.HILI_DATA = (function () {
   renderer.setPixelRatio(CAPTURE ? 1 : Math.min(window.devicePixelRatio || 1, 2));
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.86;
   const scene = new THREE.Scene();
-  const BG = 0xe4ecef;
+  const BG = 0xdbe6e9;
   scene.background = new THREE.Color(BG);
-  scene.fog = new THREE.Fog(BG, 230, 460);
+  scene.fog = new THREE.Fog(BG, 240, 480);
   const camera = new THREE.PerspectiveCamera(28, 1, 1, 800);
 
-  scene.add(new THREE.HemisphereLight(0xffffff, 0xaebdc3, 1.15));
-  const sun = new THREE.DirectionalLight(0xfff6ea, 2.0);
-  sun.position.set(60, 95, 55);
+  const sun = new THREE.DirectionalLight(0xfff1e0, 2.1);
+  sun.position.set(55, 100, 60);
   sun.target.position.set(17, 0, 0);
   sun.castShadow = true;
   sun.shadow.mapSize.set(CAPTURE ? 4096 : 3072, CAPTURE ? 4096 : 3072);
-  Object.assign(sun.shadow.camera, { left: -85, right: 85, top: 55, bottom: -55, near: 10, far: 260 });
-  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05; sun.shadow.radius = 3;
-  scene.add(sun, sun.target);
+  Object.assign(sun.shadow.camera, { left: -85, right: 85, top: 55, bottom: -55, near: 10, far: 270 });
+  sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05; sun.shadow.radius = 4;
+  scene.add(sun, sun.target, new THREE.HemisphereLight(0xffffff, 0xb0c0c6, 0.3));
 
   // ---------- helpers ----------
-  const COL = { green: 0x00a878, greenD: 0x007f5b, slate: 0x44535b, white: 0xf7fafb, card: 0xcda46a, cardD: 0xb98f57, amber: 0xb8863b };
-  const M = (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.7, metalness: 0 }, o || {}));
-  function B(w, h, d, m, x, y, z, parent, cast) {
-    const g = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m);
+  const COL = { green: 0x00a878, greenD: 0x007f5b, slate: 0x44535b, white: 0xf7fafb, card: 0xdcb27a, amber: 0xe0a53a };
+  const M = (c, o) => new THREE.MeshPhysicalMaterial(Object.assign({ color: c, roughness: 0.48, metalness: 0, clearcoat: 0.35, clearcoatRoughness: 0.35, envMapIntensity: 0.85 }, o || {}));
+  const MM = (c, o) => new THREE.MeshStandardMaterial(Object.assign({ color: c, roughness: 0.8, metalness: 0, envMapIntensity: 0.4 }, o || {}));
+  function tex(w, h, fn) {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    fn(c.getContext('2d'), w, h);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+  }
+  // rounded box (cached extrude with bevel) — soft "toy" edges like the reference renders
+  const RG = new Map();
+  function rGeo(w, h, d, r) {
+    const q = (v) => Math.max(0.03, Math.round(v * 40) / 40);
+    w = q(w); h = q(h); d = q(d); r = Math.round(Math.min(r, w * 0.48, h * 0.48, d * 0.48) * 200) / 200;
+    const key = w + ',' + h + ',' + d + ',' + r; if (RG.has(key)) return RG.get(key);
+    const x = -w / 2, y = -h / 2, sh = new THREE.Shape(), P = Math.PI;
+    sh.moveTo(x + r, y); sh.lineTo(x + w - r, y); sh.absarc(x + w - r, y + r, r, -P / 2, 0); sh.lineTo(x + w, y + h - r); sh.absarc(x + w - r, y + h - r, r, 0, P / 2);
+    sh.lineTo(x + r, y + h); sh.absarc(x + r, y + h - r, r, P / 2, P); sh.lineTo(x, y + r); sh.absarc(x + r, y + r, r, P, P * 1.5);
+    const g = new THREE.ExtrudeGeometry(sh, { depth: Math.max(0.001, d - 2 * r), bevelEnabled: true, bevelThickness: r, bevelSize: r, bevelOffset: -r, bevelSegments: 3, curveSegments: 4 });
+    g.translate(0, 0, -(d / 2 - r)); RG.set(key, g); return g;
+  }
+  function B(w, h, d, m, x, y, z, parent, cast, r) {
+    const rr = r === undefined ? Math.min(0.1, Math.min(w, h, d) * 0.3) : r;
+    const g = new THREE.Mesh(rr > 0.012 ? rGeo(w, h, d, rr) : new THREE.BoxGeometry(w, h, d), m);
     g.position.set(x || 0, y || 0, z || 0);
     g.castShadow = cast !== false; g.receiveShadow = true;
     if (parent) parent.add(g);
     return g;
   }
   function S(sx, sy, sz, m, x, y, z, parent, seg) {
-    const g = new THREE.Mesh(new THREE.SphereGeometry(1, seg || 32, seg ? seg * 0.66 : 20), m);
+    const g = new THREE.Mesh(new THREE.SphereGeometry(1, seg || 32, seg ? Math.round(seg * 0.66) : 20), m);
     g.scale.set(sx, sy, sz); g.position.set(x || 0, y || 0, z || 0);
     g.castShadow = true; g.receiveShadow = true;
     if (parent) parent.add(g);
     return g;
   }
   function CY(rt, rb, h, m, x, y, z, parent, seg) {
-    const g = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 20), m);
+    const g = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, seg || 24), m);
     g.position.set(x || 0, y || 0, z || 0); g.castShadow = true; g.receiveShadow = true;
     if (parent) parent.add(g);
     return g;
-  }
-  function tex(w, h, fn) {
-    const c = document.createElement('canvas'); c.width = w; c.height = h;
-    fn(c.getContext('2d'), w, h);
-    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
   }
   function mkPath(pts) {
     const seg = [], cum = [0]; let Lt = 0;
@@ -399,112 +447,222 @@ window.HILI_DATA = (function () {
     };
     return { pts, cum, L: Lt, at };
   }
+  // polyline with rounded (quadratic Bézier) corners → smooth vehicle turns
+  function smoothPath(pts, rad) {
+    const out = [pts[0].slice()];
+    for (let i = 1; i < pts.length - 1; i++) {
+      const p0 = pts[i - 1], p1 = pts[i], p2 = pts[i + 1];
+      const d1 = Math.hypot(p0[0] - p1[0], p0[1] - p1[1]), d2 = Math.hypot(p2[0] - p1[0], p2[1] - p1[1]), r = Math.min(rad, d1 / 2, d2 / 2);
+      const a = [p1[0] + (p0[0] - p1[0]) * r / d1, p1[1] + (p0[1] - p1[1]) * r / d1], b = [p1[0] + (p2[0] - p1[0]) * r / d2, p1[1] + (p2[1] - p1[1]) * r / d2];
+      for (let k = 0; k <= 12; k++) { const u = k / 12, w0 = (1 - u) * (1 - u), w1 = 2 * u * (1 - u), w2 = u * u; out.push([w0 * a[0] + w1 * p1[0] + w2 * b[0], w0 * a[1] + w1 * p1[1] + w2 * b[1]]); }
+    }
+    out.push(pts[pts.length - 1].slice());
+    return mkPath(out);
+  }
+  function loopPath(pts, rad) { // pts closed (first == last): start mid-edge so every corner is rounded
+    const m = [(pts[0][0] + pts[1][0]) / 2, (pts[0][1] + pts[1][1]) / 2];
+    return smoothPath([m].concat(pts.slice(1), [m]), rad);
+  }
   const pickables = [];
   function pickable(obj, info) { obj.userData.pick = info; pickables.push(obj); }
 
+  // ---------- studio environment (soft boxes) → reflections on glossy materials ----------
+  (function env() {
+    const pm = new THREE.PMREMGenerator(renderer), es = new THREE.Scene();
+    const sky = tex(4, 256, (c, w, h) => { const g = c.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffffff'); g.addColorStop(0.5, '#e6eef0'); g.addColorStop(0.56, '#c9d6da'); g.addColorStop(1, '#a3b4ba'); c.fillStyle = g; c.fillRect(0, 0, w, h); });
+    es.add(new THREE.Mesh(new THREE.SphereGeometry(50, 32, 16), new THREE.MeshBasicMaterial({ side: THREE.BackSide, map: sky })));
+    const panel = (w, h, x, y, z, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshBasicMaterial({ color: new THREE.Color(i, i, i), side: THREE.DoubleSide })); m.position.set(x, y, z); m.lookAt(0, 0, 0); es.add(m); };
+    panel(30, 20, 25, 35, 25, 6); panel(14, 40, -38, 18, 10, 3.5); panel(40, 8, 0, 30, -35, 3); panel(20, 10, 35, 12, -20, 2.5); panel(10, 30, 38, 10, 20, 2);
+    scene.environment = pm.fromScene(es, 0.03).texture;
+  })();
+
   // ---------- environment ----------
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), M(0xd8e2e6));
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000), MM(0xcbd8dc));
   ground.rotation.x = -Math.PI / 2; ground.position.y = -0.31; ground.receiveShadow = true; scene.add(ground);
-  B(134, 0.3, 54, M(0xf3f6f7), 17, -0.15, -1, scene, false);                     // factory slab
-  B(134.6, 0.34, 0.5, M(COL.green), 17, -0.15, 26.2, scene, false);               // slab edge accents
-  B(40.6, 0.02, 38, M(0xe7eef0), -26, 0.012, -2.6, scene, false);                // warehouse floor tint
+  const slabM = M(0xeaf0f2, { roughness: 0.42, clearcoat: 0.55, clearcoatRoughness: 0.25, envMapIntensity: 0.55 });
+  B(134, 0.3, 54, slabM, 17, -0.15, -1, scene, false, 0.12);
+  B(134.6, 0.34, 0.5, M(COL.green), 17, -0.15, 26.2, scene, false, 0.1);
+  B(40.6, 0.02, 38, MM(0xe7eef0), -26, 0.012, -2.6, scene, false, 0);
   function strip(x1, z1, x2, z2, w, color, y) {
     const len = Math.hypot(x2 - x1, z2 - z1);
     const holder = new THREE.Group(); holder.position.set((x1 + x2) / 2, y || 0.03, (z1 + z2) / 2); holder.rotation.y = -Math.atan2(z2 - z1, x2 - x1);
     const m = new THREE.Mesh(new THREE.PlaneGeometry(len, w), new THREE.MeshBasicMaterial({ color })); m.rotation.x = -Math.PI / 2;
     holder.add(m); scene.add(holder); return holder;
   }
-  // AGV lane (z = 10) + edge lines
-  strip(-8, 10, 66, 10, 2.0, 0xd5f0e7); strip(-8, 8.95, 66, 8.95, 0.12, COL.green); strip(-8, 11.05, 66, 11.05, 0.12, COL.green);
-  strip(-8, -13.4, -8, 10, 1.6, 0xd5f0e7);
-  // walkway lines around the assembly row
+  strip(-8, 10, 66, 10, 2.0, 0xd8f1e8); strip(-8, 8.95, 66, 8.95, 0.12, COL.green); strip(-8, 11.05, 66, 11.05, 0.12, COL.green);
+  strip(-8, -13.4, -8, 10, 1.6, 0xd8f1e8);
   strip(-3, -9.5, 70, -9.5, 0.14, 0xaec2c9); strip(-3, 14.2, 70, 14.2, 0.14, 0xaec2c9);
 
-  // trees
   (function trees() {
-    const r = rng(7);
-    const trunk = M(0xa9b6a9), leaf = [M(0xb9dccd), M(0xa5d3c0), M(0xcbe6da)];
+    const r = rng(7), trunk = MM(0xb7c3b9), leaf = [M(0x8fcfb4, { roughness: 0.55 }), M(0x7cc4a6, { roughness: 0.55 }), M(0xa4dbc3, { roughness: 0.55 })];
     for (let i = 0; i < 26; i++) {
       const x = -52 + i * 5.4 + r() * 2, z = (i % 2 ? 33 : -35) + r() * 6 * (i % 2 ? 1 : -1);
-      CY(0.18, 0.22, 1.6, trunk, x, 0.8, z, scene, 8);
-      S(1.6 + r() * 0.5, 1.9 + r() * 0.6, 1.6 + r() * 0.5, leaf[i % 3], x, 2.8, z, scene, 14);
+      CY(0.16, 0.22, 1.7, trunk, x, 0.85, z, scene, 10);
+      S(1.7 + r() * 0.5, 1.9 + r() * 0.6, 1.7 + r() * 0.5, leaf[i % 3], x, 2.9, z, scene, 18);
     }
   })();
+
+  // cartons share one label/tape texture
+  const cartonT = tex(128, 128, (c, w, h) => {
+    c.fillStyle = '#ececec'; c.fillRect(0, 0, w, h); c.fillStyle = '#c4c4c4'; c.fillRect(w / 2 - 11, 0, 22, h);
+    c.fillStyle = '#fff'; c.fillRect(8, h - 44, 46, 32); c.fillStyle = '#7a7a7a'; for (let i = 0; i < 9; i++) c.fillRect(13 + i * 4.2, h - 38, 2 + (i % 3), 14); c.fillRect(13, h - 20, 36, 3);
+  });
+  const cartonTints = [0xdcb27a, 0xd2a76e, 0xe6c89c, 0xcfa468].map((c) => M(c, { map: cartonT, roughness: 0.7, clearcoat: 0.05 }));
 
   // ---------- warehouse ----------
   const wh = new THREE.Group(); scene.add(wh);
   const ROWZ = [-16, -9, -2, 5];
   const unitX = (bay) => -39 + bay * 7.4;
-  const crates = {}; // part id -> crate mesh in rack
+  const crates = {};
   (function warehouse() {
-    const wall = M(0xf1f5f6), band = M(COL.green), cap = M(COL.slate);
-    B(40.6, 10, 0.5, wall, -26, 5, -21.2, wh); B(40.6, 1.1, 0.6, band, -26, 0.55, -20.9, wh, false); B(40.6, 0.8, 0.7, cap, -26, 10.2, -21.0, wh, false);
-    B(0.5, 10, 38.6, wall, -46.2, 5, -2.2, wh); B(0.6, 1.1, 38.6, band, -45.9, 0.55, -2.2, wh, false); B(0.7, 0.8, 38.6, cap, -46.0, 10.2, -2.2, wh, false);
-    // clerestory light band
-    const glow = new THREE.Mesh(new THREE.PlaneGeometry(36, 1.4), new THREE.MeshBasicMaterial({ color: 0xdff6ee }));
-    glow.position.set(-26, 7.4, -20.9); wh.add(glow);
-    // portal frames
-    const fr = M(0xaebdc3);
-    for (let i = 0; i < 5; i++) {
-      const x = -44 + i * 9.5;
-      B(0.2, 0.2, 37.5, fr, x, 9.4, -2.3, wh);
+    const wall = M(0xf6f9fa, { roughness: 0.38, clearcoat: 0.5 }), band = M(COL.green, { roughness: 0.35, clearcoat: 0.8 }), cap = M(COL.slate, { roughness: 0.4 });
+    const glass = M(0xa9ddcd, { transparent: true, opacity: 0.55, roughness: 0.05, metalness: 0.1, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 1.6 });
+    for (let i = 0; i < 10; i++) { // back wall panels
+      const x = -44 + i * 4.04;
+      B(3.9, 9.6, 0.5, wall, x, 4.8, -21.2, wh); B(2.9, 1.5, 0.14, glass, x, 7.4, -20.9, wh, false, 0.06);
     }
+    for (let i = 0; i < 9; i++) { // left wall panels
+      const z = -19 + i * 4.2;
+      B(0.5, 9.6, 4.08, wall, -46.2, 4.8, z, wh); B(0.14, 1.5, 3.1, glass, -45.9, 7.4, z, wh, false, 0.06);
+    }
+    B(40.8, 0.9, 0.9, band, -26, 9.9, -21.1, wh, false, 0.3); B(0.9, 0.9, 38.8, band, -46.1, 9.9, -2.4, wh, false, 0.3); B(40.8, 1.0, 0.7, cap, -26, 0.5, -20.9, wh, false, 0.25);
+    [-38, -26, -14].forEach((x) => { B(5.4, 5.8, 0.25, M(0xc9d4d9, { roughness: 0.5 }), x, 2.9, -20.8, wh, false, 0.1); for (let k = 0; k < 7; k++) B(5.0, 0.07, 0.1, MM(0x9aa9b0), x, 0.7 + k * 0.7, -20.62, wh, false, 0); B(5.9, 0.35, 0.3, band, x, 5.95, -20.7, wh, false, 0.1); });
+    const fr = M(0xb7c6cc, { roughness: 0.4, metalness: 0.4 });
+    for (let i = 0; i < 5; i++) B(0.18, 0.18, 37.5, fr, -44 + i * 9.5, 9.4, -2.3, wh, false, 0.05);
     // racks
-    const r = rng(11), post = M(COL.green), beam = M(0x8fa1a9), pal = M(0xb8956a), boxes = [M(COL.card), M(COL.cardD), M(0xe9e6df), M(0xd7b98b)];
+    const r = rng(11), post = M(COL.green, { roughness: 0.35, clearcoat: 0.8 }), beam = M(0x9fb0b7, { roughness: 0.4, metalness: 0.3 }), deck = MM(0xe3e9ec), wood = MM(0xc9a77a);
     const levels = [0.35, 2.55, 4.75];
     for (let row = 0; row < 4; row++) for (let bay = 0; bay < 4; bay++) {
       const ux = unitX(bay), uz = ROWZ[row];
       const u = new THREE.Group(); u.position.set(ux, 0, uz); wh.add(u);
-      for (const sx of [-3.2, 3.2]) for (const sz of [-0.8, 0.8]) B(0.16, 6.4, 0.16, post, sx, 3.2, sz, u);
+      for (const sx of [-3.2, 3.2]) for (const sz of [-0.8, 0.8]) B(0.17, 6.4, 0.17, post, sx, 3.2, sz, u, true, 0.06);
+      B(6.6, 0.1, 0.1, post, 0, 6.35, 0.8, u, false, 0.04); B(6.6, 0.1, 0.1, post, 0, 6.35, -0.8, u, false, 0.04);
       for (const ly of levels) {
-        B(6.4, 0.14, 0.14, beam, 0, ly, 0.8, u, false); B(6.4, 0.14, 0.14, beam, 0, ly, -0.8, u, false);
-        B(6.2, 0.06, 1.55, M(0xdde4e7), 0, ly + 0.05, 0, u, false);
-        // filler cartons
+        B(6.4, 0.14, 0.14, beam, 0, ly, 0.8, u, false, 0.05); B(6.4, 0.14, 0.14, beam, 0, ly, -0.8, u, false, 0.05);
+        B(6.2, 0.06, 1.55, deck, 0, ly + 0.05, 0, u, false, 0); B(6.0, 0.14, 1.3, wood, 0, ly + 0.15, 0, u, false, 0.04);
         const li = levels.indexOf(ly);
         for (let k = 0; k < 3; k++) {
           if (r() < 0.12) continue;
           const bw = 1.3 + r() * 0.5, bh = 0.8 + r() * 0.9, bd = 1.0 + r() * 0.35;
           const slotHere = D.parts.some((p) => p.row === row && p.bay === bay && p.lvl === li);
           if (slotHere && k === 0) continue;
-          const b = B(bw, bh, bd, boxes[(r() * 4) | 0], -2.2 + k * 2.2 + (r() - 0.5) * 0.3, ly + 0.1 + bh / 2, 0, u, false);
-          b.castShadow = false;
+          B(bw, bh, bd, cartonTints[(r() * 4) | 0], -2.2 + k * 2.2 + (r() - 0.5) * 0.3, ly + 0.22 + bh / 2, 0, u, false, 0.06);
         }
       }
-      u.traverse((o) => { if (o.isMesh) o.userData.rack = true; });
       pickable(u, { type: 'warehouse' });
     }
-    // part crates (green banded)
-    const crateM = M(0xe6eaec), bandM = M(COL.green, { emissive: COL.green, emissiveIntensity: 0.15 });
+    // part crates: white glossy, green bands
+    const crateM = M(0xf3f6f7, { roughness: 0.3, clearcoat: 0.9 }), bandM = M(COL.green, { emissive: COL.green, emissiveIntensity: 0.2 });
     D.parts.forEach((p) => {
       const g = new THREE.Group();
-      B(1.9, 1.3, 1.2, crateM, 0, 0.65, 0, g); B(1.95, 0.22, 1.25, bandM, 0, 0.9, 0, g, false); B(1.95, 1.34, 0.22, bandM, 0, 0.67, 0, g, false);
-      g.position.set(unitX(p.bay) + 1.2, levels[p.lvl] + 0.12, ROWZ[p.row]);
+      B(1.9, 1.3, 1.2, crateM, 0, 0.7, 0, g, true, 0.14); B(1.95, 0.22, 1.25, bandM, 0, 0.95, 0, g, false, 0.08); B(1.95, 1.34, 0.22, bandM, 0, 0.7, 0, g, false, 0.08); B(2.0, 0.12, 1.3, wood, 0, 0.06, 0, g, false, 0.04);
+      g.position.set(unitX(p.bay) + 1.2, levels[p.lvl] + 0.22, ROWZ[p.row]);
       scene.add(g); crates[p.id] = g;
     });
   })();
 
   // ---------- stations ----------
-  const stationLED = [], stationRing = [], stationGroups = [];
+  const stationLED = [], stationRing = [];
+  const fx = { arms: [], conveyor: null, bot: null, drone: null, holo: null };
+  function makeArm() {
+    const g = new THREE.Group(), amber = M(COL.amber, { roughness: 0.3, clearcoat: 1 }), white = M(0xf4f7f8), dark = M(0x2a343a, { roughness: 0.4, metalness: 0.4 }), gr = M(COL.green);
+    CY(0.95, 1.05, 0.3, white, 0, 0.15, 0, g, 36);
+    const base = new THREE.Group(); base.position.y = 0.3; g.add(base);
+    CY(0.55, 0.7, 0.9, white, 0, 0.45, 0, base, 28); CY(0.58, 0.58, 0.12, gr, 0, 0.55, 0, base, 28);
+    const sh = new THREE.Group(); sh.position.y = 0.95; base.add(sh);
+    const j1 = CY(0.36, 0.36, 0.95, dark, 0, 0, 0, sh, 22); j1.rotation.x = Math.PI / 2;
+    const l1 = new THREE.Mesh(new THREE.CapsuleGeometry(0.26, 2.3, 8, 18), amber); l1.rotation.z = -Math.PI / 2; l1.position.x = 1.4; l1.castShadow = true; sh.add(l1);
+    const el = new THREE.Group(); el.position.x = 2.8; sh.add(el);
+    const j2 = CY(0.3, 0.3, 0.8, dark, 0, 0, 0, el, 20); j2.rotation.x = Math.PI / 2;
+    const l2 = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 1.7, 8, 16), amber); l2.rotation.z = -Math.PI / 2; l2.position.x = 1.15; l2.castShadow = true; el.add(l2);
+    const tool = CY(0.12, 0.2, 0.7, dark, 2.4, 0, 0, el, 14); tool.rotation.z = Math.PI / 2;
+    S(0.1, 0.1, 0.1, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: COL.green, emissiveIntensity: 2 }), 2.8, 0, 0, el, 10);
+    g.userData.arm = { base, sh, el };
+    return g;
+  }
   (function stations() {
-    const slate = M(COL.slate), padM = M(0xffffff, { roughness: 0.5 });
+    const slate = M(COL.slate, { roughness: 0.38 }), white = M(0xffffff, { roughness: 0.3, clearcoat: 0.9 });
+    const padTop = tex(512, 512, (c, w, h) => {
+      c.fillStyle = '#fff'; c.fillRect(0, 0, w, h); c.translate(w / 2, h / 2);
+      c.strokeStyle = '#e1e9ec'; c.lineWidth = 3; [70, 130, 190].forEach((r) => { c.beginPath(); c.arc(0, 0, r, 0, 7); c.stroke(); });
+      c.strokeStyle = '#b9e8d9'; c.lineWidth = 12; for (let i = 0; i < 4; i++) { c.beginPath(); c.arc(0, 0, 232, i * Math.PI / 2 + 0.28, i * Math.PI / 2 + 1.28); c.stroke(); }
+      c.strokeStyle = '#d2dce0'; c.lineWidth = 3; for (let i = 0; i < 48; i++) { const a = i * Math.PI / 24; c.beginPath(); c.moveTo(Math.cos(a) * 214, Math.sin(a) * 214); c.lineTo(Math.cos(a) * 224, Math.sin(a) * 224); c.stroke(); }
+    });
     SX.forEach((x, k) => {
-      const g = new THREE.Group(); g.position.set(x, 0, 0); scene.add(g); stationGroups.push(g);
-      const pad = CY(7.2, 7.4, 0.22, padM, 0, 0.11, 0, g, 64); pad.castShadow = false;
+      const g = new THREE.Group(); g.position.set(x, 0, 0); scene.add(g);
+      const pad = new THREE.Mesh(new THREE.CylinderGeometry(7.2, 7.4, 0.24, 72), [M(0xf0f4f5, { roughness: 0.35, clearcoat: 0.8 }), M(0xffffff, { map: padTop, roughness: 0.3, clearcoat: 0.9 }), white]);
+      pad.position.y = 0.12; pad.receiveShadow = true; g.add(pad);
       const ringM = new THREE.MeshStandardMaterial({ color: COL.green, emissive: COL.green, emissiveIntensity: 0.2, roughness: 0.4 });
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(7.2, 0.1, 8, 96), ringM); ring.rotation.x = Math.PI / 2; ring.position.y = 0.24; g.add(ring);
-      const ring2 = new THREE.Mesh(new THREE.TorusGeometry(6.5, 0.04, 6, 96), M(0xc7d3d8)); ring2.rotation.x = Math.PI / 2; ring2.position.y = 0.23; g.add(ring2);
+      const ring = new THREE.Mesh(new THREE.TorusGeometry(7.25, 0.1, 10, 120), ringM); ring.rotation.x = Math.PI / 2; ring.position.y = 0.25; g.add(ring);
       stationRing.push(ringM);
-      // gantry
-      B(0.3, 7.4, 0.3, slate, 0, 3.7, 8.6, g); B(0.3, 7.4, 0.3, slate, 0, 3.7, -8.6, g); B(0.4, 0.34, 17.5, slate, 0, 7.5, 0, g);
+      const num = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.3), new THREE.MeshBasicMaterial({ transparent: true, map: tex(256, 128, (c, w, h) => { c.fillStyle = 'rgba(68,83,91,.35)'; c.font = '700 96px Inter, Arial, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('0' + (k + 1), w / 2, h / 2 + 4); }) }));
+      num.rotation.x = -Math.PI / 2; num.position.set(0, 0.27, 5.4); g.add(num);
+      // gantry arch
+      B(0.34, 7.4, 0.34, slate, 0, 3.7, 8.6, g, true, 0.12); B(0.34, 7.4, 0.34, slate, 0, 3.7, -8.6, g, true, 0.12); B(0.5, 0.42, 17.5, slate, 0, 7.5, 0, g, true, 0.16);
+      B(0.7, 0.5, 0.7, M(COL.green), 0, 0.25, 8.6, g, false, 0.18); B(0.7, 0.5, 0.7, M(COL.green), 0, 0.25, -8.6, g, false, 0.18);
       const led = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: COL.green, emissiveIntensity: 0.2 });
-      B(0.2, 0.14, 15.6, led, 0.1, 7.15, 0, g, false); stationLED.push(led);
-      // workbench + tools
-      B(2.6, 0.9, 1.0, slate, 3.8, 0.45, -9.8, g); B(2.7, 0.08, 1.1, M(0xffffff), 3.8, 0.94, -9.8, g);
-      B(0.5, 0.35, 0.4, M(COL.green), 3.2, 1.2, -9.8, g); B(0.7, 0.05, 0.5, M(0x1d2a30), 4.4, 1.0, -9.8, g, false);
-      pickable(pad, { type: 'station', i: k }); pickable(g.children[g.children.length - 1], { type: 'station', i: k });
+      B(0.2, 0.14, 15.6, led, 0.1, 7.2, 0, g, false, 0.06); stationLED.push(led);
+      [-3.5, 3.5].forEach((z) => { B(0.6, 0.35, 0.9, white, 0.1, 7.0, z, g, false, 0.12); S(0.2, 0.08, 0.3, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xffffff, emissiveIntensity: 1.5 }), 0.1, 6.78, z, g, 12); });
+      // workbench
+      B(2.8, 0.95, 1.1, slate, 3.8, 0.48, -9.8, g, true, 0.12); B(2.9, 0.1, 1.2, white, 3.8, 1.0, -9.8, g, true, 0.05);
+      const screen = B(0.9, 0.55, 0.06, new THREE.MeshStandardMaterial({ color: 0x1d2a30, emissive: COL.green, emissiveIntensity: 0.5 }), 4.4, 1.5, -10.1, g, false, 0.04); screen.rotation.x = -0.12;
+      B(0.18, 0.4, 0.18, slate, 4.4, 1.25, -10.1, g, false, 0.05); B(0.6, 0.4, 0.5, M(COL.green), 3.1, 1.25, -9.8, g, true, 0.1);
+      // robot arm
+      const arm = makeArm(); arm.position.set(2.6, 0, -6.9); g.add(arm); fx.arms.push({ arm, k });
       g.traverse((o) => { if (o.isMesh) o.userData.pick = { type: 'station', i: k }; });
       pickables.push(g);
     });
+  })();
+
+  // ---------- conveyor, service robot, drone, hologram ----------
+  (function props() {
+    const white = M(0xf5f8f9, { roughness: 0.3, clearcoat: 0.9 }), green = M(COL.green, { roughness: 0.3, clearcoat: 0.9 }), dark = M(0x2a343a, { roughness: 0.45 });
+    // conveyor
+    const cx0 = -5, cx1 = 72, CL = cx1 - cx0, cg = new THREE.Group(); cg.position.set(0, 0, -13.6); scene.add(cg);
+    B(CL, 0.5, 1.9, white, (cx0 + cx1) / 2, 0.6, 0, cg, true, 0.18);
+    B(CL, 0.22, 0.14, green, (cx0 + cx1) / 2, 0.92, 0.88, cg, false, 0.06); B(CL, 0.22, 0.14, green, (cx0 + cx1) / 2, 0.92, -0.88, cg, false, 0.06);
+    const beltT = tex(128, 64, (c, w, h) => { c.fillStyle = '#4b5a62'; c.fillRect(0, 0, w, h); c.strokeStyle = '#6a7b84'; c.lineWidth = 8; for (let i = 0; i < 4; i++) { c.beginPath(); c.moveTo(i * 32, 0); c.lineTo(i * 32 + 16, h / 2); c.lineTo(i * 32, h); c.stroke(); } });
+    beltT.wrapS = beltT.wrapT = THREE.RepeatWrapping; beltT.repeat.set(CL / 4, 1);
+    const belt = new THREE.Mesh(new THREE.PlaneGeometry(CL, 1.45), new THREE.MeshStandardMaterial({ map: beltT, roughness: 0.6 })); belt.rotation.x = -Math.PI / 2; belt.position.set((cx0 + cx1) / 2, 0.86, 0); belt.receiveShadow = true; cg.add(belt);
+    for (let x = cx0 + 2; x < cx1; x += 6) { B(0.3, 0.55, 1.7, dark, x, 0.28, 0, cg, false, 0.08); }
+    const boxes = [];
+    for (let i = 0; i < 11; i++) { const bx = B(1.1, 0.8, 0.9, cartonTints[i % 4], 0, 1.27, 0, cg, true, 0.08); boxes.push(bx); }
+    // dispatch gate where boxes appear
+    B(0.35, 3.2, 0.35, green, cx0, 1.6, 1.4, cg, true, 0.12); B(0.35, 3.2, 0.35, green, cx0, 1.6, -1.4, cg, true, 0.12); B(0.35, 0.4, 3.1, green, cx0, 3.2, 0, cg, true, 0.14);
+    fx.conveyor = { beltT, boxes, cx0, cx1, CL }; pickable(cg, { type: 'info', key: 'conveyor' });
+    // service robot (cute)
+    const bot = new THREE.Group(); bot.scale.setScalar(1.7); scene.add(bot);
+    B(0.9, 0.8, 0.8, white, 0, 0.62, 0, bot, true, 0.3); B(0.92, 0.12, 0.82, green, 0, 0.5, 0, bot, false, 0.05);
+    S(0.5, 0.45, 0.5, white, 0, 1.35, 0, bot, 28); B(0.12, 0.34, 0.62, dark, 0.38, 1.38, 0, bot, false, 0.08);
+    [0.14, -0.14].forEach((z) => S(0.05, 0.07, 0.05, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0x2bffc0, emissiveIntensity: 3 }), 0.45, 1.4, z, bot, 10));
+    CY(0.025, 0.025, 0.3, dark, 0, 1.9, 0, bot, 8); S(0.06, 0.06, 0.06, green, 0, 2.06, 0, bot, 10);
+    [0.38, -0.38].forEach((z) => { const w = CY(0.2, 0.2, 0.14, dark, 0, 0.2, z, bot, 18); w.rotation.x = Math.PI / 2; });
+    fx.bot = bot; pickable(bot, { type: 'info', key: 'bot' });
+    // inspection drone
+    const dr = new THREE.Group(); dr.scale.setScalar(2.0); scene.add(dr);
+    B(0.9, 0.28, 0.6, white, 0, 0, 0, dr, true, 0.12); B(0.5, 0.08, 0.4, green, 0, 0.17, 0, dr, false, 0.04);
+    const props = [];
+    [[0.8, 0.8], [0.8, -0.8], [-0.8, 0.8], [-0.8, -0.8]].forEach((p, i) => {
+      const arm = B(1.2, 0.07, 0.09, white, p[0] / 2, 0, p[1] / 2, dr, false, 0.03); arm.rotation.y = -Math.atan2(p[1], p[0]); arm.scale.x = 1.0; arm.position.set(p[0] / 2, 0, p[1] / 2);
+      CY(0.13, 0.13, 0.12, dark, p[0], 0.06, p[1], dr, 14);
+      const pg = new THREE.Group(); pg.position.set(p[0], 0.15, p[1]); dr.add(pg);
+      [1, -1].forEach((s) => B(0.65, 0.015, 0.07, dark, s * 0.32, 0, 0, pg, false, 0));
+      const disc = new THREE.Mesh(new THREE.CircleGeometry(0.66, 24), new THREE.MeshBasicMaterial({ color: 0x24292c, transparent: true, opacity: 0.1, side: THREE.DoubleSide, depthWrite: false })); disc.rotation.x = -Math.PI / 2; disc.raycast = () => {}; pg.add(disc);
+      props.push({ g: pg, dir: i % 2 ? 1 : -1 });
+    });
+    S(0.17, 0.17, 0.17, dark, 0.2, -0.22, 0, dr, 14); S(0.07, 0.07, 0.07, new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: COL.green, emissiveIntensity: 3 }), 0.34, -0.24, 0, dr, 10);
+    fx.drone = { g: dr, props }; pickable(dr, { type: 'info', key: 'drone' });
+    // hologram pad (LODD diamond in a glass cube) beside the final inspection
+    const hg = new THREE.Group(); hg.position.set(SX[4] + 10.5, 0, 3); scene.add(hg);
+    CY(2.3, 2.5, 0.3, white, 0, 0.15, 0, hg, 40);
+    const edgeM = new THREE.LineBasicMaterial({ color: 0x2bffc0 });
+    const cube = B(3.2, 3.2, 3.2, M(0x9fe6d0, { transparent: true, opacity: 0.18, roughness: 0.05, clearcoat: 1, envMapIntensity: 2 }), 0, 2.0, 0, hg, false, 0.12); cube.raycast = () => {};
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(3.2, 3.2, 3.2)), edgeM); edges.position.y = 2.0; hg.add(edges);
+    const dsh = new THREE.Shape(), rr = 0.55; dsh.moveTo(-rr, 0); dsh.lineTo(0, rr); dsh.lineTo(rr, 0); dsh.lineTo(0, -rr); dsh.closePath();
+    const hole = new THREE.Path(); hole.moveTo(-0.3, 0); hole.lineTo(0, -0.3); hole.lineTo(0.3, 0); hole.lineTo(0, 0.3); hole.closePath(); dsh.holes.push(hole);
+    const diamond = new THREE.Mesh(new THREE.ExtrudeGeometry(dsh, { depth: 0.16, bevelEnabled: true, bevelThickness: 0.06, bevelSize: 0.06, bevelSegments: 3 }), new THREE.MeshStandardMaterial({ color: COL.green, emissive: COL.green, emissiveIntensity: 0.9, roughness: 0.3 }));
+    diamond.geometry.translate(0, 0, -0.08); diamond.position.y = 2.0; diamond.castShadow = false; hg.add(diamond);
+    fx.holo = { diamond, edgeM }; pickable(hg, { type: 'info', key: 'holo' });
   })();
 
   // ---------- Hili aircraft ----------
@@ -516,9 +674,9 @@ window.HILI_DATA = (function () {
     [[-3.6, 1.5], [3.6, 1.5], [-3.6, -1.5], [3.6, -1.5]].forEach((p) => { const w = CY(0.14, 0.14, 0.14, M(0x20272b), p[0], 0.1, p[1], cart, 12); w.rotation.x = Math.PI / 2; });
     const a = new THREE.Group(); a.position.y = 0.31; root.add(a);
     const P = {}; const mk = (id) => { const g = new THREE.Group(); a.add(g); P[id] = g; return g; };
-    const bodyM = M(0xd8d4ba, { roughness: 0.36, metalness: 0.28 });
-    const bodyD = M(0xc6c2a8, { roughness: 0.4, metalness: 0.25 });
-    const hullM = new THREE.MeshStandardMaterial({ color: 0xd8d4ba, roughness: 0.36, metalness: 0.28, transparent: true, opacity: 1 });
+    const bodyM = M(0xd3c79d, { roughness: 0.26, metalness: 0.42, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.15 });
+    const bodyD = M(0xc2b78f, { roughness: 0.3, metalness: 0.4, clearcoat: 1, clearcoatRoughness: 0.1, envMapIntensity: 1.1 });
+    const hullM = new THREE.MeshPhysicalMaterial({ color: 0xd3c79d, roughness: 0.26, metalness: 0.42, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.15, transparent: true, opacity: 1 });
     const carbon = M(0x24292c, { roughness: 0.4, metalness: 0.3 });
     const greenM = M(0x0aa073, { roughness: 0.4 });
     const darkM = M(0x20282d, { roughness: 0.6 });
@@ -610,7 +768,7 @@ window.HILI_DATA = (function () {
         const pg = new THREE.Group(); pg.position.set(xm, 2.82, z); g.add(pg);
         CY(0.07, 0.09, 0.1, greenM, 0, 0, 0, pg, 12);
         [1, -1].forEach((s) => { const bl = B(1.05, 0.022, 0.11, carbon, s * 0.57, 0, 0, pg); bl.rotation.x = s * 0.12; });
-        const disc = new THREE.Mesh(new THREE.CircleGeometry(1.1, 36), new THREE.MeshBasicMaterial({ color: 0x24292c, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false }));
+        const disc = new THREE.Mesh(new THREE.CircleGeometry(1.1, 36), new THREE.MeshBasicMaterial({ color: 0x24292c, transparent: true, opacity: 0.05, side: THREE.DoubleSide, depthWrite: false }));
         disc.rotation.x = -Math.PI / 2; disc.position.y = 0.02; disc.visible = false; disc.raycast = () => {}; pg.add(disc);
         props.push({ g: pg, disc, dir: (i + (xm > 0 ? 0 : 1)) % 2 ? 1 : -1 });
       });
@@ -625,7 +783,7 @@ window.HILI_DATA = (function () {
     const pp = new THREE.Group(); pp.position.set(-3.95, 1.9, 0); PU.add(pp);
     CY(0.09, 0.14, 0.2, greenM, 0.04, 0, 0, pp, 12).rotation.z = Math.PI / 2;
     for (let i = 0; i < 3; i++) { const bl = B(0.03, 0.95, 0.1, carbon, 0, 0, 0, pp); bl.geometry.translate(0, 0.47, 0); bl.position.set(0, 0, 0); bl.rotation.x = (i * Math.PI * 2) / 3; }
-    const pdisc = new THREE.Mesh(new THREE.CircleGeometry(0.98, 32), new THREE.MeshBasicMaterial({ color: 0x24292c, transparent: true, opacity: 0.07, side: THREE.DoubleSide, depthWrite: false }));
+    const pdisc = new THREE.Mesh(new THREE.CircleGeometry(0.98, 32), new THREE.MeshBasicMaterial({ color: 0x24292c, transparent: true, opacity: 0.05, side: THREE.DoubleSide, depthWrite: false }));
     pdisc.rotation.y = Math.PI / 2; pdisc.visible = false; pdisc.raycast = () => {}; pp.add(pdisc);
     // --- battery
     const BA = mk('battery');
@@ -657,26 +815,27 @@ window.HILI_DATA = (function () {
   })();
 
   // ---------- parts schedule ----------
-  const AGV_PATHS = {};
   const sched = D.parts.map((p) => {
     const px = unitX(p.bay), pz = ROWZ[p.row] + 2.6, xk = SX[p.st];
-    const path = mkPath([[px, pz], [-8, pz], [-8, 10], [xk, 10], [xk, 8.3]]);
-    const ti = p.st * PERIOD + p.at, arr = ti - 1.2, dep = Math.max(0, arr - path.L / SPEED);
-    return Object.assign({ path, dep, arr, ti, garage: path.cum[2], retStart: ti + 0.3 }, p);
+    const path = smoothPath([[px, pz], [-8, pz], [-8, 10], [xk, 10], [xk, 8.3]], 5);
+    let gi = 0, gd = 1e9; path.pts.forEach((q, i) => { const d = Math.hypot(q[0] + 8, q[1] - 10); if (d < gd) { gd = d; gi = i; } });
+    const garage = path.cum[gi], ti = p.st * PERIOD + p.at, arr = ti - 1.2, dep = Math.max(0, arr - (path.L / SPEED) * 1.12);
+    const retDur = ((path.L - garage) / SPEED) * 1.12, retStart = ti + 0.3;
+    return Object.assign({ path, dep, arr, ti, garage, retStart, retDur, retEnd: retStart + retDur }, p);
   });
   const stageParts = [0, 1, 2, 3, 4].map((k) => sched.filter((p) => p.st === k));
   const hullFullT = Math.max.apply(null, stageParts[3].map((p) => p.ti)) + 1.6;
   const INSP = 4 * PERIOD; // stage-5 start
   const SPIN_T = INSP + D.checks[2].at, LIGHT_T = INSP + D.checks[4].at, READY_T = INSP + 21;
 
-  // AGVs
-  const agvM = { slate: M(COL.slate), green: M(COL.green, { emissive: COL.green, emissiveIntensity: 0.4 }), crate: M(0xe6eaec) };
+  // autonomous carts
+  const agvM = { slate: M(0x5d6d75, { roughness: 0.35 }), green: M(COL.green, { emissive: COL.green, emissiveIntensity: 0.45, roughness: 0.3 }), crate: M(0xf3f6f7, { roughness: 0.3, clearcoat: 0.9 }) };
   const agvs = sched.map((p) => {
     const g = new THREE.Group();
-    B(2.1, 0.32, 1.35, agvM.slate, 0, 0.32, 0, g); B(2.0, 0.07, 1.25, agvM.green, 0, 0.52, 0, g, false); B(0.1, 0.1, 1.0, new THREE.MeshBasicMaterial({ color: 0xffffff }), 1.06, 0.34, 0, g, false);
-    [[-0.7, 0.55], [0.7, 0.55], [-0.7, -0.55], [0.7, -0.55]].forEach((q) => { const w = CY(0.16, 0.16, 0.12, M(0x1c2226), q[0], 0.16, q[1], g, 12); w.rotation.x = Math.PI / 2; });
-    const crate = new THREE.Group(); crate.position.set(0, 0.56, 0); g.add(crate);
-    B(1.45, 1.0, 1.05, agvM.crate, 0, 0.5, 0, crate); B(1.5, 0.2, 1.1, agvM.green, 0, 0.72, 0, crate, false); B(1.5, 1.04, 0.2, agvM.green, 0, 0.52, 0, crate, false);
+    B(2.1, 0.34, 1.35, agvM.slate, 0, 0.34, 0, g, true, 0.14); B(2.0, 0.07, 1.25, agvM.green, 0, 0.55, 0, g, false, 0.03); B(0.1, 0.1, 1.0, new THREE.MeshBasicMaterial({ color: 0xffffff }), 1.06, 0.36, 0, g, false, 0);
+    [[-0.7, 0.55], [0.7, 0.55], [-0.7, -0.55], [0.7, -0.55]].forEach((q) => { const w = CY(0.17, 0.17, 0.12, M(0x1c2226, { roughness: 0.5 }), q[0], 0.17, q[1], g, 16); w.rotation.x = Math.PI / 2; });
+    const crate = new THREE.Group(); crate.position.set(0, 0.58, 0); g.add(crate);
+    B(1.45, 1.0, 1.05, agvM.crate, 0, 0.5, 0, crate, true, 0.12); B(1.5, 0.2, 1.1, agvM.green, 0, 0.72, 0, crate, false, 0.06); B(1.5, 1.04, 0.2, agvM.green, 0, 0.52, 0, crate, false, 0.06);
     g.visible = false; scene.add(g);
     pickable(g, { type: 'agv', id: p.id });
     return { g, crate };
@@ -685,13 +844,13 @@ window.HILI_DATA = (function () {
   // workers
   function makeWorker(vest) {
     const g = new THREE.Group(), pv = new THREE.Group(); g.add(pv);
-    const over = M(0xe3e9eb), vestM = M(vest), skin = M(0xd7a67e), slate = M(COL.slate), helm = M(0xffffff);
-    const legs = [-0.1, 0.1].map((x) => { const l = new THREE.Group(); l.position.set(x, 0.62, 0); B(0.16, 0.62, 0.18, slate, 0, -0.31, 0, l); pv.add(l); return l; });
-    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.21, 0.42, 4, 10), over); torso.position.y = 1.08; torso.castShadow = true; pv.add(torso);
-    const vv = CY(0.235, 0.235, 0.34, vestM, 0, 1.1, 0, pv, 14); vv.material = vestM;
-    S(0.17, 0.18, 0.17, skin, 0, 1.6, 0, pv, 12);
-    const hh = new THREE.Mesh(new THREE.SphereGeometry(0.2, 14, 8, 0, Math.PI * 2, 0, Math.PI / 2), helm); hh.position.y = 1.62; hh.castShadow = true; pv.add(hh);
-    const arms = [-0.3, 0.3].map((x) => { const a = new THREE.Group(); a.position.set(x, 1.32, 0); B(0.1, 0.52, 0.11, over, 0, -0.26, 0, a); B(0.09, 0.09, 0.09, skin, 0, -0.55, 0, a, false); pv.add(a); return a; });
+    const over = M(0xe8eef0, { roughness: 0.6, clearcoat: 0.1 }), vestM = M(vest, { roughness: 0.55 }), skin = M(0xd7a67e, { roughness: 0.6, clearcoat: 0 }), slate = M(COL.slate, { roughness: 0.6 }), helm = M(0xffffff, { roughness: 0.25, clearcoat: 1 });
+    const legs = [-0.1, 0.1].map((x) => { const l = new THREE.Group(); l.position.set(x, 0.62, 0); B(0.16, 0.62, 0.18, slate, 0, -0.31, 0, l, true, 0.06); pv.add(l); return l; });
+    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.21, 0.42, 6, 14), over); torso.position.y = 1.08; torso.castShadow = true; pv.add(torso);
+    CY(0.235, 0.235, 0.34, vestM, 0, 1.1, 0, pv, 18);
+    S(0.17, 0.18, 0.17, skin, 0, 1.6, 0, pv, 16);
+    const hh = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), helm); hh.position.y = 1.62; hh.castShadow = true; pv.add(hh);
+    const arms = [-0.3, 0.3].map((x) => { const a = new THREE.Group(); a.position.set(x, 1.32, 0); B(0.1, 0.52, 0.11, over, 0, -0.26, 0, a, true, 0.04); S(0.06, 0.06, 0.06, skin, 0, -0.55, 0, a, 10); pv.add(a); return a; });
     g.userData.w = { pv, legs, arms, torso };
     g.scale.setScalar(1.45);
     scene.add(g); pickable(g, { type: 'worker' });
@@ -703,22 +862,22 @@ window.HILI_DATA = (function () {
   });
   crew.push({ g: makeWorker(COL.green), k: 4, x: SX[4] - 7.4, z: 3.6, face: Math.PI / 2, ph: 5 });
   const patrols = [
-    { g: makeWorker(0xe6a02a), path: mkPath([[-40, -3.6], [-12, -3.6], [-12, -10], [-40, -10], [-40, -3.6]]), v: 1.6, o: 0 },
-    { g: makeWorker(0xe6a02a), path: mkPath([[-12, 3.2], [-40, 3.2], [-40, -3.6], [-12, -3.6], [-12, 3.2]]), v: 1.5, o: 20 },
+    { g: makeWorker(0xe6a02a), path: loopPath([[-40, -3.6], [-12, -3.6], [-12, -10], [-40, -10], [-40, -3.6]], 3), v: 1.6, o: 0 },
+    { g: makeWorker(0xe6a02a), path: loopPath([[-12, 3.2], [-40, 3.2], [-40, -3.6], [-12, -3.6], [-12, 3.2]], 3), v: 1.5, o: 20 },
   ];
   // forklift
   const fork = (function () {
-    const g = new THREE.Group(), white = M(0xf4f7f8), gr = M(COL.green), blk = M(0x20272b);
-    B(1.9, 0.9, 1.15, white, -0.1, 0.8, 0, g); B(1.92, 0.2, 1.17, gr, -0.1, 0.55, 0, g, false); B(1.0, 0.1, 1.0, blk, -0.3, 1.9, 0, g);
-    [[-0.7, 0.55], [-0.7, -0.55]].forEach((q) => B(0.07, 1.0, 0.07, blk, q[0], 1.4, q[1], g)); [[0.1, 0.55], [0.1, -0.55]].forEach((q) => B(0.07, 1.0, 0.07, blk, q[0], 1.4, q[1], g));
-    B(0.14, 3.0, 0.9, blk, 0.95, 1.6, 0, g); B(1.5, 0.08, 0.2, blk, 1.7, 0.2, 0.3, g); B(1.5, 0.08, 0.2, blk, 1.7, 0.2, -0.3, g);
-    [[-0.7, 0.62], [0.6, 0.62], [-0.7, -0.62], [0.6, -0.62]].forEach((q) => { const w = CY(0.25, 0.25, 0.2, blk, q[0], 0.25, q[1], g, 14); w.rotation.x = Math.PI / 2; });
+    const g = new THREE.Group(), white = M(0xf6f9fa, { roughness: 0.3, clearcoat: 0.9 }), gr = M(COL.green, { roughness: 0.3, clearcoat: 0.8 }), blk = M(0x20272b, { roughness: 0.5 });
+    B(1.9, 0.9, 1.15, white, -0.1, 0.8, 0, g, true, 0.2); B(1.92, 0.2, 1.17, gr, -0.1, 0.55, 0, g, false, 0.08); B(1.0, 0.1, 1.0, blk, -0.3, 1.9, 0, g, true, 0.04);
+    [[-0.7, 0.55], [-0.7, -0.55], [0.1, 0.55], [0.1, -0.55]].forEach((q) => B(0.07, 1.0, 0.07, blk, q[0], 1.4, q[1], g, true, 0));
+    B(0.14, 3.0, 0.9, blk, 0.95, 1.6, 0, g, true, 0.04); B(1.5, 0.08, 0.2, blk, 1.7, 0.2, 0.3, g, true, 0.02); B(1.5, 0.08, 0.2, blk, 1.7, 0.2, -0.3, g, true, 0.02);
+    [[-0.7, 0.62], [0.6, 0.62], [-0.7, -0.62], [0.6, -0.62]].forEach((q) => { const w = CY(0.27, 0.27, 0.22, blk, q[0], 0.27, q[1], g, 18); w.rotation.x = Math.PI / 2; });
     const load = new THREE.Group(); load.position.set(1.8, 0.3, 0); g.add(load);
-    B(1.3, 0.14, 1.2, M(0xb8956a), 0, 0.07, 0, load); B(1.15, 0.9, 1.0, M(COL.card), 0, 0.65, 0, load); B(1.18, 0.14, 1.04, gr, 0, 0.8, 0, load, false);
+    B(1.3, 0.14, 1.2, MM(0xc9a77a), 0, 0.07, 0, load, true, 0.04); B(1.15, 0.9, 1.0, cartonTints[0], 0, 0.65, 0, load, true, 0.08); B(1.18, 0.14, 1.04, gr, 0, 0.8, 0, load, false, 0.04);
     g.userData.load = load; scene.add(g); pickable(g, { type: 'forklift' });
     return g;
   })();
-  const forkPath = mkPath([[-10.8, -12.5], [-45, -12.5], [-45, 1.5], [-10.8, 1.5], [-10.8, -12.5]]);
+  const forkPath = loopPath([[-10.8, -12.5], [-45, -12.5], [-45, 1.5], [-10.8, 1.5], [-10.8, -12.5]], 6);
 
   // ---------- labels ----------
   const labelsEl = $('#labels'), labels = [];
@@ -728,6 +887,7 @@ window.HILI_DATA = (function () {
     const o = { el, getPos, v: new THREE.Vector3() }; labels.push(o); return o;
   }
   const stageLabels = [];
+  let acLabel = null;
   function buildLabels() {
     labels.splice(0).forEach((l) => l.el.remove()); stageLabels.length = 0;
     SX.forEach((x, k) => {
@@ -738,51 +898,58 @@ window.HILI_DATA = (function () {
     addLabel('zone small', '<span class="n">W</span><span class="t">' + L('lblWarehouse') + '</span>', () => new THREE.Vector3(-26, 11.6, -12), () => select({ type: 'warehouse' }));
     acLabel = addLabel('small', '<span class="n">H</span><span class="t">Hili A1<small class="pc"></small></span>', () => new THREE.Vector3(ac.root.position.x, 5.6, 0), () => select({ type: 'aircraft' }));
   }
-  let acLabel = null;
 
   // ---------- camera ----------
-  const cam = { t: new THREE.Vector3(20, 0, 0), r: 150, az: 0.44, ph: 1.0 };
+  const cam = { t: new THREE.Vector3(20, 0, -5), r: 150, az: 0.44, ph: 1.0 };
   const PRESETS = {
     overview: { t: [20, 0, -5], r: 150, az: 0.44, ph: 1.0 },
     warehouse: { t: [-26, 1, -2], r: 62, az: -0.3, ph: 0.95 },
     line: { t: [36, 1, 0], r: 98, az: 0.34, ph: 1.0 },
     follow: { t: [8, 2, 0], r: 34, az: 0.55, ph: 1.0 },
   };
+  // camera tour keyframes: [time, target, distance, azimuth, polar]; a cardinal spline keeps the move continuous (no stop-and-go)
   const TOUR = [[0, [-24, 1, -2], 84, -0.25, 0.86], [5, [-14, 1, 4], 72, -0.1, 0.86], [8, [8, 1, 2], 48, 0.45, 0.82], [21, [8, 1, 0], 42, 1.0, 0.86]];
   for (let k = 1; k < 5; k++) { const sgn = k % 2 ? -1 : 1; TOUR.push([k * PERIOD + 3, [SX[k], 1, 0], k === 4 ? 38 : 42, sgn * 0.5, 0.84], [k * PERIOD + 21, [SX[k], 1, 0], k === 4 ? 34 : 38, sgn * 1.05, 0.88]); }
-  TOUR.push([112, [34, 2, 0], 110, 0.44, 1.0], [122, [20, 0, 0], 150, 0.44, 1.0]);
+  TOUR.push([112, [34, 2, 0], 110, 0.44, 1.0], [122, [20, 0, -5], 150, 0.44, 1.0]);
+  const TF = TOUR.map((k) => [k[1][0], k[1][1], k[1][2], k[2], k[3], k[4]]);
+  function tourTan(j) { if (j <= 0 || j >= TOUR.length - 1) return [0, 0, 0, 0, 0, 0]; const dt = TOUR[j + 1][0] - TOUR[j - 1][0]; return TF[j].map((_, c) => (TF[j + 1][c] - TF[j - 1][c]) / dt); }
   function tourCam(t) {
     let i = 0; while (i < TOUR.length - 2 && t > TOUR[i + 1][0]) i++;
-    const a = TOUR[i], b = TOUR[i + 1], u = smr((t - a[0]) / (b[0] - a[0]));
-    cam.t.set(lerp(a[1][0], b[1][0], u), lerp(a[1][1], b[1][1], u), lerp(a[1][2], b[1][2], u));
-    cam.r = lerp(a[2], b[2], u); cam.az = lerp(a[3], b[3], u); cam.ph = lerp(a[4], b[4], u);
+    const h = TOUR[i + 1][0] - TOUR[i][0], u = clamp((t - TOUR[i][0]) / h, 0, 1), u2 = u * u, u3 = u2 * u;
+    const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2, m0 = tourTan(i), m1 = tourTan(i + 1);
+    const v = TF[i].map((a, c) => h00 * a + h10 * h * m0[c] + h01 * TF[i + 1][c] + h11 * h * m1[c]);
+    cam.t.set(v[0], v[1], v[2]); cam.r = v[3]; cam.az = v[4]; cam.ph = clamp(v[5], 0.3, 1.4);
   }
   function applyCam() {
     const s = Math.sin(cam.ph);
     camera.position.set(cam.t.x + cam.r * s * Math.sin(cam.az), cam.t.y + cam.r * Math.cos(cam.ph), cam.t.z + cam.r * s * Math.cos(cam.az));
     camera.lookAt(cam.t);
   }
-  let mode = 'overview', tween = null;
+  let mode = 'overview', tween = null, zoomT = null; const vel = { az: 0, ph: 0 };
+  function syncModeUi() {
+    document.querySelectorAll('#cams button').forEach((b) => b.classList.toggle('on', b.dataset.c === mode));
+    const tb = $('#tourBtn'); tb.classList.toggle('on', mode === 'tour'); tb.querySelector('span').textContent = L(mode === 'tour' ? 'camTourStop' : 'camTour');
+  }
   function setMode(m, instant) {
-    mode = m; document.querySelectorAll('#cams button').forEach((b) => b.classList.toggle('on', b.dataset.c === m));
-    if (m === 'tour' || !PRESETS[m]) return;
-    const p = PRESETS[m];
-    const to = { t: new THREE.Vector3(...p.t), r: p.r, az: p.az, ph: p.ph };
+    mode = m; zoomT = null; vel.az = vel.ph = 0; syncModeUi();
+    if (m === 'tour' || !PRESETS[m]) { tween = null; return; }
+    const p = PRESETS[m], to = { t: new THREE.Vector3(...p.t), r: p.r, az: p.az, ph: p.ph };
     if (m === 'follow') to.t.set(ac.root.position.x, 2, 0);
-    if (instant || CAPTURE) { cam.t.copy(to.t); cam.r = to.r; cam.az = to.az; cam.ph = to.ph; return; }
-    tween = { t0: performance.now(), dur: 1300, from: { t: cam.t.clone(), r: cam.r, az: cam.az, ph: cam.ph }, to };
+    if (instant || CAPTURE) { cam.t.copy(to.t); cam.r = to.r; cam.az = to.az; cam.ph = to.ph; tween = null; return; }
+    tween = { t0: performance.now(), dur: 1700, from: { t: cam.t.clone(), r: cam.r, az: cam.az, ph: cam.ph }, to };
   }
   function stepTween() {
     if (!tween) return;
     const u = smr((performance.now() - tween.t0) / tween.dur), f = tween.from, o = tween.to;
+    if (mode === 'follow') o.t.set(ac.root.position.x, 2, 0);
     cam.t.lerpVectors(f.t, o.t, u); cam.r = lerp(f.r, o.r, u); cam.az = lerp(f.az, o.az, u); cam.ph = lerp(f.ph, o.ph, u);
     if (u >= 1) tween = null;
   }
   // input
   const ptrs = new Map(); let drag = null, lastPinch = 0;
-  function userMoved() { tween = null; if (mode === 'tour' || ['overview', 'warehouse', 'line'].includes(mode)) { mode = mode === 'tour' ? 'free' : mode; document.querySelectorAll('#cams button').forEach((b) => b.classList.toggle('on', b.dataset.c === mode)); } }
+  function userMoved() { tween = null; if (mode === 'tour') { mode = 'free'; syncModeUi(); } }
   canvas.addEventListener('pointerdown', (e) => {
-    canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    canvas.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY }); vel.az = vel.ph = 0;
     drag = { x: e.clientX, y: e.clientY, moved: 0, t: performance.now(), btn: e.button, shift: e.shiftKey };
     if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; lastPinch = Math.hypot(a.x - b.x, a.y - b.y); }
   });
@@ -797,18 +964,22 @@ window.HILI_DATA = (function () {
     if (drag.moved < 4) return;
     userMoved();
     if (drag.btn === 2 || drag.shift) {
-      const k = cam.r * 0.0017; if (mode === 'follow') { mode = 'free'; document.querySelectorAll('#cams button').forEach((b) => b.classList.remove('on')); }
+      const k = cam.r * 0.0017; if (mode === 'follow') { mode = 'free'; syncModeUi(); }
       cam.t.x += (-dx * Math.cos(cam.az) - dy * Math.sin(cam.az)) * k; cam.t.z += (dx * Math.sin(cam.az) - dy * Math.cos(cam.az)) * k;
-    } else { cam.az -= dx * 0.005; cam.ph = clamp(cam.ph - dy * 0.005, 0.18, 1.45); }
+    } else { cam.az -= dx * 0.005; cam.ph = clamp(cam.ph - dy * 0.005, 0.18, 1.45); vel.az = -dx * 0.0045; vel.ph = -dy * 0.0045; }
   });
   const endPtr = (e) => {
     const was = drag; ptrs.delete(e.pointerId); if (ptrs.size < 2) lastPinch = 0;
-    if (was && e.type === 'pointerup' && was.moved < 5 && performance.now() - was.t < 600 && was.btn === 0) pick(e);
+    if (was && e.type === 'pointerup' && was.moved < 5 && performance.now() - was.t < 600 && was.btn === 0) { vel.az = vel.ph = 0; pick(e); }
     if (!ptrs.size) drag = null;
   };
   canvas.addEventListener('pointerup', endPtr); canvas.addEventListener('pointercancel', endPtr);
   canvas.addEventListener('contextmenu', (e) => e.preventDefault());
-  canvas.addEventListener('wheel', (e) => { e.preventDefault(); cam.r = clamp(cam.r * Math.exp(e.deltaY * 0.0012), 12, 260); userMoved(); }, { passive: false });
+  canvas.addEventListener('wheel', (e) => { e.preventDefault(); if (zoomT === null) zoomT = cam.r; zoomT = clamp(zoomT * Math.exp(e.deltaY * 0.0012), 12, 260); userMoved(); }, { passive: false });
+  function stepInput(dt) { // inertia + eased zoom (live view only)
+    if (!drag && (Math.abs(vel.az) > 1e-4 || Math.abs(vel.ph) > 1e-4)) { cam.az += vel.az; cam.ph = clamp(cam.ph + vel.ph, 0.18, 1.45); const f = Math.pow(0.04, dt); vel.az *= f; vel.ph *= f; }
+    if (zoomT !== null) { cam.r += (zoomT - cam.r) * (1 - Math.exp(-dt * 9)); if (Math.abs(zoomT - cam.r) < 0.02) zoomT = null; }
+  }
 
   // picking
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(); let hoverT = 0;
@@ -830,55 +1001,51 @@ window.HILI_DATA = (function () {
     for (let k = 0; k < NS; k++) {
       const s = k * PERIOD;
       if (t < s + STG) return SX[k];
-      if (k < NS - 1 && t < s + PERIOD) return lerp(SX[k], SX[k + 1], sm((t - s - STG) / XFER));
+      if (k < NS - 1 && t < s + PERIOD) return lerp(SX[k], SX[k + 1], smr((t - s - STG) / XFER));
     }
     return SX[NS - 1];
   }
   const inXfer = (t) => { const k = stageOf(t); return k < NS - 1 && t - k * PERIOD > STG; };
   const curStage = (t) => { const k = stageOf(t); return inXfer(t) ? k + 1 : k; };
   const tri = (u) => { u = ((u % 2) + 2) % 2; return u < 1 ? u : 2 - u; };
-  const heading = (path, s) => { const a = path.at(s - 0.8), b = path.at(s + 0.8); return -Math.atan2(b[1] - a[1], b[0] - a[0]); };
+  const heading = (path, s) => { const a = path.at(s - 1.2), b = path.at(s + 1.2); return -Math.atan2(b[1] - a[1], b[0] - a[0]); };
 
   function simulate(t) {
     const x = acX(t); ac.root.position.x = x;
-    // parts
     sched.forEach((p, i) => {
       const grp = ac.P[p.id], u = (t - p.ti) / 1.5;
       grp.visible = t >= p.ti;
       if (grp.visible) {
-        const e = eob(u), c = p.c; const o0 = [x - x + 0 - c[0], 1.8 - c[1], 8.3 - c[2]];
+        const e = eob(u), c = p.c, o0 = [-c[0], 1.8 - c[1], 8.3 - c[2]];
         grp.position.set(o0[0] * (1 - e), o0[1] * (1 - e) + 2.4 * Math.sin(Math.PI * clamp(u, 0, 1)), o0[2] * (1 - e));
         grp.rotation.y = (1 - clamp(u, 0, 1)) * 0.5;
       }
       crates[p.id].visible = t < p.dep;
-      // cart
-      const a = agvs[i]; let s = -1;
-      if (t >= p.dep && t < p.arr) s = (t - p.dep) * SPEED;
+      const a = agvs[i]; let s = -1, back = false;
+      if (t >= p.dep && t < p.arr) s = p.path.L * ease((t - p.dep) / (p.arr - p.dep));
       else if (t >= p.arr && t < p.retStart) s = p.path.L;
-      else if (t >= p.retStart) { s = p.path.L - (t - p.retStart) * SPEED; if (s <= p.garage) s = -1; }
+      else if (t >= p.retStart && t < p.retEnd) { s = p.path.L - (p.path.L - p.garage) * ease((t - p.retStart) / p.retDur); back = true; }
       a.g.visible = s >= 0;
-      if (s >= 0) { const q = p.path.at(s); a.g.position.set(q[0], 0, q[1]); a.g.rotation.y = heading(p.path, s); a.crate.visible = t < p.ti; }
+      if (s >= 0) {
+        const q = p.path.at(s); a.g.position.set(q[0], 0, q[1]); a.g.rotation.y = heading(p.path, s) + (back ? Math.PI : 0); a.crate.visible = t < p.ti;
+        a.g.scale.setScalar(Math.min(sm((t - p.dep) / 0.5), 1 - sm((t - (p.retEnd - 0.6)) / 0.6)) * 0.98 + 0.02);
+      }
     });
     // hull x-ray -> opaque
-    const hv = ac.P.fuselage.visible;
     const op = t < hullFullT - 1.6 ? 0.26 : lerp(0.26, 1, sm((t - (hullFullT - 1.6)) / 1.5));
-    ac.hullM.opacity = op; ac.hullM.depthWrite = op > 0.9; ac.hullM.needsUpdate = false;
-    // props spin
-    const spinning = t >= SPIN_T;
-    ac.props.forEach((p) => { p.g.rotation.y = spinning ? (t - SPIN_T) * 38 * p.dir : 0.35; p.disc.visible = spinning && t > SPIN_T + 0.7; });
+    ac.hullM.opacity = op; ac.hullM.depthWrite = op > 0.9;
+    const spinning = t >= SPIN_T, sp = spinning ? Math.min(1, (t - SPIN_T) / 1.5) : 0;
+    ac.props.forEach((p) => { p.g.rotation.y = spinning ? (sp * (t - SPIN_T) - 0.5 * (1 - sp) * 1.5) * 38 * p.dir : 0.35; p.disc.visible = spinning && t > SPIN_T + 0.7; });
     ac.pp.rotation.x = spinning ? (t - SPIN_T) * 45 : 0; ac.pdisc.visible = spinning && t > SPIN_T + 0.7;
     ac.lights.forEach((l) => { l.emissiveIntensity = t >= LIGHT_T ? 2.5 : 0; });
-    // scan beam
     const sc = t > INSP + 1 && t < INSP + 18.5;
-    ac.scan.visible = sc; if (sc) ac.scan.position.x = lerp(-5, 4.2, tri((t - INSP - 1) / 5.3));
+    ac.scan.visible = sc; if (sc) ac.scan.position.x = lerp(-5, 4.2, smr(tri((t - INSP - 1) / 5.3)));
     ac.cartLed.emissiveIntensity = 0.5 + 0.4 * Math.sin(t * 3);
-    // stations
     const cs = curStage(t);
     SX.forEach((_, k) => {
-      const st = t >= k * PERIOD + STG ? 2 : (t >= k * PERIOD && !inXfer(t) || (k === cs && t >= k * PERIOD - 1e-6) ? 1 : 0);
-      const ei = st === 1 ? 1.6 : st === 2 ? 0.7 : 0.12; stationLED[k].emissiveIntensity = ei; stationRing[k].emissiveIntensity = st === 1 ? 1.1 : st === 2 ? 0.5 : 0.1;
+      const st = t >= k * PERIOD + STG ? 2 : (k === cs && t >= k * PERIOD - 1e-6 && !(inXfer(t) && k !== cs) ? 1 : 0);
+      const ei = st === 1 ? 1.6 + 0.3 * Math.sin(t * 3) : st === 2 ? 0.7 : 0.12; stationLED[k].emissiveIntensity = ei; stationRing[k].emissiveIntensity = st === 1 ? 1.1 + 0.25 * Math.sin(t * 3) : st === 2 ? 0.5 : 0.1;
     });
-    // crew
     crew.forEach((c) => {
       const w = c.g.userData.w, active = t >= c.k * PERIOD && t < c.k * PERIOD + STG;
       c.g.position.set(c.x, 0, c.z); c.g.rotation.y = c.face;
@@ -888,11 +1055,26 @@ window.HILI_DATA = (function () {
       else { w.arms[0].rotation.x = 0.05 + Math.sin(t * 1.3 + c.ph) * 0.04; w.arms[1].rotation.x = 0.05; w.pv.position.y = 0; w.pv.rotation.x = 0; }
     });
     patrols.forEach((pt) => {
-      const d = ((t * pt.v + pt.o) % pt.path.L), q = pt.path.at(d), h = pt.path.at(d + 0.5), w = pt.g.userData.w, ph = t * 7;
+      const d = ((t * pt.v + pt.o) % pt.path.L), q = pt.path.at(d), h = pt.path.at(d + 0.6), w = pt.g.userData.w, ph = t * 7;
       pt.g.position.set(q[0], 0, q[1]); pt.g.rotation.y = Math.atan2(h[0] - q[0], h[1] - q[1]);
       w.legs[0].rotation.x = Math.sin(ph) * 0.5; w.legs[1].rotation.x = -Math.sin(ph) * 0.5; w.arms[0].rotation.x = -Math.sin(ph) * 0.4; w.arms[1].rotation.x = Math.sin(ph) * 0.4;
     });
-    { const d = (t * 2.6) % forkPath.L, q = forkPath.at(d); fork.position.set(q[0], 0, q[1]); fork.rotation.y = heading(forkPath, d); fork.userData.load.visible = ((t * 2.6) % forkPath.L) < forkPath.L * 0.5; }
+    { const d = (t * 2.6) % forkPath.L, q = forkPath.at(d); fork.position.set(q[0], 0, q[1]); fork.rotation.y = heading(forkPath, d); fork.userData.load.visible = d < forkPath.L * 0.5; }
+    // robot arms
+    fx.arms.forEach((a) => {
+      const A = a.arm.userData.arm, s0 = a.k * PERIOD, act = sm((t - s0) / 1.6) * (1 - sm((t - (s0 + STG - 1.6)) / 1.6)), ph = t * 1.2 + a.k;
+      A.base.rotation.y = lerp(-1.0, -2.2 + 0.35 * Math.sin(ph * 0.8), act);
+      A.sh.rotation.z = lerp(1.35, 0.7 + 0.25 * Math.sin(ph * 1.3), act);
+      A.el.rotation.z = lerp(-2.55, -1.15 + 0.3 * Math.cos(ph * 1.1), act);
+    });
+    // conveyor, service robot, drone, hologram
+    { const c = fx.conveyor; c.beltT.offset.x = -((t * 2.4) / 4) % 1;
+      c.boxes.forEach((b, i) => { const px = ((t * 2.4 + i * (c.CL / c.boxes.length)) % c.CL); b.position.x = c.cx0 + px; b.scale.setScalar(clamp(Math.min(px, c.CL - px) / 2, 0.01, 1)); }); }
+    { const u = t * 0.042 * Math.PI * 2, bx = lerp(-4, 60, 0.5 - 0.5 * Math.cos(u)), dx = Math.sin(u), sg = Math.tanh(dx * 9);
+      fx.bot.position.set(bx, 0, 12.6 + Math.sin(t * 0.5) * 0.4); fx.bot.rotation.y = (1 - sg) * 0.5 * Math.PI; }
+    { const a = t * 0.13, dr = fx.drone; dr.g.position.set(34 + 38 * Math.cos(a), 15 + 1.2 * Math.sin(t * 0.8), 1 + 17 * Math.sin(a));
+      dr.g.rotation.y = -Math.atan2(17 * Math.cos(a), -38 * Math.sin(a)); dr.g.rotation.z = 0.06 * Math.sin(t * 0.8); dr.props.forEach((p) => { p.g.rotation.y = t * 70 * p.dir; }); }
+    fx.holo.diamond.rotation.y = t * 1.2; fx.holo.diamond.position.y = 2.0 + 0.12 * Math.sin(t * 2);
   }
 
   // ---------- UI ----------
@@ -932,7 +1114,7 @@ window.HILI_DATA = (function () {
       const k = s.i, st = stateOf(k, t), sg = D.stages[k]; kind = L('station') + ' ' + (k + 1); title = N(sg.n); icon = String(k + 1); desc = N(sg.d);
       stat = st === 'done' ? L('done') : st === 'run' ? L('running') : L('waiting'); cls = st === 'done' ? '' : st === 'run' ? 'run' : 'wait'; prog = stageProg(k, t);
       if (k < 4) list = stageParts[k].map((p) => '<li class="' + (t >= p.ti ? 'ok' : t >= p.dep ? 'run' : '') + '"><i></i>' + N(p.n) + '<em>' + (t >= p.ti ? L('installed') : t >= p.dep ? '…' : fmt(p.ti)) + '</em></li>').join('');
-      else list = D.checks.map((c, j) => { const ok = t >= INSP + c.at, run = !ok && t >= INSP + c.at - 4 && t >= INSP; return '<li class="' + (ok ? 'ok' : run ? 'run' : '') + '"><i></i>' + N(c.n) + '<em>' + (ok ? L('passed') : run ? L('scanning') : L('pending')) + '</em></li>'; }).join('');
+      else list = D.checks.map((c) => { const ok = t >= INSP + c.at, run = !ok && t >= INSP + c.at - 4 && t >= INSP; return '<li class="' + (ok ? 'ok' : run ? 'run' : '') + '"><i></i>' + N(c.n) + '<em>' + (ok ? L('passed') : run ? L('scanning') : L('pending')) + '</em></li>'; }).join('');
       foot = L('stageTime') + ': ' + STG + ' ' + L('demoSec');
     } else if (s.type === 'aircraft') {
       kind = L('aircraft'); title = 'Hili A1'; icon = 'H'; desc = L('acDesc'); prog = t / TOTAL; stat = t >= READY_T ? L('ready') : L('running'); cls = t >= READY_T ? '' : 'run';
@@ -943,8 +1125,9 @@ window.HILI_DATA = (function () {
     } else if (s.type === 'agv') {
       const p = sched.find((q) => q.id === s.id); kind = L('vehicle'); title = L('cartCarrying') + ' ' + N(p.n); icon = 'A'; desc = L('cartDesc'); stat = t >= p.ti ? L('installed') : t >= p.dep ? L('running') : L('waiting'); cls = t >= p.dep && t < p.ti ? 'run' : t >= p.ti ? '' : 'wait'; prog = clamp((t - p.dep) / (p.ti - p.dep), 0, 1);
     } else if (s.type === 'forklift') { kind = L('vehicle'); title = L('forklift'); icon = 'F'; desc = L('forkliftDesc'); stat = L('running'); cls = 'run'; prog = (t * 2.6 % forkPath.L) / forkPath.L; }
+    else if (s.type === 'info') { kind = L('equipment'); title = L('info_' + s.key + '_t'); icon = title.charAt(0); desc = L('info_' + s.key + '_d'); stat = L('running'); cls = 'run'; prog = 0.5 + 0.5 * Math.sin(t * 0.3); }
     else { kind = L('team'); title = L('worker'); icon = 'T'; desc = L('workerDesc'); stat = L('running'); cls = 'run'; prog = 0.5; }
-    const key = [s.type, s.i, s.id, lang, title, stat, Math.round(prog * 50), list].join('|');
+    const key = [s.type, s.i, s.id, s.key, lang, title, stat, Math.round(prog * 50), list].join('|');
     if (key === panelKey) return; panelKey = key;
     $('#pKind').textContent = kind; $('#pTitle').textContent = title; $('#pIcon').textContent = icon;
     const st = $('#pStatus'); st.textContent = stat; st.className = 'p-status ' + cls; $('#pBar').style.width = Math.round(prog * 100) + '%'; $('#pDesc').textContent = desc; $('#pList').innerHTML = list; $('#pFoot').textContent = foot;
@@ -960,7 +1143,7 @@ window.HILI_DATA = (function () {
     $('#lang').textContent = lang === 'ar' ? 'EN' : 'AR';
     $('#specs').innerHTML = D.specs.map((s) => '<div><small>' + L(s.k) + '</small><b>' + s.v + '<i>' + s.u + '</i></b></div>').join('');
     document.title = lang === 'ar' ? 'مصنع هيلي الذكي' : 'Hili Smart Factory';
-    buildLabels(); buildSteps(); Object.keys(lastUi).forEach((k) => delete lastUi[k]); panelKey = '';
+    buildLabels(); buildSteps(); syncModeUi(); Object.keys(lastUi).forEach((k) => delete lastUi[k]); panelKey = '';
   }
   $('#lang').addEventListener('click', () => { lang = lang === 'ar' ? 'en' : 'ar'; try { localStorage.setItem('hili-lang', lang); } catch (e) { /* ignore */ } applyLang(); refresh(); });
   $('#play').addEventListener('click', () => togglePlay());
@@ -971,6 +1154,10 @@ window.HILI_DATA = (function () {
   $('#restart').addEventListener('click', () => { time = 0; togglePlay(true); });
   document.querySelectorAll('#speed button').forEach((b) => b.addEventListener('click', () => { speed = +b.dataset.s; document.querySelectorAll('#speed button').forEach((x) => x.classList.toggle('on', x === b)); }));
   document.querySelectorAll('#cams button').forEach((b) => b.addEventListener('click', () => setMode(b.dataset.c)));
+  $('#tourBtn').addEventListener('click', () => {
+    if (mode === 'tour') { setMode('free'); return; }
+    if (time >= TOTAL - 0.5) time = 0; togglePlay(true); setMode('tour');
+  });
   els.scrub.addEventListener('input', () => { time = (+els.scrub.value / 1000) * TOTAL; refresh(); });
   window.addEventListener('keydown', (e) => { if (e.code === 'Space' && e.target.tagName !== 'INPUT') { e.preventDefault(); togglePlay(); } });
 
@@ -990,17 +1177,18 @@ window.HILI_DATA = (function () {
       l.el.style.transform = 'translate(' + ((tmp.x * 0.5 + 0.5) * w).toFixed(1) + 'px,' + ((-tmp.y * 0.5 + 0.5) * h - 4).toFixed(1) + 'px) translate(-50%,-100%)';
     });
   }
-  function refresh() {
+  function refresh(dt) {
     time = clamp(time, 0, TOTAL); simulate(time);
     if (mode === 'tour') tourCam(time);
-    else if (mode === 'follow') { cam.t.x += (ac.root.position.x - cam.t.x) * (CAPTURE ? 1 : 0.08); cam.t.y = lerp(cam.t.y, 2, 0.1); cam.t.z = lerp(cam.t.z, 0, 0.1); }
+    else if (mode === 'follow' && !tween) { const k = CAPTURE ? 1 : 1 - Math.exp(-(dt || 0.016) * 4); cam.t.x += (ac.root.position.x - cam.t.x) * k; cam.t.y = lerp(cam.t.y, 2, k); cam.t.z = lerp(cam.t.z, 0, k); }
+    if (dt !== undefined) stepInput(dt);
     stepTween(); applyCam(); updateHud(time); renderPanel(time); projectLabels(); renderer.render(scene, camera);
   }
   let last = performance.now();
   function loop(now) {
     const dt = Math.min(0.1, (now - last) / 1000); last = now;
     if (playing) { time += dt * speed; if (time >= TOTAL) { time = TOTAL; togglePlay(false); } }
-    refresh(); requestAnimationFrame(loop);
+    refresh(dt); requestAnimationFrame(loop);
   }
 
   // ---------- boot ----------
@@ -1008,10 +1196,10 @@ window.HILI_DATA = (function () {
   if (Q.has('t')) time = +Q.get('t');
   simulate(time); setMode('overview', true);
   if (Q.get('cam') && PRESETS[Q.get('cam')]) setMode(Q.get('cam'), true);
-  if (Q.has('sel')) select({ type: 'station', i: +Q.get('sel') });
-  if (Q.has('pause') || CAPTURE) togglePlay(false);
   if (Q.get('tour') === '1') setMode('tour', true);
   ['r', 'az', 'ph'].forEach((k) => { if (Q.has(k)) cam[k] = +Q.get(k); });
+  if (Q.has('sel')) select({ type: 'station', i: +Q.get('sel') });
+  if (Q.has('pause') || CAPTURE) togglePlay(false);
   refresh();
   window.__hili = {
     frame: (t, m) => { if (m && mode !== m) setMode(m, true); time = t; refresh(); },
