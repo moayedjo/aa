@@ -12,4 +12,9 @@ fonts = '<link rel="preconnect" href="https://fonts.googleapis.com">\n<link href
 out = f'<title>Hili Smart Factory</title>\n{fonts}<style>\n{css}\n</style>\n{body}{scripts}'
 (root / 'dist').mkdir(exist_ok=True)
 (root / 'dist' / 'hili-factory.html').write_text(out)
+# fully standalone document (opens by double-click on any device, no server, no other files)
+standalone = ('<!doctype html>\n<html lang="en" dir="ltr">\n<head>\n<meta charset="utf-8">\n'
+              '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n' + out + '</body>\n</html>\n')
+standalone = standalone.replace('<title>Hili Smart Factory</title>\n', '', 1).replace('<meta charset="utf-8">\n', '<meta charset="utf-8">\n<title>Hili Smart Factory</title>\n', 1)
+(root / 'Hili_Smart_Factory_Standalone.html').write_text(standalone)
 print(len(out) / 1e6, 'MB')
