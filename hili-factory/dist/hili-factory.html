@@ -399,7 +399,7 @@ window.HILI_DATA = (function () {
   sun.position.set(55, 100, 60);
   sun.target.position.set(17, 0, 0);
   sun.castShadow = true;
-  sun.shadow.mapSize.set(CAPTURE ? 4096 : 3072, CAPTURE ? 4096 : 3072);
+  sun.shadow.mapSize.set(CAPTURE ? 2048 : 3072, CAPTURE ? 2048 : 3072);
   Object.assign(sun.shadow.camera, { left: -85, right: 85, top: 55, bottom: -55, near: 10, far: 270 });
   sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.05; sun.shadow.radius = 4;
   scene.add(sun, sun.target, new THREE.HemisphereLight(0xffffff, 0xb0c0c6, 0.3));
