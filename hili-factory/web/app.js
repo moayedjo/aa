@@ -134,7 +134,10 @@
   // ---------- Blender glTF assets (embedded as base64 so the page works from file://) ----------
   const GLB = new THREE.GLTFLoader();
   const b64buf = (str) => { const bin = atob(str), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u.buffer; };
-  const [GA, GS] = await Promise.all([GLB.parseAsync(b64buf(window.HILI_GLB.aircraft), ''), GLB.parseAsync(b64buf(window.HILI_GLB.site), '')]);
+  const [GA, GS, GP] = await Promise.all([GLB.parseAsync(b64buf(window.HILI_GLB.aircraft), ''), GLB.parseAsync(b64buf(window.HILI_GLB.site), ''), GLB.parseAsync(b64buf(window.HILI_GLB.props), '')]);
+  const PR = {}; GP.scene.traverse((o) => { if (/^(Worker|CarSedan|CarSUV|TruckBox|TruckSemi|Rack\d)$/.test(o.name)) PR[o.name] = o; });
+  GP.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material && o.material.envMapIntensity !== undefined) o.material.envMapIntensity = 0.9; if (/^(CarGlass|GlassDark)$/.test(o.material.name)) { o.material.transparent = true; o.material.opacity = 0.82; } } });
+  const tinted = {}; const tint = (obj, matName, hex) => { obj.traverse((o) => { if (o.isMesh && o.material && o.material.name === matName) { const key = matName + '#' + hex; if (!tinted[key]) { tinted[key] = o.material.clone(); tinted[key].color.setHex(hex); } o.material = tinted[key]; } }); };
   GS.scene.traverse((o) => { if (o.isMesh) { o.receiveShadow = true; o.castShadow = !/Desert|Lawns|Dunes|Road|YardSlab|HallFloor/.test(o.name);
     const m = o.material; if (!m) return; if (m.envMapIntensity !== undefined) m.envMapIntensity = 0.8;
     if (/^Glass/.test(m.name)) { m.transmission = 0; m.transparent = true; m.opacity = 0.35; m.depthWrite = false; }
@@ -195,33 +198,18 @@
     const fr = M(0xb7c6cc, { roughness: 0.4, metalness: 0.4 });
     for (let i = 0; i < 5; i++) B(0.18, 0.18, 37.5, fr, -44 + i * 9.5, 9.4, -2.3, wh, false, 0.05);
     // racks
-    const r = rng(11), post = M(COL.green, { roughness: 0.35, clearcoat: 0.8 }), beam = M(0x9fb0b7, { roughness: 0.4, metalness: 0.3 }), deck = MM(0xe3e9ec), wood = MM(0xc9a77a);
-    const levels = [0.35, 2.55, 4.75];
+    const wood = MM(0xc9a77a), levels = [0.35, 2.55, 4.75];
     for (let row = 0; row < 4; row++) for (let bay = 0; bay < 4; bay++) {
-      const ux = unitX(bay), uz = ROWZ[row];
-      const u = new THREE.Group(); u.position.set(ux, 0, uz); wh.add(u);
-      for (const sx of [-3.2, 3.2]) for (const sz of [-0.8, 0.8]) B(0.17, 6.4, 0.17, post, sx, 3.2, sz, u, true, 0.06);
-      B(6.6, 0.1, 0.1, post, 0, 6.35, 0.8, u, false, 0.04); B(6.6, 0.1, 0.1, post, 0, 6.35, -0.8, u, false, 0.04);
-      for (const ly of levels) {
-        B(6.4, 0.14, 0.14, beam, 0, ly, 0.8, u, false, 0.05); B(6.4, 0.14, 0.14, beam, 0, ly, -0.8, u, false, 0.05);
-        B(6.2, 0.06, 1.55, deck, 0, ly + 0.05, 0, u, false, 0); B(6.0, 0.14, 1.3, wood, 0, ly + 0.15, 0, u, false, 0.04);
-        const li = levels.indexOf(ly);
-        for (let k = 0; k < 3; k++) {
-          if (r() < 0.12) continue;
-          const bw = 1.3 + r() * 0.5, bh = 0.8 + r() * 0.9, bd = 1.0 + r() * 0.35;
-          const slotHere = D.parts.some((p) => p.row === row && p.bay === bay && p.lvl === li);
-          if (slotHere && k === 0) continue;
-          B(bw, bh, bd, cartonTints[(r() * 4) | 0], -2.2 + k * 2.2 + (r() - 0.5) * 0.3, ly + 0.22 + bh / 2, 0, u, false, 0.06);
-        }
-      }
+      const u = PR['Rack' + ((row * 3 + bay) % 4)].clone(true); u.position.set(unitX(bay), 0, ROWZ[row]); wh.add(u);
       pickable(u, { type: 'warehouse' });
     }
     // part crates: white glossy, green bands
     const crateM = M(0xf3f6f7, { roughness: 0.3, clearcoat: 0.9 }), bandM = M(COL.green, { emissive: COL.green, emissiveIntensity: 0.2 });
     D.parts.forEach((p) => {
       const g = new THREE.Group();
+      g.scale.set(0.62, 0.72, 0.7);
       B(1.9, 1.3, 1.2, crateM, 0, 0.7, 0, g, true, 0.14); B(1.95, 0.22, 1.25, bandM, 0, 0.95, 0, g, false, 0.08); B(1.95, 1.34, 0.22, bandM, 0, 0.7, 0, g, false, 0.08); B(2.0, 0.12, 1.3, wood, 0, 0.06, 0, g, false, 0.04);
-      g.position.set(unitX(p.bay) + 1.2, levels[p.lvl] + 0.22, ROWZ[p.row]);
+      g.position.set(unitX(p.bay) + 0.85, levels[p.lvl] + 0.2, ROWZ[p.row]);
       scene.add(g); crates[p.id] = g;
     });
   })();
@@ -400,25 +388,10 @@
   function wheel(x, z, parent, s) { const w = new THREE.Mesh(wheelGeo, wheelM); w.rotation.x = Math.PI / 2; w.position.set(x, 0.38 * (s || 1), z); w.scale.setScalar(s || 1); w.castShadow = true; parent.add(w); const h = CY(0.17, 0.17, 0.32, hubM, x, 0.38 * (s || 1), z, parent, 12); h.rotation.x = Math.PI / 2; h.scale.setScalar(s || 1); }
   const glassCar = M(0x22323a, { roughness: 0.06, clearcoat: 1, envMapIntensity: 1.8 }), headM = new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: 0xfff6dd, emissiveIntensity: 1.6 }), tailM = new THREE.MeshStandardMaterial({ color: 0x661111, emissive: 0xff2020, emissiveIntensity: 1.0 });
   function makeCar(col, long) {
-    const g = new THREE.Group(), body = M(col, { roughness: 0.22, metalness: 0.35, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.2 });
-    B(4.3, 0.85, 1.85, body, 0, 0.72, 0, g, true, 0.32); B(2.3, 0.8, 1.65, glassCar, -0.2, 1.4, 0, g, true, 0.32); B(2.1, 0.1, 1.55, body, -0.2, 1.84, 0, g, true, 0.08);
-    [1.35, -1.35].forEach((x) => [0.82, -0.82].forEach((z) => wheel(x, z, g)));
-    [0.6, -0.6].forEach((z) => { B(0.1, 0.2, 0.42, headM, 2.15, 0.78, z, g, false, 0.04); B(0.1, 0.2, 0.42, tailM, -2.15, 0.78, z, g, false, 0.04); });
-    if (long) B(1.4, 0.1, 1.4, M(0xdfe5e8), -1.6, 1.1, 0, g, false, 0.04);
-    return g;
+    const g = new THREE.Group(), m = PR[long ? 'CarSUV' : 'CarSedan'].clone(true); m.position.set(0, 0, 0); m.rotation.set(0, 0, 0); g.add(m); tint(m, 'CarWhite', col); return g;
   }
   function makeTruck(semi) {
-    const g = new THREE.Group(), cab = M(COL.slate, { roughness: 0.3, clearcoat: 1 }), white = M(0xf5f8f9, { roughness: 0.3, clearcoat: 0.8 }), green = M(COL.green, { roughness: 0.3, clearcoat: 0.8 });
-    const bl = semi ? 12.5 : 6.4, bx = semi ? -4.4 : -1.3, cx = semi ? 3.2 : 3.6;
-    B(2.2, 2.3, 2.45, cab, cx, 1.65, 0, g, true, 0.35); B(0.12, 1.0, 2.2, glassCar, cx + 1.1, 2.15, 0, g, false, 0.08);
-    B(bl, 3.1, 2.55, white, bx, 2.35, 0, g, true, 0.2); B(bl + 0.02, 0.45, 2.6, green, bx, 1.35, 0, g, false, 0.12);
-    const lg = tex(256, 128, (c, w, h) => { c.clearRect(0, 0, w, h); c.fillStyle = '#00a878'; c.font = '800 70px Inter, Arial, sans-serif'; c.textBaseline = 'middle'; c.fillText('LODD', 20, h / 2); });
-    [1, -1].forEach((s) => { const lm = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 2.1), new THREE.MeshBasicMaterial({ map: lg, transparent: true, side: THREE.DoubleSide })); lm.position.set(bx, 2.7, s * 1.29); g.add(lm); });
-    B(bl + 0.5, 0.3, 1.6, M(0x30383c), bx + (semi ? 0 : 0), 0.7, 0, g, false, 0.05);
-    const axles = semi ? [cx, bx - 3.4, bx - 4.8, bx + 1.0] : [cx, bx - 1.7, bx - 2.9];
-    axles.forEach((x) => [1.08, -1.08].forEach((z) => wheel(x, z, g, 1.15)));
-    [0.8, -0.8].forEach((z) => { B(0.1, 0.22, 0.45, headM, cx + 1.12, 0.95, z, g, false, 0.04); B(0.1, 0.22, 0.45, tailM, bx - bl / 2 - 0.02, 0.95, z, g, false, 0.04); });
-    return g;
+    const g = new THREE.Group(), m = PR[semi ? 'TruckSemi' : 'TruckBox'].clone(true); m.position.set(0, 0, 0); m.rotation.set(0, 0, 0); g.add(m); return g;
   }
   fx.traffic = [];
   (function traffic() {
@@ -574,16 +547,12 @@
 
   // workers
   function makeWorker(vest) {
-    const g = new THREE.Group(), pv = new THREE.Group(); g.add(pv);
-    const over = M(0xe8eef0, { roughness: 0.6, clearcoat: 0.1 }), vestM = M(vest, { roughness: 0.55 }), skin = M(0xd7a67e, { roughness: 0.6, clearcoat: 0 }), slate = M(COL.slate, { roughness: 0.6 }), helm = M(0xffffff, { roughness: 0.25, clearcoat: 1 });
-    const legs = [-0.1, 0.1].map((x) => { const l = new THREE.Group(); l.position.set(x, 0.62, 0); B(0.16, 0.62, 0.18, slate, 0, -0.31, 0, l, true, 0.06); pv.add(l); return l; });
-    const torso = new THREE.Mesh(new THREE.CapsuleGeometry(0.21, 0.42, 6, 14), over); torso.position.y = 1.08; torso.castShadow = true; pv.add(torso);
-    CY(0.235, 0.235, 0.34, vestM, 0, 1.1, 0, pv, 18);
-    S(0.17, 0.18, 0.17, skin, 0, 1.6, 0, pv, 16);
-    const hh = new THREE.Mesh(new THREE.SphereGeometry(0.2, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), helm); hh.position.y = 1.62; hh.castShadow = true; pv.add(hh);
-    const arms = [-0.3, 0.3].map((x) => { const a = new THREE.Group(); a.position.set(x, 1.32, 0); B(0.1, 0.52, 0.11, over, 0, -0.26, 0, a, true, 0.04); S(0.06, 0.06, 0.06, skin, 0, -0.55, 0, a, 10); pv.add(a); return a; });
-    g.userData.w = { pv, legs, arms, torso };
-    g.scale.setScalar(1.35);
+    const g = new THREE.Group(), inner = new THREE.Group(), m = PR.Worker.clone(true); m.position.set(0, 0, 0); m.rotation.set(0, 0, 0); m.scale.set(1, 1, 1);
+    inner.rotation.y = -Math.PI / 2; inner.scale.setScalar(1.3); inner.add(m); g.add(inner); tint(m, 'VestGreen', vest);
+    const N = (n) => m.getObjectByName(n), ax = (n) => ({ rotation: { set x(v) { N(n).rotation.z = -v; } } });
+    const spine = N('spine');
+    const pv = { position: { set y(v) { inner.position.y = v; } }, rotation: { set x(v) { spine.rotation.z = -v; } } };
+    g.userData.w = { pv, legs: [ax('legL'), ax('legR')], arms: [ax('armL'), ax('armR')] };
     scene.add(g); pickable(g, { type: 'worker' });
     return g;
   }
@@ -968,7 +937,7 @@
   window.__hili = {
     frame: (t, m) => { if (m && mode !== m) setMode(m, true); time = t; refresh(); },
     TOTAL, ready: true, setLang: (l) => { lang = l; applyLang(); refresh(); },
-    select, closePanel,
+    select, closePanel, cam, fx,
   };
   if (!CAPTURE) requestAnimationFrame(loop);
   setTimeout(() => $('#loading').classList.add('off'), 150);

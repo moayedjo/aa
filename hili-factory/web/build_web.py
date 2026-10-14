@@ -10,7 +10,7 @@ for f in ('data.js', 'style.css'):
 for f in ('logo-lodd.png', 'logo-hili.png'):
     (here / 'assets' / f).write_bytes((root / 'assets' / f).read_bytes())
 b = lambda n: base64.b64encode((here / 'assets' / n).read_bytes()).decode()
-glb = 'window.HILI_GLB = {aircraft: "%s", site: "%s"};\n' % (b('hili_aircraft.glb'), b('hili_site.glb'))
+glb = 'window.HILI_GLB = {aircraft: "%s", site: "%s", props: "%s"};\n' % (b('hili_aircraft.glb'), b('hili_site.glb'), b('hili_props.glb'))
 (here / 'glb_data.js').write_text(glb)
 html = (root / 'index.html').read_text().replace('<script src="vendor/three.min.js"></script>\n<script src="data.js"></script>', '<script src="vendor/three.bundle.js"></script>\n<script src="glb_data.js"></script>\n<script src="data.js"></script>')
 html = html.replace('<title>Hili Smart Factory</title>', '<title>Hili Realistic Factory</title>')

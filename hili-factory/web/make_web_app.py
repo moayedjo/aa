@@ -107,5 +107,49 @@ rep("renderer.setSize(w, h, false); camera.aspect = w / h;", "renderer.setSize(w
 rep("projectLabels(); renderer.render(scene, camera);", "projectLabels(); if (composer) composer.render(); else renderer.render(scene, camera);")
 rep("renderer.toneMappingExposure = 0.86;", "renderer.toneMappingExposure = 0.72;")
 rep("document.title = lang === 'ar' ? 'مصنع هيلي الذكي' : 'Hili Smart Factory';", "document.title = lang === 'ar' ? 'مصنع هيلي الواقعي' : 'Hili Realistic Factory';")
+
+# --- detailed props (workers, cars, trucks, racks) from the Blender props GLB
+rep("const [GA, GS] = await Promise.all([GLB.parseAsync(b64buf(window.HILI_GLB.aircraft), ''), GLB.parseAsync(b64buf(window.HILI_GLB.site), '')]);",
+    "const [GA, GS, GP] = await Promise.all([GLB.parseAsync(b64buf(window.HILI_GLB.aircraft), ''), GLB.parseAsync(b64buf(window.HILI_GLB.site), ''), GLB.parseAsync(b64buf(window.HILI_GLB.props), '')]);\n"
+    "  const PR = {}; GP.scene.traverse((o) => { if (/^(Worker|CarSedan|CarSUV|TruckBox|TruckSemi|Rack\\d)$/.test(o.name)) PR[o.name] = o; });\n"
+    "  GP.scene.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; if (o.material && o.material.envMapIntensity !== undefined) o.material.envMapIntensity = 0.9; if (/^(CarGlass|GlassDark)$/.test(o.material.name)) { o.material.transparent = true; o.material.opacity = 0.82; } } });\n"
+    "  const tinted = {}; const tint = (obj, matName, hex) => { obj.traverse((o) => { if (o.isMesh && o.material && o.material.name === matName) { const key = matName + '#' + hex; if (!tinted[key]) { tinted[key] = o.material.clone(); tinted[key].color.setHex(hex); } o.material = tinted[key]; } }); };")
+
+# racks: GLB units instead of the procedural loop
+i = s.index("    const r = rng(11), post = M(COL.green"); j = s.index("    // part crates: white glossy")
+s = s[:i] + """    const wood = MM(0xc9a77a), levels = [0.35, 2.55, 4.75];
+    for (let row = 0; row < 4; row++) for (let bay = 0; bay < 4; bay++) {
+      const u = PR['Rack' + ((row * 3 + bay) % 4)].clone(true); u.position.set(unitX(bay), 0, ROWZ[row]); wh.add(u);
+      pickable(u, { type: 'warehouse' });
+    }
+""" + s[j:]
+rep("B(1.9, 1.3, 1.2, crateM, 0, 0.7, 0, g, true, 0.14);", "g.scale.set(0.62, 0.72, 0.7);\n      B(1.9, 1.3, 1.2, crateM, 0, 0.7, 0, g, true, 0.14);")
+rep("g.position.set(unitX(p.bay) + 1.2, levels[p.lvl] + 0.22, ROWZ[p.row]);", "g.position.set(unitX(p.bay) + 0.85, levels[p.lvl] + 0.2, ROWZ[p.row]);")
+
+# vehicles
+i = s.index("  function makeCar(col, long) {"); j = s.index("  fx.traffic = [];")
+s = s[:i] + """  function makeCar(col, long) {
+    const g = new THREE.Group(), m = PR[long ? 'CarSUV' : 'CarSedan'].clone(true); m.position.set(0, 0, 0); m.rotation.set(0, 0, 0); g.add(m); tint(m, 'CarWhite', col); return g;
+  }
+  function makeTruck(semi) {
+    const g = new THREE.Group(), m = PR[semi ? 'TruckSemi' : 'TruckBox'].clone(true); m.position.set(0, 0, 0); m.rotation.set(0, 0, 0); g.add(m); return g;
+  }
+""" + s[j:]
+
+# workers
+i = s.index("  function makeWorker(vest) {"); j = s.index("  const crew = [];")
+s = s[:i] + """  function makeWorker(vest) {
+    const g = new THREE.Group(), inner = new THREE.Group(), m = PR.Worker.clone(true); m.position.set(0, 0, 0); m.rotation.set(0, 0, 0); m.scale.set(1, 1, 1);
+    inner.rotation.y = -Math.PI / 2; inner.scale.setScalar(1.3); inner.add(m); g.add(inner); tint(m, 'VestGreen', vest);
+    const N = (n) => m.getObjectByName(n), ax = (n) => ({ rotation: { set x(v) { N(n).rotation.z = -v; } } });
+    const spine = N('spine');
+    const pv = { position: { set y(v) { inner.position.y = v; } }, rotation: { set x(v) { spine.rotation.z = -v; } } };
+    g.userData.w = { pv, legs: [ax('legL'), ax('legR')], arms: [ax('armL'), ax('armR')] };
+    scene.add(g); pickable(g, { type: 'worker' });
+    return g;
+  }
+""" + s[j:]
+
+rep('    select, closePanel,\n  };', '    select, closePanel, cam, fx,\n  };')
 (root / 'web' / 'app.js').write_text(s)
 print('web/app.js', len(s.splitlines()), 'lines')

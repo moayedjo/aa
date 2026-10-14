@@ -7,6 +7,7 @@ import os
 import random
 import bpy
 import bmesh
+import hili_assets as AS
 from mathutils import Vector, Matrix
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -119,7 +120,7 @@ def emissive(name, rgb, strength):
 def materials():
     M = {}
     M['grass'] = textured('Grass', (0.045, 0.14, 0.03), 0.85, 0, noise_scale=2.0, bump=0.8, rough_var=0.1, color_var=0.6)
-    M['sand'] = textured('DesertSand', (0.50, 0.38, 0.23), 0.92, 0, noise_scale=1.2, bump=0.5, rough_var=0.05, color_var=0.7)
+    M['sand'] = textured('DesertSand', (0.38, 0.28, 0.17), 0.92, 0, noise_scale=1.2, bump=0.5, rough_var=0.05, color_var=0.7)
     M['concrete'] = textured('Concrete', (0.50, 0.50, 0.49), 0.55, 0, noise_scale=6, bump=0.15, rough_var=0.25, color_var=0.22)
     M['concrete_polish'] = textured('PolishedConcrete', (0.56, 0.56, 0.55), 0.22, 0, noise_scale=3, bump=0.03, rough_var=0.12, color_var=0.15, **{'Coat Weight': 0.35, 'Coat Roughness': 0.1})
     M['asphalt'] = textured('Asphalt', (0.045, 0.048, 0.052), 0.82, 0, noise_scale=120, bump=0.6, rough_var=0.12, color_var=0.3)
@@ -141,7 +142,7 @@ def materials():
     M['leaf2'] = textured('Leaf2', (0.13, 0.30, 0.09), 0.6, 0, noise_scale=40, bump=0.5, color_var=0.4, **{'Subsurface Weight': 0.15})
     M['frond'] = img_alpha('Frond', os.path.join(TEX, 'palm_frond.png'))
     M['skin_tone'] = pbr('Skin', (0.55, 0.36, 0.25), 0.55, 0, **{'Subsurface Weight': 0.2})
-    M['overall'] = pbr('Overall', (0.72, 0.74, 0.75), 0.7)
+    M['overall'] = textured('Overall', (0.11, 0.15, 0.19), 0.8, 0, noise_scale=300, bump=0.6, rough_var=0.1, color_var=0.15)
     M['vest_green'] = pbr('VestGreen', (0.0, 0.42, 0.22), 0.6)
     M['vest_orange'] = pbr('VestOrange', (0.9, 0.3, 0.02), 0.6)
     M['helmet'] = pbr('Helmet', (0.9, 0.9, 0.88), 0.28, 0, **{'Coat Weight': 1.0})
@@ -150,6 +151,24 @@ def materials():
     M['car_green'] = pbr('CarGreen', (0.0, 0.3, 0.15), 0.25, 0.3, **{'Coat Weight': 1.0, 'Coat Roughness': 0.04})
     M['car_red'] = pbr('CarRed', (0.5, 0.03, 0.02), 0.25, 0.3, **{'Coat Weight': 1.0, 'Coat Roughness': 0.04})
     M['car_silver'] = pbr('CarSilver', (0.5, 0.52, 0.54), 0.25, 0.7, **{'Coat Weight': 1.0})
+    M['reflective'] = pbr('Reflective', (0.65, 0.66, 0.64), 0.3, 0.7)
+    M['dark_eye'] = pbr('DarkTrim', (0.01, 0.01, 0.012), 0.6)
+    M['rim'] = pbr('Alloy', (0.7, 0.72, 0.74), 0.22, 1.0)
+    M['rim_dark'] = pbr('AlloyDark', (0.06, 0.06, 0.07), 0.5, 1.0)
+    M['glass_car'] = glass('CarGlass', (0.03, 0.045, 0.05), 0.02)
+    M['plate'] = pbr('Plate', (0.8, 0.8, 0.78), 0.4)
+    M['cab'] = pbr('CabPaint', (0.06, 0.09, 0.1), 0.25, 0.5, **{'Coat Weight': 1.0, 'Coat Roughness': 0.04})
+    M['panel_line'] = pbr('PanelLine', (0.45, 0.47, 0.48), 0.5)
+    M['wood_dark'] = textured('WoodDark', (0.24, 0.15, 0.07), 0.75, 0, noise_scale=70, bump=0.3)
+    M['carton_light'] = pbr('CartonLight', (0.68, 0.52, 0.33), 0.8)
+    M['wrap'] = pbr('StretchWrap', (0.9, 0.92, 0.93), 0.12, 0.0, **{'Alpha': 0.14, 'Specular IOR Level': 1.0})
+    M['drum_blue'] = pbr('DrumTeal', (0.0, 0.2, 0.17), 0.3, 0.6, **{'Coat Weight': 0.6})
+    M['drum_green'] = pbr('DrumGreen', (0.0, 0.3, 0.14), 0.3, 0.6, **{'Coat Weight': 0.6})
+    M['rack_blue'] = pbr('RackUpright', (0.0, 0.30, 0.15), 0.35, 0.3, **{'Coat Weight': 0.5})
+    M['rack_orange'] = pbr('RackBeam', (0.85, 0.34, 0.02), 0.35, 0.3, **{'Coat Weight': 0.5})
+    M['steel_plain'] = pbr('PlainSteel', (0.55, 0.57, 0.58), 0.45, 0.8)
+    M['skin_tone2'] = pbr('Skin2', (0.30, 0.18, 0.12), 0.55, 0, **{'Subsurface Weight': 0.2})
+    M['skin_tone3'] = pbr('Skin3', (0.68, 0.46, 0.34), 0.55, 0, **{'Subsurface Weight': 0.2})
     M['headlight'] = emissive('Headlight', (1, 0.95, 0.8), 25)
     M['taillight'] = emissive('Taillight', (1, 0.05, 0.02), 6)
     M['led_green'] = emissive('LEDGreen', (0.0, 1.0, 0.5), 8)
@@ -304,12 +323,25 @@ def warehouse(M, C):
     for i in range(5):
         w.box((-44 + i * 9.5, 2.3, 9.4), (0.2, 37.5, 0.2), m=4)
     w.finish(C, bevel=0.03)
-    unit = rack_unit(M, C); unit.hide_render = True; unit.location = (0, 0, -50)
+    rr = random.Random(5)
+    masters = coll('RackMasters', C)
+    variants = [AS.rack_unit(M, masters, rr, 'RackMaster%d' % v) for v in range(4)]
+    def hide_tree(o):
+        o.hide_render = True
+        for ch in o.children:
+            hide_tree(ch)
+    def dup_tree(o, parent=None):
+        n = o.copy(); n.hide_render = False; C.objects.link(n); n.parent = parent
+        for ch in o.children:
+            dup_tree(ch, n)
+        return n
     rows = (16, 9, 2, -5)
-    n = 0
+    k = 0
     for ry in rows:
         for bay in range(4):
-            o = unit.copy(); o.data = unit.data; o.hide_render = False; C.objects.link(o); o.location = (-39 + bay * 7.4, ry, 0); n += 1
+            n = dup_tree(variants[k % 4]); n.location = (-39 + bay * 7.4, ry, 0); k += 1
+    for v in variants:
+        hide_tree(v)
     # forklift pallets / floor markings
     fl = Builder('WarehouseMarks', [M['line_yellow']])
     for y in (12.5, 5.5, -1.5, -8.5):
@@ -318,27 +350,13 @@ def warehouse(M, C):
 
 
 def people(M, C):
-    def worker(loc, yaw, vest, working=True, name='Worker'):
-        b = Builder(name, [M['overall'], M[vest], M['skin_tone'], M['helmet'], M['rubber'], M['slate']])
-        # legs
-        for s in (-1, 1):
-            b.cyl((0.0, s * 0.1, 0.5), 0.085, 0.95, m=0, seg=14, r2=0.07); b.box((0.07, s * 0.1, 0.05), (0.28, 0.12, 0.1), m=4)
-        b.box((0, 0, 1.05), (0.28, 0.42, 0.34), m=0); b.box((0, 0, 1.32), (0.3, 0.44, 0.34), m=1)
-        b.cyl((0, 0, 1.55), 0.06, 0.1, m=2, seg=10); b.sphere((0.0, 0, 1.68), (0.105, 0.09, 0.12), m=2)
-        b.sphere((0.0, 0, 1.74), (0.13, 0.115, 0.08), m=3)
-        for s in (-1, 1):
-            ang = -1.2 if working else -0.1
-            ex = 0.0 + math.sin(-ang) * 0.3
-            b.cyl((0.18 if working else 0.0, s * 0.27, 1.28 - (0 if working else 0.28)), 0.045, 0.6, m=0, axis='X' if working else 'Z', seg=10)
-            b.sphere((0.5 if working else 0.0, s * 0.27, 1.28 if working else 0.95), (0.05, 0.05, 0.05), m=2, seg=10)
-        o = b.finish(C, bevel=0.01); o.location = loc; o.rotation_euler = (0, 0, yaw)
-        return o
+    skins = ('skin_tone', 'skin_tone2', 'skin_tone3')
     for k, x in enumerate(SX):
-        worker((x + 3.6, -8.1, 0), math.pi / 2, 'vest_green', True, 'W%da' % k)
-        worker((x - 3.4, 8.2, 0), -math.pi / 2, 'vest_orange', True, 'W%db' % k)
-    worker((60, -3.6, 0), math.pi, 'vest_green', True, 'W5c')
-    worker((-26, -10, 0), 0.6, 'vest_orange', False, 'WH1'); worker((-14, 3, 0), 2.4, 'vest_orange', False, 'WH2')
-    worker((110, 1, 0), math.pi, 'vest_orange', False, 'Crew1'); worker((88, 12, 0), -1.0, 'vest_orange', False, 'Crew2')
+        AS.make_worker(M, C, 'W%da' % k, 'vest_green', 'work', (x + 3.6, -8.1, 0), math.pi / 2, skin=skins[k % 3])
+        AS.make_worker(M, C, 'W%db' % k, 'vest_orange', 'work', (x - 3.4, 8.2, 0), -math.pi / 2, skin=skins[(k + 1) % 3])
+    AS.make_worker(M, C, 'W5c', 'vest_green', 'point', (60, -3.6, 0), math.pi, skin='skin_tone3')
+    AS.make_worker(M, C, 'WH1', 'vest_orange', 'walk', (-26, -10, 0), 0.6, skin='skin_tone2'); AS.make_worker(M, C, 'WH2', 'vest_orange', 'stand', (-14, 3, 0), 2.4)
+    AS.make_worker(M, C, 'Crew1', 'vest_orange', 'stand', (110, 1, 0), math.pi, skin='skin_tone3'); AS.make_worker(M, C, 'Crew2', 'vest_orange', 'walk', (88, 12, 0), -1.0)
 
 
 def conveyor_and_agv(M, C):
@@ -378,36 +396,11 @@ def robots(M, C):
 
 
 def car(M, C, name, mat, loc, yaw, kind='sedan'):
-    b = Builder(name, [M[mat], M['glass_dark'], M['rubber'], M['headlight'], M['taillight'], M['car_silver']])
-    L = {'sedan': 4.5, 'suv': 4.7, 'van': 5.2}[kind]
-    H = {'sedan': 1.45, 'suv': 1.7, 'van': 2.0}[kind]
-    b.box((0, 0, 0.62), (L, 1.85, 0.62), m=0)
-    cab_l = L * (0.52 if kind == 'sedan' else 0.72)
-    b.box((-0.3 if kind != 'van' else 0.2, 0, 0.62 + (H - 0.62) / 2 + 0.1), (cab_l, 1.65, H - 0.5), m=1)
-    b.box((-0.3 if kind != 'van' else 0.2, 0, H + 0.02), (cab_l - 0.2, 1.55, 0.06), m=0)
-    for sx in (L * 0.3, -L * 0.3):
-        for sy in (0.8, -0.8):
-            b.cyl((sx, sy, 0.34), 0.34, 0.26, m=2, axis='Y', seg=28)
-    for sy in (0.65, -0.65):
-        b.box((L / 2, sy, 0.7), (0.06, 0.4, 0.14), m=3); b.box((-L / 2, sy, 0.75), (0.06, 0.4, 0.14), m=4)
-    o = b.finish(C, bevel=0.15, angle=40); o.location = loc; o.rotation_euler = (0, 0, yaw)
-    return o
+    return AS.make_car(M, C, name, mat, kind, loc, yaw)
 
 
 def truck(M, C, loc, yaw, semi=False):
-    b = Builder('Truck', [M['slate'], M['glass_dark'], M['white'], M['green'], M['rubber'], M['headlight'], M['taillight']])
-    bl = 12.5 if semi else 6.4
-    cx = 3.2 if semi else 3.6
-    bx = -4.4 if semi else -1.3
-    b.box((cx, 0, 1.65), (2.2, 2.45, 2.3), m=0); b.box((cx + 1.12, 0, 2.15), (0.12, 2.2, 1.0), m=1)
-    b.box((bx, 0, 2.35), (bl, 2.55, 3.1), m=2); b.box((bx, 0, 1.35), (bl + 0.02, 2.6, 0.45), m=3)
-    axles = ([cx, bx - 3.4, bx - 4.8, bx + 1.0] if semi else [cx, bx - 1.7, bx - 2.9])
-    for x in axles:
-        for sy in (1.08, -1.08):
-            b.cyl((x, sy, 0.45), 0.45, 0.32, m=4, axis='Y', seg=28)
-    for sy in (0.8, -0.8):
-        b.box((cx + 1.12, sy, 0.95), (0.1, 0.45, 0.22), m=5); b.box((bx - bl / 2, sy, 0.95), (0.1, 0.45, 0.22), m=6)
-    o = b.finish(C, bevel=0.1, angle=40); o.location = loc; o.rotation_euler = (0, 0, yaw)
+    return AS.make_truck(M, C, 'Truck', loc, yaw, semi)
 
 
 def vehicles(M, C):

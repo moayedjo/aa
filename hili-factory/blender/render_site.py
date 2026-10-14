@@ -40,7 +40,7 @@ if hover:
 if mode == 'night':
     HS.sky_and_sun(-4, -35, 0.12)
 else:
-    HS.sky_and_sun(float(os.environ.get('SUN', '24')), -50, 1.0)
+    HS.sky_and_sun(float(os.environ.get('SUN', '30')), -50, 1.0)
 HS.hall_lights(site)
 
 # cameras
@@ -54,6 +54,9 @@ CAM = {
  'road':      ((-6, -62, 3.0), (50, -42, 1.6), 32),
  'trucks':    ((60, -56, 2.4), (85, -42, 1.8), 40),
  'noon':      ((-40, -90, 60), (40, 0, 3), 30),
+ 'people':    ((29.5, -3.8, 1.5), (26.5, -8.1, 1.2), 55),
+ 'cars':      ((6, -52, 1.6), (18, -41, 1.4), 45),
+ 'racks':     ((-14, -2.5, 2.2), (-30, 5.5, 2.2), 32),
 }
 loc, tgt, f = CAM.get(shot, CAM['aerial'])
 cam = bpy.data.cameras.new('Cam'); co = bpy.data.objects.new('Cam', cam); sc.collection.objects.link(co); sc.camera = co
@@ -74,4 +77,9 @@ sc.render.filepath = out; sc.render.image_settings.file_format = 'PNG'
 bpy.ops.render.render(write_still=True)
 if '--save-blend' in sys.argv:
     bpy.ops.wm.save_as_mainfile(filepath=os.path.join(HERE, 'Hili_Factory.blend'))
+try:
+    import grade as G
+    raw = out.replace('.png', '_raw.png'); os.replace(out, raw); G.grade(raw, out); os.remove(raw)
+except Exception as e:   # grading is optional
+    print('grade skipped:', e)
 print('RENDERED', out)
