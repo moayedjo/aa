@@ -1,0 +1,107 @@
+[
+  {
+    "name": "تعديل النص",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "تغيير الخط",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "تغيير اللون",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "تغيير الحجم",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "الخط محمّل فعليًا في المتصفح",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "تحريك النص بالسحب",
+    "pass": true,
+    "detail": "(540,1500) → (700,1640)"
+  },
+  {
+    "name": "الالتقاط على خط المنتصف",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "تراجع",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "إرجاع التنسيق الأصلي",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "إضافة نص جديد",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "إخفاء عنصر اختياري",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "تنبيه النص الطويل ظاهر",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "التصدير ممنوع مع نص زائد",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "التنبيه يختفي بعد الاختصار",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "رفع صورة + تكبير + تحريك داخل الإطار",
+    "pass": true,
+    "detail": "zoom=1.8 ox=100 oy=-40"
+  },
+  {
+    "name": "تنزيل PNG",
+    "pass": true,
+    "detail": "921556 bytes"
+  },
+  {
+    "name": "تنزيل PDF",
+    "pass": true,
+    "detail": "126614 bytes"
+  },
+  {
+    "name": "قراءة مدة الفيديو تلقائيًا",
+    "pass": true,
+    "detail": "4.00 ث"
+  },
+  {
+    "name": "PNG/PDF للمشهد المرجعي",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "name": "إنتاج MP4",
+    "pass": true,
+    "detail": "1048939 bytes"
+  },
+  {
+    "name": "لا أخطاء JavaScript في الصفحة",
+    "pass": true,
+    "detail": ""
+  }
+]
