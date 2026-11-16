@@ -1,0 +1,59 @@
+@@@OLD
+const W=1080,H=1920;
+@@@NEW
+let W=1080,H=1920;
+@@@OLD
+const P=new URLSearchParams(location.search), SLUG=P.get("p")||"";
+@@@NEW
+const P=new URLSearchParams(location.search), SLUG=P.get("p")||"";
+/* قالب من أداة الإعداد: يُقرأ من هذا المتصفح (localStorage + IndexedDB) */
+const TPLID=P.get("tpl")||"",ADMIN=P.get("admin")==="1";let CUSTOM=null,bgImg=null;
+const fget=k=>new Promise(r=>{try{const q=indexedDB.open("namq",1);q.onupgradeneeded=()=>q.result.createObjectStore("f");q.onerror=()=>r(null);
+  q.onsuccess=()=>{const g=q.result.transaction("f").objectStore("f").get(k);g.onsuccess=()=>r(g.result||null);g.onerror=()=>r(null)}}catch(e){r(null)}});
+async function loadCustom(){if(!TPLID)return;try{const t=JSON.parse(localStorage.getItem("namq-tpls")||"[]").find(x=>x.id===TPLID);if(!t)return;
+  CUSTOM=JSON.parse(JSON.stringify(t));CUSTOM.id=t.id+"@"+(t.v||0);W=t.w;H=t.h;
+  for(const f of t.customFonts||[]){const b=await fget("font:"+f);if(b){const ff=new FontFace(f,await b.arrayBuffer());await ff.load();document.fonts.add(ff)}}
+  if(t.fonts&&t.fonts.length){FONTS.length=0;FONTS.push(...t.fonts)}
+  const b=await fget("bg:"+t.id);if(b){const u=URL.createObjectURL(b);
+    if(t.kind==="video"){vid.src=u;await new Promise(r=>{vid.onloadeddata=r;vid.onerror=r;setTimeout(r,4000)})}
+    else{bgImg=new Image();await new Promise(r=>{bgImg.onload=r;bgImg.onerror=()=>{bgImg=null;r()};bgImg.src=u})}}
+  const wr=document.querySelector(".stage .wrap");wr.style.aspectRatio=W+"/"+H;wr.style.height="auto";wr.style.minHeight="0";wr.style.width="min(100%,"+(44*W/H).toFixed(1)+"vh)";$("seg").hidden=true}catch(e){}}
+@@@OLD
+function tplFor(m){const t=
+@@@NEW
+function tplFor(m){if(CUSTOM)return JSON.parse(JSON.stringify(CUSTOM));const t=
+@@@OLD
+"namq-draft-"+(SLUG||mode);
+@@@NEW
+"namq-draft-"+(TPLID?"tpl-"+TPLID:SLUG||mode);
+@@@OLD
+function save(){try{
+@@@NEW
+function save(){if(ADMIN)return;try{
+@@@OLD
+function bg(c){
+@@@NEW
+function bg(c){if(bgImg){c.drawImage(bgImg,0,0,W,H);return}
+ 
+@@@OLD
+x:540,y:1720,box:{w:800,h:160}
+@@@NEW
+x:W/2,y:Math.round(H*.9),box:{w:Math.round(W*.74),h:160}
+@@@OLD
+"المقاس النهائي 1080×1920 بكسل
+@@@NEW
+"المقاس النهائي "+W+"×"+H+" بكسل
+@@@OLD
+const fr=e.type==="image"&&!!e.movable&&(
+@@@NEW
+const fr=e.type==="image"&&(ADMIN||!!e.movable)&&(ADMIN||
+@@@OLD
+function endDrag(){if(drag){
+@@@NEW
+function endDrag(){if(drag){if(ADMIN&&drag.moved){const e=el(drag.id);parent.postMessage({namq:1,id:e.id,x:Math.round(e.x||0),y:Math.round(e.y||0),frame:e.frame||null},location.origin)}
+  
+@@@OLD
+ready:setMode(P.get("mode")==="video"?"video":"static")
+@@@NEW
+ready:loadCustom().then(()=>setMode(CUSTOM?CUSTOM.kind:P.get("mode")==="video"?"video":"static"))
+@@@END

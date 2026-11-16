@@ -1,5 +1,5 @@
 "use strict";
-const W=1080,H=1920;
+let W=1080,H=1920;
 const FONTS=["Tajawal","Amiri","Aref Ruqaa","Reem Kufi"];
 const COLORS=["#3F2E5C","#222222","#D94F70","#8A6A3B","#1F5A5A","#FFFFFF"];
 /* تعريف القالب الأصلي — مفصول عن مشروع العميل */
@@ -19,6 +19,18 @@ const TEMPLATES={
 };
 /* ربط المنتج: كل منتج تجريبي يفتح نسخة من القالب التجريبي بنصوصه وعناصره */
 const P=new URLSearchParams(location.search), SLUG=P.get("p")||"";
+/* قالب من أداة الإعداد: يُقرأ من هذا المتصفح (localStorage + IndexedDB) */
+const TPLID=P.get("tpl")||"",ADMIN=P.get("admin")==="1";let CUSTOM=null,bgImg=null;
+const fget=k=>new Promise(r=>{try{const q=indexedDB.open("namq",1);q.onupgradeneeded=()=>q.result.createObjectStore("f");q.onerror=()=>r(null);
+  q.onsuccess=()=>{const g=q.result.transaction("f").objectStore("f").get(k);g.onsuccess=()=>r(g.result||null);g.onerror=()=>r(null)}}catch(e){r(null)}});
+async function loadCustom(){if(!TPLID)return;try{const t=JSON.parse(localStorage.getItem("namq-tpls")||"[]").find(x=>x.id===TPLID);if(!t)return;
+  CUSTOM=JSON.parse(JSON.stringify(t));CUSTOM.id=t.id+"@"+(t.v||0);W=t.w;H=t.h;
+  for(const f of t.customFonts||[]){const b=await fget("font:"+f);if(b){const ff=new FontFace(f,await b.arrayBuffer());await ff.load();document.fonts.add(ff)}}
+  if(t.fonts&&t.fonts.length){FONTS.length=0;FONTS.push(...t.fonts)}
+  const b=await fget("bg:"+t.id);if(b){const u=URL.createObjectURL(b);
+    if(t.kind==="video"){vid.src=u;await new Promise(r=>{vid.onloadeddata=r;vid.onerror=r;setTimeout(r,4000)})}
+    else{bgImg=new Image();await new Promise(r=>{bgImg.onload=r;bgImg.onerror=()=>{bgImg=null;r()};bgImg.src=u})}}
+  const wr=document.querySelector(".stage .wrap");wr.style.aspectRatio=W+"/"+H;wr.style.height="auto";wr.style.minHeight="0";wr.style.width="min(100%,"+(44*W/H).toFixed(1)+"vh)";$("seg").hidden=true}catch(e){}}
 const VARIANTS=[
  {k:"خطوبة",texts:{},mono:true},
  {k:"مولود",texts:{kicker:"رزقنا الله بمولودنا",title:"أهلًا يوسف",names:"عائلة النعيمي",details:"وُلد يوم الجمعة ٢٥ يناير\nشاكرين دعواتكم"}},
@@ -28,13 +40,13 @@ const VARIANTS=[
 const VAR=VARIANTS.find(v=>SLUG.includes(v.k))||{k:"",texts:{}};
 const LETTERS="ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
 const MONO_FONTS=["Aref Ruqaa","Amiri","Reem Kufi"];
-function tplFor(m){const t=JSON.parse(JSON.stringify(TEMPLATES[m]));if(m!=="static")return t;
+function tplFor(m){if(CUSTOM)return JSON.parse(JSON.stringify(CUSTOM));const t=JSON.parse(JSON.stringify(TEMPLATES[m]));if(m!=="static")return t;
   for(const e of t.elements)if(VAR.texts[e.id])e.text=VAR.texts[e.id];
   if(VAR.mono){t.elements.find(e=>e.id==="photo").startHidden=true;
     t.elements.splice(1,0,{id:"mono",type:"mono",label:"رمز العروسين",a:"س",b:"أ",font:"Aref Ruqaa",size:300,color:"#C9A86A",gap:22,rise:16,x:540,y:640,required:false})}
   if(VAR.logo)t.elements.push({id:"logo",type:"image",kind:"logo",label:"الشعار",frame:{x:540,y:1740,w:300,h:160},movable:true,resizable:true,required:false});
   if(VAR.k)t.id+="-v"+VARIANTS.indexOf(VAR);return t}
-let T=null;const DKEY=()=>"namq-draft-"+(SLUG||mode);
+let T=null;const DKEY=()=>"namq-draft-"+(TPLID?"tpl-"+TPLID:SLUG||mode);
 let mode="static", S=null, sel=null, guides={v:false,h:false}, hist=[], imgs={}, playing=false;
 const $=id=>document.getElementById(id), pv=$("pv"), ctx=pv.getContext("2d"), vid=$("vid");
 const clone=o=>JSON.parse(JSON.stringify(o));
@@ -42,10 +54,11 @@ function newProject(m){const t=T;return{templateId:t.id,kind:t.kind,elements:t.e
 function tpl(){return T}
 function el(id){return S.elements.find(e=>e.id===id)}
 function snap(){hist.push(JSON.stringify(S));if(hist.length>60)hist.shift();$("undo").disabled=false}
-function save(){try{S.slug=SLUG;localStorage.setItem(DKEY(),JSON.stringify(S))}catch(e){}}
+function save(){if(ADMIN)return;try{S.slug=SLUG;localStorage.setItem(DKEY(),JSON.stringify(S))}catch(e){}}
 
 /* ---------- الرسم: نفس الدالة للمعاينة والتصدير ---------- */
-function bg(c){ // خلفية تجريبية مولّدة بالكود (تمثّل الصورة التي يرفعها المصمم)
+function bg(c){if(bgImg){c.drawImage(bgImg,0,0,W,H);return}
+  // خلفية تجريبية مولّدة بالكود (تمثّل الصورة التي يرفعها المصمم)
   const g=c.createLinearGradient(0,0,W,H);g.addColorStop(0,"#FBF4EE");g.addColorStop(1,"#F3E9F4");c.fillStyle=g;c.fillRect(0,0,W,H);
   c.save();c.globalAlpha=.55;
   [[-80,-60,420,"#EBD9F1"],[W+60,250,300,"#FBDDE5"],[-40,H-120,360,"#FBDDE5"],[W+40,H+20,460,"#E3D3EE"]].forEach(([x,y,r,col])=>{c.beginPath();c.arc(x,y,r,0,7);c.fillStyle=col;c.fill()});
@@ -135,7 +148,7 @@ function build(){const F=$("fields");F.innerHTML="";
     d.innerHTML=h;F.appendChild(d);const ta=d.querySelector("textarea");if(ta)ta.value=e.text}
   const pb=$("prod");if(pb&&S.pname){pb.hidden=false}
   $("xMp4").hidden=mode!=="video";$("play").hidden=mode!=="video";$("addText").hidden=false;
-  $("expNote").textContent="نسخة تجريبية: التصدير مفتوح مؤقتًا إلى حين تفعيل الدفع. "+(mode==="video"?"PNG وPDF يُصدَّران من المشهد المرجعي للقالب (الثانية "+tpl().refT+"). MP4 يُنتَج على خادم تصدير بنفس محرّك الرسم — غير مربوط داخل هذه الصفحة.":"المقاس النهائي 1080×1920 بكسل، مستقل عن حجم المعاينة. PDF هنا صورة نقطية RGB داخل صفحة بنفس المقاس — ليس ملف طباعة احترافيًا.");
+  $("expNote").textContent="نسخة تجريبية: التصدير مفتوح مؤقتًا إلى حين تفعيل الدفع. "+(mode==="video"?"PNG وPDF يُصدَّران من المشهد المرجعي للقالب (الثانية "+tpl().refT+"). MP4 يُنتَج على خادم تصدير بنفس محرّك الرسم — غير مربوط داخل هذه الصفحة.":"المقاس النهائي "+W+"×"+H+" بكسل، مستقل عن حجم المعاينة. PDF هنا صورة نقطية RGB داخل صفحة بنفس المقاس — ليس ملف طباعة احترافيًا.");
 }
 function select(id,keep){sel=id;if(!keep)S.fmtOpen=S.fmtOpen===id?id:null;document.querySelectorAll("[data-card]").forEach(c=>c.classList.toggle("sel",c.dataset.card===id));paint()}
 $("fields").addEventListener("input",ev=>{const t=ev.target,id=t.dataset.id;if(!id)return;const e=el(id),a=t.dataset.act;
@@ -160,7 +173,7 @@ $("fields").addEventListener("click",ev=>{const b=ev.target.closest("[data-act]"
   else if(a==="del"){S.elements=S.elements.filter(x=>x.id!==id);if(sel===id)sel=null}
   else if(a==="rmimg"){delete imgs[id];e.zoom=1;e.ox=e.oy=0}
   if(a!=="del"&&a!=="hide")sel=id;build();paint();save()});
-$("addText").onclick=()=>{snap();S.n++;const t=tpl(),d=t.newText||{};const e={id:"added"+S.n,type:"text",label:"نص مضاف "+S.n,text:"نص جديد",font:"Tajawal",weight:400,size:60,color:"#222222",align:"center",x:540,y:1720,box:{w:800,h:160},required:false,added:true,hidden:false};
+$("addText").onclick=()=>{snap();S.n++;const t=tpl(),d=t.newText||{};const e={id:"added"+S.n,type:"text",label:"نص مضاف "+S.n,text:"نص جديد",font:"Tajawal",weight:400,size:60,color:"#222222",align:"center",x:W/2,y:Math.round(H*.9),box:{w:Math.round(W*.74),h:160},required:false,added:true,hidden:false};
   if(mode==="video"){e.in=d.in;e.out=d.out}e.base=clone(e);S.elements.push(e);sel=e.id;S.fmtOpen=null;build();paint();save();const ta=$("f-"+e.id);ta.scrollIntoView({block:"center",behavior:"smooth"});ta.focus();ta.select()};
 $("undo").onclick=()=>{if(!hist.length)return;S=JSON.parse(hist.pop());$("undo").disabled=!hist.length;if(sel&&!el(sel))sel=null;build();paint();save()};
 $("goExport").onclick=()=>$("exportCard").scrollIntoView({behavior:"smooth",block:"center"});
@@ -171,7 +184,7 @@ function hit(p){for(let i=S.elements.length-1;i>=0;i--){const e=S.elements[i];if
   if(Math.abs(p.x-b.x)<=b.w/2&&Math.abs(p.y-b.y)<=b.h/2)return e}return null}
 let drag=null;
 pv.addEventListener("pointerdown",ev=>{const p=pt(ev),e=hit(p);if(!e){sel=null;select(null);return}pv.setPointerCapture(ev.pointerId);
-  const fr=e.type==="image"&&!!e.movable&&(!!e.dragFrame||e.kind==="logo"||!imgs[e.id]);
+  const fr=e.type==="image"&&(ADMIN||!!e.movable)&&(ADMIN||!!e.dragFrame||e.kind==="logo"||!imgs[e.id]);
   drag={id:e.id,p,fr,x0:fr?e.frame.x:e.type==="image"?(e.ox||0):e.x,y0:fr?e.frame.y:e.type==="image"?(e.oy||0):e.y,moved:false};if(sel!==e.id){select(e.id,true)}});
 pv.addEventListener("pointermove",ev=>{if(!drag)return;const p=pt(ev),dx=p.x-drag.p.x,dy=p.y-drag.p.y,e=el(drag.id);
   if(!drag.moved){if(Math.hypot(dx,dy)<6)return;drag.moved=true;snap()}
@@ -179,7 +192,8 @@ pv.addEventListener("pointermove",ev=>{if(!drag)return;const p=pt(ev),dx=p.x-dra
   else{let x=drag.x0+dx,y=drag.y0+dy;guides.v=Math.abs(x-W/2)<16;guides.h=Math.abs(y-H/2)<16;if(guides.v)x=W/2;if(guides.h)y=H/2;
     const bw=bounds(e).w,o=drag.fr?e.frame:e;o.x=Math.max(bw/2-200,Math.min(W-bw/2+200,x));o.y=Math.max(60,Math.min(H-60,y))}
   paint()});
-function endDrag(){if(drag){drag=null;guides.v=guides.h=false;paint();save()}}
+function endDrag(){if(drag){if(ADMIN&&drag.moved){const e=el(drag.id);parent.postMessage({namq:1,id:e.id,x:Math.round(e.x||0),y:Math.round(e.y||0),frame:e.frame||null},location.origin)}
+  drag=null;guides.v=guides.h=false;paint();save()}}
 pv.addEventListener("pointerup",endDrag);pv.addEventListener("pointercancel",endDrag);
 
 /* ---------- التصدير ---------- */
@@ -225,7 +239,7 @@ addEventListener("resize",paint);
 vid.addEventListener("loadedmetadata",()=>{if(T&&T.kind==="video")T.duration=vid.duration});
 /* واجهة للاختبار الآلي وخادم التصدير */
 const b64=async b=>{const u=new Uint8Array(await b.arrayBuffer());let s="";for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s)};
-window.NAMQ={ready:setMode(P.get("mode")==="video"?"video":"static"),setMode,get state(){return S},setState(s){S=s;build();paint()},validate,
+window.NAMQ={ready:loadCustom().then(()=>setMode(CUSTOM?CUSTOM.kind:P.get("mode")==="video"?"video":"static")),setMode,get state(){return S},setState(s){S=s;build();paint()},validate,
   png:async()=>b64(await exportPNG()),pdf:async()=>b64(await exportPDF()),
   setImage(id,src){return new Promise(r=>{const im=new Image();im.onload=()=>{imgs[id]=im;build();paint();r()};im.src=src})},
   textFrame(t){const c=document.createElement("canvas");c.width=W;c.height=H;drawScene(c.getContext("2d"),{textOnly:true,exp:true,t});return c.toDataURL("image/png").split(",")[1]}};
