@@ -1,0 +1,161 @@
+@@@OLD
+  {id:"photo",type:"image",label:"الصورة",frame:{x:540,y:640,w:380,h:380,round:true},required:false},
+@@@NEW
+  {id:"photo",type:"image",label:"الصورة",frame:{x:540,y:640,w:380,h:380,round:true},movable:true,resizable:true,required:false},
+@@@OLD
+ ]}
+};
+@@@NEW
+ ]}
+};
+/* ربط المنتج: كل منتج تجريبي يفتح نسخة من القالب التجريبي بنصوصه وعناصره */
+const P=new URLSearchParams(location.search), SLUG=P.get("p")||"";
+const VARIANTS=[
+ {k:"خطوبة",texts:{},mono:true},
+ {k:"مولود",texts:{kicker:"رزقنا الله بمولودنا",title:"أهلًا يوسف",names:"عائلة النعيمي",details:"وُلد يوم الجمعة ٢٥ يناير\nشاكرين دعواتكم"}},
+ {k:"تخرج",texts:{kicker:"مبارك التخرج",title:"ألف مبروك",names:"المهندسة سارة",details:"دفعة ٢٠٢٦\nبكل الفخر والاعتزاز"}},
+ {k:"عرض",texts:{kicker:"لفترة محدودة",title:"عرض خاص",names:"خصم ٣٠٪",details:"على جميع المنتجات حتى نهاية الشهر\nاطلب الآن"},logo:true}
+];
+const VAR=VARIANTS.find(v=>SLUG.includes(v.k))||{k:"",texts:{}};
+const LETTERS="ابتثجحخدذرزسشصضطظعغفقكلمنهوي".split("");
+const MONO_FONTS=["Aref Ruqaa","Amiri","Reem Kufi"];
+function tplFor(m){const t=JSON.parse(JSON.stringify(TEMPLATES[m]));if(m!=="static")return t;
+  for(const e of t.elements)if(VAR.texts[e.id])e.text=VAR.texts[e.id];
+  if(VAR.mono){t.elements.find(e=>e.id==="photo").startHidden=true;
+    t.elements.splice(1,0,{id:"mono",type:"mono",label:"رمز العروسين",a:"س",b:"أ",font:"Aref Ruqaa",size:300,color:"#C9A86A",gap:22,rise:16,x:540,y:640,required:false})}
+  if(VAR.logo)t.elements.push({id:"logo",type:"image",kind:"logo",label:"الشعار",frame:{x:540,y:1740,w:300,h:160},movable:true,resizable:true,required:false});
+  if(VAR.k)t.id+="-v"+VARIANTS.indexOf(VAR);return t}
+let T=null;const DKEY=()=>"namq-draft-"+(SLUG||mode);
+@@@OLD
+function newProject(m){const t=TEMPLATES[m];return{templateId:t.id,kind:t.kind,elements:t.elements.map(e=>({...clone(e),hidden:false,base:clone(e)})),n:0}}
+function tpl(){return TEMPLATES[mode]}
+@@@NEW
+function newProject(m){const t=T;return{templateId:t.id,kind:t.kind,elements:t.elements.map(e=>({...clone(e),hidden:!!e.startHidden,base:clone(e)})),n:0}}
+function tpl(){return T}
+@@@OLD
+function save(){try{localStorage.setItem("namq-draft-"+mode,JSON.stringify(S))}catch(e){}}
+@@@NEW
+function save(){try{S.slug=SLUG;localStorage.setItem(DKEY(),JSON.stringify(S))}catch(e){}}
+@@@OLD
+    c.fillStyle="#8A6A3B";c.font='400 40px "Tajawal"';c.textAlign="center";c.textBaseline="middle";c.direction="rtl";c.fillText("أضف صورة",f.x,f.y);c.restore();return}
+@@@NEW
+    c.fillStyle="#8A6A3B";c.font='400 40px "Tajawal"';c.textAlign="center";c.textBaseline="middle";c.direction="rtl";c.fillText(e.kind==="logo"?"أضف شعارًا":"أضف صورة",f.x,f.y);c.restore();return}
+  if(e.kind==="logo"){const s=Math.min(f.w/im.width,f.h/im.height);c.drawImage(im,f.x-im.width*s/2,f.y-im.height*s/2,im.width*s,im.height*s);return}
+@@@OLD
+  c.save();framePath(c,f);c.strokeStyle="#fff";c.lineWidth=8;c.stroke();c.restore()}
+@@@NEW
+  c.save();framePath(c,f);c.strokeStyle="#fff";c.lineWidth=8;c.stroke();c.restore()}
+function bounds(e){return e.type==="image"?e.frame:e.type==="mono"?{x:e.x,y:e.y,w:e.size*1.7,h:e.size*1.4}:{x:e.x,y:e.y,w:e.box.w,h:e.box.h}}
+function drawMono(c,e){c.save();c.fillStyle=e.color;c.textAlign="center";c.textBaseline="middle";c.direction="rtl";c.font=`400 ${e.size}px "${e.font}"`;
+  const d=e.size*e.gap/100,r=e.size*e.rise/200;c.fillText(e.a,e.x+d,e.y-r);c.globalAlpha=.82;c.fillText(e.b,e.x-d,e.y+r);c.restore()}
+@@@OLD
+  for(const e of S.elements){if(e.hidden)continue;if(e.type==="image"){if(!opt.textOnly)drawImage(c,e,opt.exp)}else drawText(c,e,t)}
+@@@NEW
+  for(const e of S.elements){if(e.hidden)continue;if(e.type==="image"){if(!opt.textOnly)drawImage(c,e,opt.exp)}else if(e.type==="mono")drawMono(c,e);else drawText(c,e,t)}
+@@@OLD
+    if(sel){const e=el(sel);if(e&&!e.hidden){const b=e.type==="image"?{x:e.frame.x,y:e.frame.y,w:e.frame.w,h:e.frame.h}:{x:e.x,y:e.y,w:e.box.w,h:e.box.h};
+@@@NEW
+    if(sel){const e=el(sel);if(e&&!e.hidden){const b=bounds(e);
+@@@OLD
+function syncWarn(){for(const e of S.elements){const w=document.querySelector(`[data-warn="${e.id}"]`);if(w)w.classList.toggle("on",!!e._overflow&&!e.hidden)}}
+@@@NEW
+function syncWarn(){for(const e of S.elements){const w=document.querySelector(`[data-warn="${e.id}"]`);if(w)w.classList.toggle("on",!!e._overflow&&!e.hidden)}}
+function monoUI(e){const sel=(k,n)=>`<label class="lbl">${n} <select data-act="mset" data-k="${k}" data-id="${e.id}" ${e.hidden?"disabled":""}>${LETTERS.map(l=>`<option ${e[k]===l?"selected":""}>${l}</option>`).join("")}</select></label>`;
+  const rng=(k,n,a,b)=>`<div class="lbl" style="margin-top:8px">${n}</div><input type="range" data-act="mnum" data-k="${k}" data-id="${e.id}" min="${a}" max="${b}" value="${e[k]}">`;
+  return `<div class="row" style="margin-top:8px;justify-content:flex-start;gap:16px">${sel("a","حرف العريس")}${sel("b","حرف العروس")}</div>
+  <div class="lbl" style="margin-top:8px">الخط</div><div class="chips">${MONO_FONTS.map(f=>`<button class="chip" style="font-family:'${f}'" data-act="font" data-id="${e.id}" data-v="${f}" aria-pressed="${e.font===f}">${e.a} ${e.b}</button>`).join("")}</div>
+  <div class="lbl">اللون</div><div class="chips">${COLORS.concat("#C9A86A").map(k=>`<button class="sw" style="background:${k}" data-act="color" data-id="${e.id}" data-v="${k}" aria-pressed="${e.color===k}" aria-label="لون ${k}"></button>`).join("")}</div>
+  ${rng("size","الحجم",150,450)}${rng("gap","التقارب",0,45)}${rng("rise","الارتفاع",-40,40)}
+  <div class="row" style="margin-top:10px"><button class="btn" data-act="reset" data-id="${e.id}">استعادة الوضع الأصلي</button><span class="lbl">اسحب الرمز في المعاينة لتحريكه</span></div>
+  <p class="note">الحرفان يُرسمان بالخط المختار كما هو. اضبط التقارب والارتفاع حتى يعجبك التداخل.</p>`}
+function frameUI(e,has){let h="";if(e.hidden)return h;
+  if(e.movable&&has&&e.kind!=="logo")h+=`<div class="lbl" style="margin-top:8px">السحب في المعاينة يحرّك</div><div class="chips">${[["0","الصورة داخل الإطار"],["1","الإطار نفسه"]].map(([v,n])=>`<button class="chip" style="font-size:14px" data-act="fmode" data-id="${e.id}" data-v="${v}" aria-pressed="${(!!e.dragFrame)===(v==="1")}">${n}</button>`).join("")}</div>`;
+  if(e.resizable)h+=`<div class="lbl" style="margin-top:8px">حجم ${e.kind==="logo"?"الشعار":"الإطار"}</div><input type="range" data-act="fsize" data-id="${e.id}" min="50" max="160" value="${Math.round((e.fs||1)*100)}">`;
+  if(e.movable||e.resizable)h+=`<div style="margin-top:8px"><button class="btn" data-act="reset" data-id="${e.id}">إرجاع المكان والحجم</button></div>`;
+  return h}
+@@@OLD
+    }else{
+@@@NEW
+    }else if(e.type==="mono"){h+=monoUI(e)}else{
+@@@OLD
+      ${has?`<div class="lbl" style="margin-top:8px">تكبير داخل الإطار — واسحب الصورة في المعاينة لضبط القص</div><input type="range" data-act="zoom" data-id="${e.id}" min="100" max="300" value="${Math.round((e.zoom||1)*100)}">`:""}`;
+@@@NEW
+      ${has&&e.kind!=="logo"?`<div class="lbl" style="margin-top:8px">تكبير داخل الإطار — واسحب الصورة في المعاينة لضبط القص</div><input type="range" data-act="zoom" data-id="${e.id}" min="100" max="300" value="${Math.round((e.zoom||1)*100)}">`:""}`;
+      h+=frameUI(e,has);
+@@@OLD
+    d.innerHTML=h;F.appendChild(d);const ta=d.querySelector("textarea");if(ta)ta.value=e.text}
+@@@NEW
+    d.innerHTML=h;F.appendChild(d);const ta=d.querySelector("textarea");if(ta)ta.value=e.text}
+  const pb=$("prod");if(pb&&S.pname){pb.hidden=false}
+@@@OLD
+  $("expNote").textContent=mode==="video"?"PNG وPDF يُصدَّران من المشهد المرجعي للقالب (الثانية "+tpl().refT+"). MP4 يُنتَج على خادم تصدير بنفس محرّك الرسم — غير مربوط داخل هذه الصفحة.":"المقاس النهائي 1080×1920 بكسل، مستقل عن حجم المعاينة. PDF هنا صورة نقطية RGB داخل صفحة بنفس المقاس — ليس ملف طباعة احترافيًا.";
+@@@NEW
+  $("expNote").textContent="نسخة تجريبية: التصدير مفتوح مؤقتًا إلى حين تفعيل الدفع. "+(mode==="video"?"PNG وPDF يُصدَّران من المشهد المرجعي للقالب (الثانية "+tpl().refT+"). MP4 يُنتَج على خادم تصدير بنفس محرّك الرسم — غير مربوط داخل هذه الصفحة.":"المقاس النهائي 1080×1920 بكسل، مستقل عن حجم المعاينة. PDF هنا صورة نقطية RGB داخل صفحة بنفس المقاس — ليس ملف طباعة احترافيًا.");
+@@@OLD
+  else if(a==="zoom"){if(!t._s){snap();t._s=1}e.zoom=t.value/100}
+@@@NEW
+  else if(a==="zoom"){if(!t._s){snap();t._s=1}e.zoom=t.value/100}
+  else if(a==="mnum"){if(!t._s){snap();t._s=1}e[t.dataset.k]=+t.value}
+  else if(a==="fsize"){if(!t._s){snap();t._s=1}e.fs=t.value/100;e.frame.w=e.base.frame.w*e.fs;e.frame.h=e.base.frame.h*e.fs}
+@@@OLD
+$("fields").addEventListener("change",ev=>{const t=ev.target;t._s=0;if(t.dataset.act==="file"&&t.files[0]){const id=t.dataset.id,rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{snap();imgs[id]=im;const e=el(id);e.zoom=1;e.ox=0;e.oy=0;e.hidden=false;sel=id;build();paint()};im.src=rd.result};rd.readAsDataURL(t.files[0])}});
+@@@NEW
+$("fields").addEventListener("change",ev=>{const t=ev.target;t._s=0;if(t.dataset.act==="mset"){snap();el(t.dataset.id)[t.dataset.k]=t.value;sel=t.dataset.id;build();paint();save();return}
+  if(t.dataset.act==="file"&&t.files[0]){const id=t.dataset.id,rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{snap();imgs[id]=im;const e=el(id);e.zoom=1;e.ox=0;e.oy=0;e.hidden=false;sel=id;build();paint()};im.src=rd.result};rd.readAsDataURL(t.files[0])}});
+@@@OLD
+$("fields").addEventListener("click",ev=>{const b=ev.target.closest("[data-act]");if(!b||b.tagName==="INPUT"||b.tagName==="TEXTAREA")return;const id=b.dataset.id,e=el(id),a=b.dataset.act,v=b.dataset.v;
+@@@NEW
+$("fields").addEventListener("click",ev=>{const b=ev.target.closest("[data-act]");if(!b||b.tagName==="INPUT"||b.tagName==="TEXTAREA"||b.tagName==="SELECT"||b.tagName==="OPTION")return;const id=b.dataset.id,e=el(id),a=b.dataset.act,v=b.dataset.v;
+@@@OLD
+  if(a==="font"){e.font=v;document.fonts.load(`${e.size}px "${v}"`,e.text).then(paint)}
+@@@NEW
+  if(a==="font"){e.font=v;document.fonts.load(`${e.size}px "${v}"`,e.text||e.a+e.b).then(paint)}
+@@@OLD
+  else if(a==="reset"){const b0=e.base;Object.assign(e,{font:b0.font,size:b0.size,color:b0.color,align:b0.align,x:b0.x,y:b0.y})}
+@@@NEW
+  else if(a==="reset"){const b0=e.base;for(const k of ["font","size","color","align","x","y","gap","rise"])if(k in b0)e[k]=b0[k];if(b0.frame){e.frame=clone(b0.frame);e.fs=1}}
+  else if(a==="fmode")e.dragFrame=v==="1";
+@@@OLD
+function hit(p){for(let i=S.elements.length-1;i>=0;i--){const e=S.elements[i];if(e.hidden)continue;const b=e.type==="image"?e.frame:{x:e.x,y:e.y,w:e.box.w,h:Math.min(e.box.h,Math.max(120,e.size*1.6))};
+@@@NEW
+function hit(p){for(let i=S.elements.length-1;i>=0;i--){const e=S.elements[i];if(e.hidden)continue;const b=e.type==="text"?{x:e.x,y:e.y,w:e.box.w,h:Math.min(e.box.h,Math.max(120,e.size*1.6))}:bounds(e);
+@@@OLD
+  drag={id:e.id,p,x0:e.type==="image"?(e.ox||0):e.x,y0:e.type==="image"?(e.oy||0):e.y,moved:false};if(sel!==e.id){select(e.id,true)}});
+@@@NEW
+  const fr=e.type==="image"&&!!e.movable&&(!!e.dragFrame||e.kind==="logo"||!imgs[e.id]);
+  drag={id:e.id,p,fr,x0:fr?e.frame.x:e.type==="image"?(e.ox||0):e.x,y0:fr?e.frame.y:e.type==="image"?(e.oy||0):e.y,moved:false};if(sel!==e.id){select(e.id,true)}});
+@@@OLD
+  if(e.type==="image"){if(imgs[e.id]){e.ox=drag.x0+dx;e.oy=drag.y0+dy}}
+@@@NEW
+  if(e.type==="image"&&!drag.fr){if(imgs[e.id]){e.ox=drag.x0+dx;e.oy=drag.y0+dy}}
+@@@OLD
+    e.x=Math.max(e.box.w/2-200,Math.min(W-e.box.w/2+200,x));e.y=Math.max(60,Math.min(H-60,y))}
+@@@NEW
+    const bw=bounds(e).w,o=drag.fr?e.frame:e;o.x=Math.max(bw/2-200,Math.min(W-bw/2+200,x));o.y=Math.max(60,Math.min(H-60,y))}
+@@@OLD
+async function setMode(m){mode=m;playing=false;vid.pause();$("play").textContent="تشغيل";hist=[];$("undo").disabled=true;sel=null;imgs={};
+@@@NEW
+async function setMode(m){mode=m;T=tplFor(m);playing=false;vid.pause();$("play").textContent="تشغيل";hist=[];$("undo").disabled=true;sel=null;imgs={};
+@@@OLD
+  S=null;try{const d=JSON.parse(localStorage.getItem("namq-draft-"+m)||"null");if(d&&d.templateId===TEMPLATES[m].id)S=d}catch(e){}
+@@@NEW
+  S=null;try{const d=JSON.parse(localStorage.getItem(DKEY())||"null");if(d&&d.templateId===T.id)S=d}catch(e){}
+@@@OLD
+vid.addEventListener("loadedmetadata",()=>{TEMPLATES.video.duration=vid.duration});
+@@@NEW
+vid.addEventListener("loadedmetadata",()=>{if(T&&T.kind==="video")T.duration=vid.duration});
+@@@OLD
+window.NAMQ={ready:setMode(new URLSearchParams(location.search).get("mode")==="video"?"video":"static"),setMode,get state(){return S},setState(s){S=s;build();paint()},validate,
+@@@NEW
+window.NAMQ={ready:setMode(P.get("mode")==="video"?"video":"static"),setMode,get state(){return S},setState(s){S=s;build();paint()},validate,
+@@@OLD
+  textFrame(t){const c=document.createElement("canvas");c.width=W;c.height=H;drawScene(c.getContext("2d"),{textOnly:true,exp:true,t});return c.toDataURL("image/png").split(",")[1]}};
+@@@NEW
+  textFrame(t){const c=document.createElement("canvas");c.width=W;c.height=H;drawScene(c.getContext("2d"),{textOnly:true,exp:true,t});return c.toDataURL("image/png").split(",")[1]}};
+/* ---------- ربط المنتج: الاسم والسعر من المتجر ---------- */
+(async()=>{const bar=$("prod");await window.NAMQ.ready;if(!bar||!SLUG)return;$("seg").hidden=true;
+  const show=(n,p)=>{bar.textContent="";const a=document.createElement("b");a.textContent=n;const s=document.createElement("span");
+    s.textContent=[p,mode==="video"?"متحرك":"ثابت","\u2066"+W+"×"+H+"\u2069"].filter(Boolean).join(" · ");bar.append(a,s);bar.hidden=false;S.pname=n;save()};
+  show(S.pname||SLUG.replace(/-/g," "),"");
+  try{const m=await import("/js/wix/catalog.js"),p=await m.fetchProductBySlug(SLUG);if(p&&p.name)show(p.name,p.price||"")}catch(e){}})();
+@@@END
