@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>محرّر نمق — نموذج تجريبي</title>
+<meta name="description" content="محرّر قوالب نمق التجريبي: عدّل النص والصورة وصدّر PNG وPDF.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri&family=Aref+Ruqaa&family=Reem+Kufi&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF9F7;--card:#FFFFFF;--ink:#222222;--pri:#D94F70;--line:#EAE7E4;--mute:#77726d}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:16px}
+button,input,textarea,select{font-family:inherit;font-size:16px;color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--card)}
+.brand{font-weight:700;font-size:20px}.brand small{font-weight:400;color:var(--mute);font-size:12px;margin-inline-start:6px}
+.tag{white-space:nowrap;font-size:12px;background:#FFF1D6;color:#7a5200;border-radius:999px;padding:3px 10px}
+.seg{display:flex;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{border:0;background:transparent;border-radius:999px;padding:7px 14px;cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--pri);color:#fff}
+main{display:grid;grid-template-columns:1fr;max-width:1100px;margin:0 auto}
+.stage{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 14px 8px;border-bottom:1px solid var(--line)}
+.stage .wrap{position:relative;margin:0 auto;height:44vh;min-height:250px;aspect-ratio:9/16}
+canvas#pv{width:100%;height:100%;display:block;border-radius:12px;border:1px solid var(--line);background:#fff;touch-action:none}
+.bar{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:40px}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.panel{padding:12px 14px 90px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.card.sel{border-color:var(--pri)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+label.t{font-weight:700;font-size:14px}
+.opt{font-size:12px;color:var(--mute);font-weight:400}
+textarea{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;resize:vertical;min-height:46px;margin-top:8px;background:#fff;direction:rtl}
+textarea:focus,input:focus{outline:2px solid var(--pri);outline-offset:1px}
+.warn{display:none;margin-top:8px;font-size:13px;background:#FFF4F4;border:1px solid #F1C4C4;color:#8a1f1f;border-radius:8px;padding:8px}
+.warn.on{display:block}
+.fmt{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px}
+.fmt.on{display:block}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:17px}
+.chip[aria-pressed=true]{border-color:var(--pri);color:var(--pri)}
+.sw{width:32px;height:32px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer;padding:0}
+.sw[aria-pressed=true]{box-shadow:0 0 0 2px var(--pri)}
+.lbl{font-size:13px;color:var(--mute)}
+input[type=range]{width:100%;accent-color:var(--pri)}
+.note{font-size:13px;color:var(--mute);line-height:1.7}
+.result{display:none}.result.on{display:block}
+.result img{max-width:160px;border:1px solid var(--line);border-radius:8px;display:block;margin:8px auto}
+.prod{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;font-size:14px;border-bottom:1px solid var(--line);background:var(--card)}
+.prod span{color:var(--mute);white-space:nowrap}
+[hidden]{display:none!important}
+select{font-family:inherit;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;color:inherit}
+@media(max-width:520px){.brand small{display:none}}
+@media(min-width:860px){main{grid-template-columns:420px 1fr;align-items:start}.stage{border-bottom:0;top:10px}.stage .wrap{height:76vh}.panel{padding-bottom:30px}}
+</style>
+<script id="wix-site-script" src="https://manage.wix.com/_api/headless-business-setup/v1/headless-business/site-script.js" data-client-id="d2cc7c89-4f19-45b1-a547-f8ceec8f2e53" async></script></head>
+<body>
+<header>
+  <a class="brand" href="/index.html" style="color:inherit;text-decoration:none">‹ نمق<small>تصاميم جاهزة، بلمستك</small></a>
+  <span class="tag">نموذج تجريبي</span>
+  <div class="seg" id="seg" role="group" aria-label="نوع القالب">
+    <button id="mStatic" aria-pressed="true">ثابت</button>
+    <button id="mVideo" aria-pressed="false">متحرك</button>
+  </div>
+</header>
+<div class="prod" id="prod" hidden></div>
+<main>
+  <section class="stage">
+    <div class="wrap"><canvas id="pv" aria-label="معاينة التصميم"></canvas></div>
+    <div class="bar">
+      <button class="btn" id="undo" disabled>تراجع</button>
+      <button class="btn" id="play" hidden>تشغيل</button>
+      <button class="btn" id="addText">+ نص</button>
+      <button class="btn pri" id="goExport">تصدير</button>
+    </div>
+  </section>
+  <section class="panel">
+    <div id="fields"></div>
+    <div class="card" id="exportCard">
+      <label class="t">التصدير</label>
+      <p class="note" id="expNote"></p>
+      <div class="bar" style="justify-content:flex-start">
+        <button class="btn pri" id="xPng">PNG</button>
+        <button class="btn pri" id="xPdf">PDF</button>
+        <button class="btn" id="xMp4" hidden disabled>MP4 — عبر خادم التصدير (غير مربوط هنا)</button>
+      </div>
+      <div class="result" id="res"><p class="note" id="resMsg"></p><img id="resImg" alt="الملف المصدَّر"></div>
+    </div>
+    <p class="note">أصول هذا النموذج (الخلفية والفيديو) تجريبية مولّدة بالكود، والخطوط مفتوحة المصدر (OFL) من Google Fonts. ليست منتجات نهائية.</p>
+  </section>
+</main>
+<video id="vid" muted playsinline loop preload="auto" style="display:none" src="/demo-bg.mp4"></video>
+<script src="/editor.js"></script>
+</body>
+</html>

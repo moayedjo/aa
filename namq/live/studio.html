@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نمق — إعداد القوالب</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF9F7;--card:#FFFFFF;--ink:#222222;--pri:#D94F70;--line:#EAE7E4;--mute:#77726d}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:15px;line-height:1.6}
+button,input,select,textarea{font-family:inherit;font-size:15px;color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 14px;background:var(--card);border-bottom:1px solid var(--line)}
+header b{font-size:20px}
+.tag{font-size:12px;background:#FFF1D6;color:#7a5200;border-radius:999px;padding:3px 10px;white-space:nowrap}
+main{display:grid;grid-template-columns:1fr;gap:12px;max-width:1200px;margin:0 auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.card h2{font-size:16px;margin:0 0 8px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--card);border-radius:10px;padding:8px 12px;cursor:pointer;min-height:40px;text-decoration:none;display:inline-flex;align-items:center}
+.btn.pri{background:var(--pri);border-color:var(--pri);color:#fff;font-weight:700}
+.btn:focus-visible,input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);outline-offset:1px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+label.f{display:flex;flex-direction:column;font-size:13px;color:var(--mute);gap:2px}
+label.f.w{grid-column:1/-1}
+label.c{display:flex;align-items:center;gap:6px;font-size:14px}
+input[type=text],input[type=number],select,textarea{border:1px solid var(--line);border-radius:8px;padding:7px 9px;background:#fff;width:100%;min-height:38px}
+input[type=color]{width:100%;height:38px;border:1px solid var(--line);border-radius:8px;background:#fff;padding:2px}
+.note{font-size:13px;color:var(--mute);margin:6px 0}
+.el summary{cursor:pointer;font-weight:700;padding:4px 0}
+iframe{width:100%;height:78vh;min-height:520px;border:1px solid var(--line);border-radius:12px;background:#fff}
+[hidden]{display:none!important}
+@media(min-width:900px){main{grid-template-columns:minmax(0,1fr) 400px;align-items:start}.side{position:sticky;top:10px}}
+</style>
+<script id="wix-site-script" src="https://manage.wix.com/_api/headless-business-setup/v1/headless-business/site-script.js" data-client-id="d2cc7c89-4f19-45b1-a547-f8ceec8f2e53" async></script></head>
+<body>
+<header><b>نمق · إعداد القوالب</b><span class="tag">أداة تجريبية — تُحفظ على هذا الجهاز فقط</span></header>
+<main>
+<div>
+  <div class="card">
+    <h2>القوالب</h2>
+    <div class="row">
+      <select id="pick" aria-label="اختر قالبًا" style="flex:1;min-width:160px"></select>
+      <button class="btn pri" id="new">+ قالب جديد</button>
+      <button class="btn" id="dup">نسخ</button>
+      <button class="btn" id="del">حذف</button>
+      <button class="btn" id="exp">تصدير ملف القالب</button>
+      <label class="btn">استيراد<input type="file" id="imp" accept="application/json,.json" hidden></label>
+    </div>
+    <p class="note">القوالب والخلفيات والخطوط هنا محفوظة في هذا المتصفح فقط. النشر إلى المتجر غير مربوط بعد، ولا يرى العملاء هذه القوالب.</p>
+  </div>
+  <div id="work" hidden>
+    <div class="card">
+      <h2>إعدادات القالب</h2>
+      <div class="grid">
+        <label class="f w">اسم القالب<input type="text" id="t-name"></label>
+        <label class="f w">الخلفية (صورة للثابت، فيديو صامت للمتحرك)<input type="file" id="bg" accept="image/*,video/mp4,video/webm"></label>
+        <label class="f">العرض (بكسل)<input type="number" id="t-w" min="100" max="8000"></label>
+        <label class="f">الارتفاع (بكسل)<input type="number" id="t-h" min="100" max="8000"></label>
+        <label class="f" id="refWrap">المشهد المرجعي للنسخة الثابتة (ثانية)<input type="number" id="t-ref" min="0" step="0.1"></label>
+      </div>
+      <p class="note" id="bgInfo"></p>
+      <h2 style="margin-top:10px">الخطوط المتاحة للعميل في هذا القالب</h2>
+      <div class="row" id="fonts"></div>
+      <div class="row" style="margin-top:8px"><label class="btn">رفع خط (TTF / OTF / WOFF2)<input type="file" id="font" accept=".ttf,.otf,.woff,.woff2" hidden></label></div>
+    </div>
+    <div class="card">
+      <h2>العناصر</h2>
+      <div class="row">
+        <button class="btn" data-add="text">+ نص</button>
+        <button class="btn" data-add="image">+ صورة</button>
+        <button class="btn" data-add="logo">+ شعار</button>
+        <button class="btn" data-add="mono">+ رمز العروسين</button>
+      </div>
+      <p class="note">اسحب العنصر في المعاينة لتحديد مكانه، أو اكتب الإحداثيات. نقطة X/Y هي مركز العنصر.</p>
+      <div id="els"></div>
+    </div>
+  </div>
+</div>
+<div class="side" id="side" hidden>
+  <div class="row" style="margin-bottom:8px"><a class="btn pri" id="asClient" target="_blank" rel="noopener">معاينة كعميل</a><button class="btn" id="reload">تحديث المعاينة</button></div>
+  <iframe id="pv" title="معاينة القالب"></iframe>
+</div>
+</main>
+<script src="/studio.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>نمق — تصاميم جاهزة، بلمستك</title>
+<meta name="description" content="نمق: قوالب تصميم عربية جاهزة للدعوات والتهاني والسوشيال ميديا. اكتب بياناتك، شاهد النتيجة، ونزّل تصميمك.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FAF9F7">
+<meta property="og:title" content="نمق — تصاميم جاهزة، بلمستك">
+<meta property="og:description" content="قوالب تصميم عربية جاهزة تعدّلها بنفسك من التلفون.">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/index.html">نمق<small>تصاميم جاهزة، بلمستك</small></a>
+  <a class="toplink" href="/plans.html">الاشتراك</a>
+</header>
+<main class="page">
+  <section class="hero" id="hero">
+    <h1>تصميمك جاهز في دقائق</h1>
+    <p>اختر قالبًا، اكتب بياناتك، ونزّل تصميمك من تلفونك.</p>
+  </section>
+  <div class="searchbar">
+    <input id="q" class="search" type="search" placeholder="ابحث: خطوبة، مولود، عيد، عرض…" aria-label="ابحث عن قالب" autocomplete="off" enterkeyhint="search">
+  </div>
+  <div class="seg" role="group" aria-label="نوع القالب">
+    <button type="button" data-kind="" aria-pressed="true">الكل</button>
+    <button type="button" data-kind="ثابت" aria-pressed="false">ثابت</button>
+    <button type="button" data-kind="متحرك" aria-pressed="false">متحرك</button>
+  </div>
+  <nav id="cats" class="chips" aria-label="الأقسام"></nav>
+  <nav id="subs" class="chips sub" aria-label="الأقسام الفرعية" hidden></nav>
+  <div id="view" aria-live="polite"><p class="note">جارٍ تحميل القوالب…</p></div>
+  <section id="mine" class="card" hidden>
+    <h2>تصاميمي</h2>
+    <p class="note">تصاميمك محفوظة على هذا الجهاز فقط، وتختفي إذا مسحت بيانات المتصفح.</p>
+    <div id="drafts"></div>
+  </section>
+  <section class="steps" id="steps" aria-label="كيف يعمل نمق">
+    <div><b>١</b><span>اختر قالبًا</span></div>
+    <div><b>٢</b><span>اكتب بياناتك</span></div>
+    <div><b>٣</b><span>نزّل تصميمك</span></div>
+  </section>
+  <a class="subbanner" id="subbanner" href="/plans.html">
+    <b>كل القوالب باشتراك واحد</b>
+    <span>تخصيص وتنزيل بلا حدود، شهريًا أو سنويًا</span>
+  </a>
+  <p class="foot">قوالب هذه النسخة تجريبية لعرض طريقة العمل.</p>
+</main>
+<nav class="tabs" aria-label="التنقل">
+  <button type="button" data-view="all" aria-pressed="true">القوالب</button>
+  <button type="button" data-view="fav" aria-pressed="false">المفضلة</button>
+  <button type="button" data-view="mine" aria-pressed="false">تصاميمي</button>
+</nav>
+<script type="module" src="/catalog-page.js"></script>
+</body>
+</html>
