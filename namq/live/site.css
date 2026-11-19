@@ -87,6 +87,13 @@ h2{font-size:18px;margin:0}
 .steps div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px 6px;text-align:center}
 .steps b{display:block;color:var(--pri);font-size:20px;line-height:1.2}
 .steps span{font-size:13px}
+.kitbanner{margin-top:14px;border-radius:18px;padding:16px;background:linear-gradient(135deg,#FBE9EE 0%,#F6DCC4 100%);border:1px solid #F1D3DA}
+.kitbanner .kittext{display:block;text-decoration:none;color:var(--ink)}
+.kitbanner b{display:block;font-size:18px;margin-bottom:4px}
+.kitbanner span{font-size:14px;color:#5b4a46;line-height:1.7}
+.kitocc{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.kitocc a{text-decoration:none;color:var(--ink);background:#fff;border:1px solid #EBCFD6;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700}
+.chip.kitchip{background:var(--pri-soft);border-color:#F1C7D2;color:var(--pri);font-weight:700}
 .subbanner{display:block;text-decoration:none;margin-top:14px;border-radius:18px;padding:18px;background:var(--ink);color:#fff}
 .subbanner b{display:block;font-size:18px}
 .subbanner span{font-size:14px;opacity:.82}
@@ -125,6 +132,7 @@ h2{font-size:18px;margin:0}
 .plan ul{padding-inline-start:20px;margin:10px 0}
 body:not(.store) .top{position:static}
 
+@media(max-width:520px){.top .brand small{display:none}}
 @media(max-width:360px){.grid{gap:8px}.top{gap:6px;padding:10px 12px}.pill{min-width:38px;height:38px}}
 @media(min-width:720px){
   h1{font-size:34px}

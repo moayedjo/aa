@@ -257,7 +257,13 @@ window.NAMQ={ready:loadCustom().then(loadRemote).then(()=>setMode(CUSTOM?CUSTOM.
   textFrame(t){const c=document.createElement("canvas");c.width=W;c.height=H;drawScene(c.getContext("2d"),{textOnly:true,exp:true,t});return c.toDataURL("image/png").split(",")[1]}};
 /* ---------- ربط المنتج: الاسم والسعر من المتجر ---------- */
 (async()=>{const bar=$("prod");await window.NAMQ.ready;if(!bar||!SLUG)return;$("seg").hidden=true;
-  const show=(n,p)=>{bar.textContent="";const a=document.createElement("b");a.textContent=n;const s=document.createElement("span");
+  const show=(n,p)=>{bar.textContent="";const a=document.createElement("b");a.textContent=String(n).replace(/(\d+×\d+)/g,"\u2066$1\u2069");const s=document.createElement("span");
     s.textContent=[p,mode==="video"?"متحرك":"ثابت","\u2066"+W+"×"+H+"\u2069"].filter(Boolean).join(" · ");bar.append(a,s);bar.hidden=false;S.pname=n;save()};
   show(S.pname||SLUG.replace(/-/g," "),"");
-  try{const m=await import("/js/wix/catalog.js"),p=await m.fetchProductBySlug(SLUG);if(p&&p.name)show(p.name,p.price||"")}catch(e){}})();
+  try{const m=await import("/js/wix/catalog.js"),p=await m.fetchProductBySlug(SLUG);if(p&&p.name){show(p.name,p.price||"");sizes(m,p)}}catch(e){}})();
+/* متوفر بمقاسات أخرى: منتجات بنفس اسم التصميم (قبل « — ») ومقاس مختلف */
+async function sizes(m,p){const base=s=>String(s).split(" — ")[0].trim(),sz=s=>(String(s).split(" — ")[1]||s).replace(/\s*\(تجريبي\)\s*/,"").trim().replace(/(\d+×\d+)/g,"\u2066$1\u2069");
+  const r=await m.searchCatalog({limit:50,search:base(p.name)}).catch(()=>null);const sib=((r&&r.products)||[]).filter(x=>x.slug!==p.slug&&base(x.name)===base(p.name));if(!sib.length)return;
+  const box=document.createElement("nav");box.className="sizes";box.setAttribute("aria-label","متوفر بمقاسات أخرى");const lb=document.createElement("span");lb.textContent="متوفر بمقاسات أخرى:";box.append(lb);
+  const cur=document.createElement("b");cur.textContent=sz(p.name);cur.setAttribute("aria-current","true");cur.title="المقاس الحالي";box.append(cur);
+  for(const x of sib){const a=document.createElement("a");a.href="/editor.html?mode=static&p="+encodeURIComponent(x.slug);a.textContent=sz(x.name);box.append(a)}$("prod").after(box)}

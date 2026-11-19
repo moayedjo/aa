@@ -6,6 +6,7 @@
 <title>محرّر نمق — نموذج تجريبي</title>
 <meta name="description" content="محرّر قوالب نمق التجريبي: عدّل النص والصورة وصدّر PNG وPDF.">
 <meta name="robots" content="noindex,nofollow">
+<script src="/i18n.js"></script>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Aref+Ruqaa&family=Reem+Kufi&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
@@ -51,6 +52,11 @@ input[type=range]{width:100%;accent-color:var(--pri)}
 .result img{max-width:160px;border:1px solid var(--line);border-radius:8px;display:block;margin:8px auto}
 .prod{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;font-size:14px;border-bottom:1px solid var(--line);background:var(--card)}
 .prod span{color:var(--mute);white-space:nowrap}
+.langb{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px;white-space:nowrap}
+.sizes{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}
+.sizes a,.sizes b{border:1px solid var(--line);border-radius:999px;padding:5px 12px;text-decoration:none;color:var(--ink);background:#fff;font-weight:400}
+.sizes b{border-color:var(--pri);color:var(--pri)}
+html[dir=ltr] .brand{direction:ltr}
 [hidden]{display:none!important}
 select{font-family:inherit;font-size:16px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:#fff;color:inherit}
 @media(max-width:520px){.brand small{display:none}}
@@ -61,6 +67,7 @@ select{font-family:inherit;font-size:16px;border:1px solid var(--line);border-ra
 <header>
   <a class="brand" href="/index.html" style="color:inherit;text-decoration:none">‹ نمق<small>تصاميم جاهزة، بلمستك</small></a>
   <span class="tag">نموذج تجريبي</span>
+  <button type="button" class="langb" data-lang-toggle>English</button>
   <div class="seg" id="seg" role="group" aria-label="نوع القالب">
     <button id="mStatic" aria-pressed="true">ثابت</button>
     <button id="mVideo" aria-pressed="false">متحرك</button>

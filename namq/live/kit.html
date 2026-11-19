@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تنسيق حفلات — نمق</title>
+<meta name="description" content="أدخل بيانات حفلتك مرة واحدة، ونمق يجهّز لك كل التصاميم: دعوات بأسماء المعازيم، ستوري، بطاقات للطباعة، لوحة ترحيب وأكثر.">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#FAF9F7">
+<script src="/i18n.js"></script>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Aref+Ruqaa:wght@400;700&family=Reem+Kufi:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/site.css">
+<style>
+.kit{max-width:1180px;margin:0 auto;padding:12px 14px 120px}
+.kit h1{margin:6px 0 4px}
+.kit .lead{color:var(--mute);margin:0 0 14px;line-height:1.7}
+.kgrid{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.kgrid>*{min-width:0}
+.step{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+.step h2{font-size:17px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.step h2 b{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--pri);color:#fff;font-size:14px}
+.occs{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.occ{border:1.5px solid var(--line);background:#fff;border-radius:14px;padding:12px 10px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:2px;font:inherit;color:inherit}
+.occ b{font-size:16px}.occ span{font-size:12px;color:var(--mute)}
+.occ[aria-pressed=true]{border-color:var(--pri);background:var(--pri-soft)}
+.themes{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px}
+.theme{border:2px solid transparent;border-radius:14px;background:none;padding:0;cursor:pointer;flex:0 0 auto;text-align:center;font:inherit;color:inherit}
+.theme canvas{width:92px;height:164px;border-radius:12px;display:block;border:1px solid var(--line)}
+.theme span{display:block;font-size:12px;margin-top:4px;color:var(--mute)}
+.theme[aria-pressed=true]{border-color:var(--pri)}
+.fields{display:grid;grid-template-columns:1fr;gap:10px}
+.f{display:flex;flex-direction:column;gap:4px;font-size:13px;font-weight:700}
+.f small{font-weight:400;color:var(--mute)}
+.f input,.f textarea,.f select{font:inherit;font-size:16px;font-weight:400;border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:#fff;color:var(--ink);width:100%}
+.f textarea{min-height:44px;resize:vertical}
+.f.chk{flex-direction:row;align-items:center;gap:8px}
+.f.chk input{width:22px;height:22px;accent-color:var(--pri)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.guests textarea{width:100%;min-height:110px;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:10px;padding:10px}
+.gstat{font-size:14px;margin:8px 0 0}
+.gstat b{color:var(--pri)}
+.pieces{display:grid;grid-template-columns:1fr;gap:8px}
+.piece{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:12px;padding:10px;cursor:pointer;background:#fff}
+.piece input{width:22px;height:22px;accent-color:var(--pri);flex:0 0 auto;margin-top:2px}
+.piece b{display:block;font-size:15px}.piece span{font-size:12px;color:var(--mute)}
+.piece.off{opacity:.55}
+.piece .need{color:#9a5b00}
+.pv{order:-1;position:sticky;top:0;z-index:20;background:rgba(250,249,247,.97);border-bottom:1px solid var(--line);margin:0 -14px;padding:8px 14px;backdrop-filter:blur(6px)}
+.pvtabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.pvtabs button{flex:0 0 auto;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;color:inherit}
+.pvtabs button[aria-pressed=true]{border-color:var(--pri);color:var(--pri);background:var(--pri-soft)}
+.pvbox{display:grid;place-items:center;background:#F2EFEC;border-radius:12px;padding:6px}
+.pvbox canvas{max-width:100%;max-height:30vh;box-shadow:0 6px 24px rgba(0,0,0,.12);border-radius:4px;background:#fff}
+.pvnote{font-size:12px;color:var(--mute);margin:6px 0 0;text-align:center}
+.step{scroll-margin-top:42vh}
+.go{position:fixed;inset-inline:0;bottom:0;z-index:30;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding:10px 14px calc(10px + env(safe-area-inset-bottom));display:flex;gap:10px;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.go .btn{min-width:220px}
+.go small{color:var(--mute);font-size:12px}
+.prog{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;width:0;background:var(--pri);transition:width .2s}
+.files{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px}
+.files li{display:flex;justify-content:space-between;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 10px;background:#fff;font-size:14px}
+.files a{color:var(--pri);font-weight:700;white-space:nowrap}
+.priv{font-size:12px;color:#2f6b45;background:#EEF8F1;border:1px solid #CBE7D4;border-radius:10px;padding:8px 10px;margin:8px 0 0}
+@media(min-width:720px){.occs{grid-template-columns:repeat(4,1fr)}.fields{grid-template-columns:1fr 1fr}.fields .w{grid-column:1/-1}.pieces{grid-template-columns:1fr 1fr}}
+@media(min-width:980px){.kgrid{grid-template-columns:minmax(0,1fr) 420px;align-items:start}.pv{order:0;top:8px;margin:0;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--card)}.pvbox{min-height:300px;padding:10px}.pvbox canvas{max-height:62vh}.go{inset-inline-start:auto;inset-inline-end:24px;bottom:20px;border:1px solid var(--line);border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.12)}}
+</style>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="/index.html">‹ نمق<small>تصاميم جاهزة، بلمستك</small></a>
+  <span class="tag">نسخة تجريبية</span>
+  <button type="button" class="pill" data-lang-toggle>English</button>
+</header>
+<main class="kit">
+  <h1>تنسيق حفلات</h1>
+  <p class="lead">أدخل بيانات حفلتك مرة واحدة، ونجهّز لك مجموعة كاملة جاهزة للتنزيل والطباعة: دعوات بأسماء المعازيم، ستوري، بطاقة للطباعة، لوحة ترحيب، بطاقات الطاولات وملصقات التوزيعات.</p>
+  <div class="kgrid">
+    <div>
+      <section class="step">
+        <h2><b>١</b><span>المناسبة</span></h2>
+        <div class="occs" id="occs"></div>
+      </section>
+      <section class="step">
+        <h2><b>٢</b><span>الطابع</span></h2>
+        <div class="themes" id="themes"></div>
+        <div class="fields" style="margin-top:10px">
+          <label class="f">خط الأسماء<select id="font"></select></label>
+        </div>
+      </section>
+      <section class="step">
+        <h2><b>٣</b><span>بيانات الحفل</span></h2>
+        <div class="fields" id="fields"></div>
+      </section>
+      <section class="step guests">
+        <h2><b>٤</b><span>المعازيم</span></h2>
+        <p class="note">ارفع ملف Excel أو CSV فيه عمود «الاسم» (واختياريًا عمود «اللقب»)، أو الصق الأسماء، اسمًا في كل سطر. نجهّز دعوة باسم كل مدعو.</p>
+        <div class="row" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <label class="btn pri" style="display:inline-flex;align-items:center">رفع ملف الأسماء<input type="file" id="gfile" accept=".xlsx,.csv,.txt,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden></label>
+          <button type="button" class="btn" id="gsample">تنزيل نموذج الملف</button>
+          <button type="button" class="btn" id="gclear">مسح القائمة</button>
+        </div>
+        <textarea id="glist" data-notr placeholder="محمد أحمد&#10;الأستاذة سارة علي&#10;عائلة الخطيب"></textarea>
+        <p class="gstat" id="gstat"></p>
+        <p class="priv">الأسماء تبقى على جهازك: القراءة والتصميم يتمان داخل المتصفح، ولا تُرسل القائمة لأي خادم.</p>
+      </section>
+      <section class="step">
+        <h2><b>٥</b><span>التصاميم المطلوبة</span></h2>
+        <div class="pieces" id="pieces"></div>
+        <div class="two" style="margin-top:10px">
+          <label class="f">عدد الطاولات<input type="number" id="tables" min="1" max="200" inputmode="numeric"></label>
+          <label class="f">عدد الملصقات<input type="number" id="stickers" min="1" max="600" inputmode="numeric"></label>
+        </div>
+      </section>
+      <section class="step" id="out" hidden>
+        <h2><b>٦</b><span>ملفاتك</span></h2>
+        <p class="note" id="outMsg"></p>
+        <div class="prog" id="prog" hidden><i></i></div>
+        <ul class="files" id="files"></ul>
+      </section>
+    </div>
+    <aside class="pv" aria-label="المعاينة">
+      <div class="pvtabs" id="pvtabs"></div>
+      <div class="pvbox"><canvas id="pv" aria-label="معاينة التصميم"></canvas></div>
+      <p class="pvnote" id="pvnote"></p>
+    </aside>
+  </div>
+</main>
+<div class="go">
+  <button type="button" class="btn pri" id="build">جهّز المجموعة ونزّلها</button>
+  <small id="goNote"></small>
+</div>
+<script type="module" src="/kit.js"></script>
+</body>
+</html>

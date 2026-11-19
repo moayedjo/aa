@@ -16,7 +16,8 @@ const T = {
     favNote: "محفوظة على هذا الجهاز فقط.", favEmptyT: "لا توجد قوالب في المفضلة", favEmpty: "اضغط ♡ على أي قالب ليظهر هنا.", noRes: "لا توجد نتائج", tryOther: "جرّب كلمة أخرى.", noSub: (s) => `لا توجد قوالب «${s}» بعد.`,
     emptyCatT: "لا توجد قوالب هنا بعد", emptyCat: "ستُضاف قريبًا.", noKindT: (k) => `لا توجد قوالب ${k} بعد`, noKind: "جرّب «الكل».", noCatT: "هذا القسم غير موجود", backAll: "عرض كل القوالب",
     loading: "جارٍ تحميل القوالب…", error: "تعذّر تحميل القوالب. تحقق من الاتصال ثم", retry: "أعد المحاولة", favAdd: "إضافة إلى المفضلة", favDel: "إزالة من المفضلة", preview: "معاينة",
-    sheetTitle: "ابدأ تصميمك — اختر المناسبة", aed: "د.إ", video: "متحرك", static: "ثابت" },
+    sheetTitle: "ابدأ تصميمك — اختر المناسبة", aed: "د.إ", video: "متحرك", static: "ثابت",
+    kit: "تنسيق حفلات", kitTitle: "تنسيق حفلات — كل تصاميم حفلتك مرة وحدة", kitText: "أدخل بيانات الحفل مرة واحدة ونزّل مجموعة كاملة: دعوات بأسماء المعازيم من ملف Excel، ستوري، بطاقة A5 للطباعة، لوحة ترحيب، أرقام طاولات وملصقات توزيعات.", oWed: "عرس", oEng: "خطوبة", oBday: "عيد ميلاد", oBaby: "مولود جديد" },
   en: { brand: "Namq", start: "+ Start a design", tabAll: "Templates", tabFav: "Favorites", tabSearch: "Search", tabMine: "My designs", mine: "My designs", plans: "Subscription", close: "Close",
     search: "Search templates…", heroTitle: "Design your invitation in Arabic calligraphy", heroText: "Pick a template, type your details and download your design from your phone.",
     kAll: "All", kStatic: "Static", kVideo: "Animated", home: "Home", browse: "Browse by occasion", allT: "All templates", seeAll: "See all", results: "Search results", count: (n) => n + (n === 1 ? " template" : " templates"),
@@ -25,7 +26,8 @@ const T = {
     favNote: "Saved on this device only.", favEmptyT: "No favorites yet", favEmpty: "Tap ♡ on any template to keep it here.", noRes: "No results", tryOther: "Try another word.", noSub: (s) => `No “${s}” templates yet.`,
     emptyCatT: "No templates here yet", emptyCat: "Coming soon.", noKindT: (k) => `No ${k.toLowerCase()} templates yet`, noKind: "Try “All”.", noCatT: "This category doesn't exist", backAll: "See all templates",
     loading: "Loading templates…", error: "Couldn't load templates. Check your connection, then", retry: "try again", favAdd: "Add to favorites", favDel: "Remove from favorites", preview: "Preview",
-    sheetTitle: "Start your design — pick an occasion", aed: "AED", video: "Animated", static: "Static" },
+    sheetTitle: "Start your design — pick an occasion", aed: "AED", video: "Animated", static: "Static",
+    kit: "Event kits", kitTitle: "Event kits — every design for your event, at once", kitText: "Enter your event details once and download a full set: invitations named from your Excel guest list, stories, an A5 print card, a welcome sign, table numbers and favor stickers.", oWed: "Wedding", oEng: "Engagement", oBday: "Birthday", oBaby: "New baby" },
 };
 let lang = store.get("namq-lang", "ar") === "en" ? "en" : "ar";
 const t = (k, ...a) => { const v = T[lang][k]; return typeof v === "function" ? v(...a) : v; };
@@ -127,10 +129,10 @@ function render() {
   const browsing = state.view === "all";
   $("mine").hidden = state.view !== "mine";
   v.hidden = state.view === "mine";
-  ["hero", "steps", "subbanner"].forEach((id) => ($(id).hidden = !home));
+  ["hero", "kitbanner", "steps", "subbanner"].forEach((id) => ($(id).hidden = !home));
   document.querySelector(".filters").hidden = !browsing;
   $$("[data-view]").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.view === state.view)));
-  $("cats").innerHTML = `<a class="chip" href="/index.html" aria-current="${!catSlug && browsing}">${t("home")}</a>` + state.cats.map((c) => `<a class="chip" href="/index.html?cat=${encodeURIComponent(c.slug)}" aria-current="${!!(state.cat && state.cat.id === c.id)}">${esc(catName(c))}</a>`).join("");
+  $("cats").innerHTML = `<a class="chip" href="/index.html" aria-current="${!catSlug && browsing}">${t("home")}</a><a class="chip kitchip" href="/kit.html">✦ ${t("kit")}</a>` + state.cats.map((c) => `<a class="chip" href="/index.html?cat=${encodeURIComponent(c.slug)}" aria-current="${!!(state.cat && state.cat.id === c.id)}">${esc(catName(c))}</a>`).join("");
   const subs = state.cat ? metaOf(state.cat).subs : [];
   $("subs").hidden = !browsing || !subs.length;
   $("subs").innerHTML = subs.map(([ar, en]) => `<button type="button" class="chip" data-sub="${esc(ar)}" aria-pressed="${state.sub === ar}">${esc(lang === "en" ? en : ar)}</button>`).join("");

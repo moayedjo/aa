@@ -26,14 +26,14 @@ page.on("pageerror", (e) => errs.push(String(e).slice(0, 200)));
 const go = async (u) => { await page.goto(B + u, { waitUntil: "networkidle" }); await page.waitForFunction(() => !document.getElementById("view").textContent.includes("جارٍ"), null, { timeout: 20000 }); await page.waitForTimeout(700); };
 
 await go("/index.html");
-const cats = await page.$$eval("#cats a", (a) => a.map((x) => [x.textContent.trim(), x.getAttribute("href")]));
+const cats = await page.$$eval("#cats a:not(.kitchip)", (a) => a.map((x) => [x.textContent.trim(), x.getAttribute("href")]));
 ok("الرئيسية: 5 أقسام + الكل", cats.length === 6, cats.map((c) => c[0]).join(" | "));
 ok("بطاقات الأقسام مع الأقسام الفرعية", (await page.$$("#view .catcard")).length === 5 && (await page.textContent("#view .catcard")).includes("·"));
 const rails = await page.$$eval("section.sec", (s) => s.map((x) => x.querySelector("h2").textContent + ":" + x.querySelectorAll(".tile").length));
 ok("الرئيسية تعرض كل القوالب (شبكة عند قلة القوالب، صفوف أفقية عند كثرتها)", rails.reduce((n, r) => n + +r.split(":")[1], 0) >= 5, rails.join(" | "));
 ok("معاينة مرسومة لكل قالب", await page.$$eval("canvas[data-t]", (c) => c.length >= 5 && c.every((x) => x.width === 270 && x.dataset.done === "1")));
 const t0 = await page.$eval(".tile", (t) => [t.querySelector(".name").textContent.trim(), t.querySelector(".size").textContent.trim(), t.querySelector(".price").textContent.trim(), t.querySelector(".kind").textContent]);
-ok("البطاقة: اسم مختصر + مقاس + سعر + نوع", /1080×1920/.test(t0[1]) && /د\.إ/.test(t0[2]) && !t0[0].includes("تجريبي"), t0.join(" | "));
+ok("البطاقة: اسم مختصر + مقاس + سعر + نوع", /\d+×\d+/.test(t0[1]) && /د\.إ/.test(t0[2]) && !t0[0].includes("تجريبي"), t0.join(" | "));
 ok("لا تمرير أفقي للصفحة", await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
 await page.screenshot({ path: path.join(out, "ui-home.png"), fullPage: true });
 
