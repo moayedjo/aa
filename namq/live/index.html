@@ -10,51 +10,80 @@
 <meta property="og:title" content="نمق — تصاميم جاهزة، بلمستك">
 <meta property="og:description" content="قوالب تصميم عربية جاهزة تعدّلها بنفسك من التلفون.">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@400;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/site.css">
 </head>
-<body>
+<body class="store">
+<aside class="side" aria-label="القائمة">
+  <a class="brand" href="/index.html"><span class="mark" aria-hidden="true">ن</span><span data-i="brand">نمق</span></a>
+  <button type="button" class="btn pri create" data-start data-i="start">+ ابدأ تصميمًا</button>
+  <nav class="sidenav">
+    <button type="button" data-view="all" aria-pressed="true"><span class="ic" aria-hidden="true">▦</span><span data-i="tabAll">القوالب</span></button>
+    <button type="button" data-focus-search><span class="ic" aria-hidden="true">⌕</span><span data-i="tabSearch">بحث</span></button>
+    <p class="sidehead" data-i="mine">تصاميمي</p>
+    <button type="button" data-view="mine" aria-pressed="false"><span class="ic" aria-hidden="true">▤</span><span data-i="tabMine">تصاميمي</span></button>
+    <button type="button" data-view="fav" aria-pressed="false"><span class="ic" aria-hidden="true">♡</span><span data-i="tabFav">المفضلة</span></button>
+    <a href="/plans.html"><span class="ic" aria-hidden="true">♛</span><span data-i="plans">الاشتراك</span></a>
+  </nav>
+</aside>
+<div class="shell">
 <header class="top">
-  <a class="brand" href="/index.html">نمق<small>تصاميم جاهزة، بلمستك</small></a>
-  <a class="toplink" href="/plans.html">الاشتراك</a>
+  <a class="brand" href="/index.html"><span class="mark" aria-hidden="true">ن</span><span data-i="brand">نمق</span></a>
+  <div class="searchbar"><input id="q" class="search" type="search" placeholder="ابحث عن قالب…" aria-label="ابحث عن قالب" autocomplete="off" enterkeyhint="search"></div>
+  <button type="button" class="pill" id="lang" aria-label="English">EN</button>
+  <a class="pill crown" href="/plans.html" aria-label="الاشتراك" data-i-aria="plans">♛</a>
 </header>
+<nav class="catbar" aria-label="الأقسام">
+  <button type="button" class="favchip" data-view="fav" aria-label="المفضلة" data-i-aria="tabFav">♡</button>
+  <div id="cats" class="chips"></div>
+</nav>
 <main class="page">
-  <section class="hero" id="hero">
-    <h1>تصميمك جاهز في دقائق</h1>
-    <p>اختر قالبًا، اكتب بياناتك، ونزّل تصميمك من تلفونك.</p>
-  </section>
-  <div class="searchbar">
-    <input id="q" class="search" type="search" placeholder="ابحث: خطوبة، مولود، عيد، عرض…" aria-label="ابحث عن قالب" autocomplete="off" enterkeyhint="search">
+  <a class="hero" id="hero" href="#" aria-label="صمّم دعوتك بخط عربي">
+    <span class="hero-art" aria-hidden="true">نمق</span>
+    <span class="hero-quote" aria-hidden="true">بكل الحب ندعوكم</span>
+    <b data-i="heroTitle">صمّم دعوتك بخط عربي</b>
+    <span data-i="heroText">اختر قالبًا، اكتب بياناتك، ونزّل تصميمك من تلفونك.</span>
+  </a>
+  <div class="filters">
+    <div class="seg" role="group" aria-label="نوع القالب">
+      <button type="button" data-kind="" aria-pressed="true" data-i="kAll">الكل</button>
+      <button type="button" data-kind="ثابت" aria-pressed="false" data-i="kStatic">ثابت</button>
+      <button type="button" data-kind="متحرك" aria-pressed="false" data-i="kVideo">متحرك</button>
+    </div>
   </div>
-  <div class="seg" role="group" aria-label="نوع القالب">
-    <button type="button" data-kind="" aria-pressed="true">الكل</button>
-    <button type="button" data-kind="ثابت" aria-pressed="false">ثابت</button>
-    <button type="button" data-kind="متحرك" aria-pressed="false">متحرك</button>
-  </div>
-  <nav id="cats" class="chips" aria-label="الأقسام"></nav>
   <nav id="subs" class="chips sub" aria-label="الأقسام الفرعية" hidden></nav>
   <div id="view" aria-live="polite"><p class="note">جارٍ تحميل القوالب…</p></div>
   <section id="mine" class="card" hidden>
-    <h2>تصاميمي</h2>
-    <p class="note">تصاميمك محفوظة على هذا الجهاز فقط، وتختفي إذا مسحت بيانات المتصفح.</p>
+    <h2 data-i="mine">تصاميمي</h2>
+    <p class="note" data-i="mineNote">تصاميمك محفوظة على هذا الجهاز فقط، وتختفي إذا مسحت بيانات المتصفح.</p>
     <div id="drafts"></div>
   </section>
   <section class="steps" id="steps" aria-label="كيف يعمل نمق">
-    <div><b>١</b><span>اختر قالبًا</span></div>
-    <div><b>٢</b><span>اكتب بياناتك</span></div>
-    <div><b>٣</b><span>نزّل تصميمك</span></div>
+    <div><b>١</b><span data-i="s1">اختر قالبًا</span></div>
+    <div><b>٢</b><span data-i="s2">اكتب بياناتك</span></div>
+    <div><b>٣</b><span data-i="s3">نزّل تصميمك</span></div>
   </section>
   <a class="subbanner" id="subbanner" href="/plans.html">
-    <b>كل القوالب باشتراك واحد</b>
-    <span>تخصيص وتنزيل بلا حدود، شهريًا أو سنويًا</span>
+    <b data-i="subTitle">كل القوالب باشتراك واحد</b>
+    <span data-i="subText">تخصيص وتنزيل بلا حدود، شهريًا أو سنويًا</span>
   </a>
-  <p class="foot">قوالب هذه النسخة تجريبية لعرض طريقة العمل.</p>
+  <p class="foot" data-i="foot">قوالب هذه النسخة تجريبية لعرض طريقة العمل.</p>
 </main>
+</div>
 <nav class="tabs" aria-label="التنقل">
-  <button type="button" data-view="all" aria-pressed="true">القوالب</button>
-  <button type="button" data-view="fav" aria-pressed="false">المفضلة</button>
-  <button type="button" data-view="mine" aria-pressed="false">تصاميمي</button>
+  <button type="button" data-view="all" aria-pressed="true"><span class="ic" aria-hidden="true">▦</span><span data-i="tabAll">القوالب</span></button>
+  <button type="button" data-view="fav" aria-pressed="false"><span class="ic" aria-hidden="true">♡</span><span data-i="tabFav">المفضلة</span></button>
+  <button type="button" class="plus" data-start aria-label="ابدأ تصميمًا" data-i-aria="start"><span aria-hidden="true">+</span></button>
+  <button type="button" data-focus-search><span class="ic" aria-hidden="true">⌕</span><span data-i="tabSearch">بحث</span></button>
+  <button type="button" data-view="mine" aria-pressed="false"><span class="ic" aria-hidden="true">▤</span><span data-i="tabMine">تصاميمي</span></button>
 </nav>
+<div class="sheet" id="sheet" hidden>
+  <div class="sheet-bg" data-close></div>
+  <div class="sheet-box" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+    <div class="sheet-head"><h2 id="sheetTitle" data-i="sheetTitle">ابدأ تصميمك — اختر المناسبة</h2><button type="button" class="pill" data-close aria-label="إغلاق" data-i-aria="close">✕</button></div>
+    <div id="sheetCats" class="sheet-cats"></div>
+  </div>
+</div>
 <script type="module" src="/catalog-page.js"></script>
 </body>
 </html>
