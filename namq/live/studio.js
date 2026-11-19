@@ -135,3 +135,28 @@ addEventListener("message", (ev) => {
   render.open = i; render(); persist(false);
 });
 select(L[0]);
+
+/* ---------- النشر إلى المتجر (Wix CMS: NamqTemplates) ---------- */
+(() => {
+  const sel = $("pubProd"), msg = $("pubMsg"), slugEl = $("pubSlug"), list = $("pubList");
+  const esc = x => String(x).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const def = () => { const d = JSON.parse(JSON.stringify(cur)); delete d.id; delete d.v; d.customFonts = []; return d; };
+  sel.onchange = () => { slugEl.textContent = sel.value || "—"; };
+  import("/js/wix/catalog.js").then(m => m.searchCatalog({ limit: 100 })).then(r => {
+    const ps = (r && (r.products || r.items)) || [];
+    sel.innerHTML = '<option value="">— اختر المنتج —</option>' + ps.map(p => '<option value="' + esc(p.slug) + '">' + esc(p.name) + "</option>").join("");
+  }).catch(() => { sel.innerHTML = '<option value="">تعذّر تحميل المنتجات</option>'; });
+  $("pubCopy").onclick = async () => {
+    if (!cur) return;
+    if (!sel.value) { msg.textContent = "اختر المنتج أولًا."; return; }
+    const d = def(), txt = JSON.stringify(d);
+    const warn = (cur.customFonts || []).length ? " تنبيه: الخطوط المرفوعة يدويًا لا تُنشر بعد، وسيستخدم العميل الخطوط المتاحة." : "";
+    try { await navigator.clipboard.writeText(txt); msg.textContent = "نُسخ التعريف (" + txt.length + " حرفًا)." + warn; }
+    catch (e) { prompt("انسخ التعريف:", txt); msg.textContent = warn.trim(); }
+  };
+  import("/js/wix/client.js").then(m => m.wixRequest("/wix-data/v2/items/query", { method: "POST", body: { dataCollectionId: "NamqTemplates", query: { filter: { published: true }, paging: { limit: 50 } } } }))
+    .then(r => {
+      const it = (r && r.dataItems) || [];
+      list.innerHTML = it.length ? "<ul style='padding-inline-start:18px;margin:0'>" + it.map(i => "<li>" + esc(i.data.title || "") + " — <a target='_blank' rel='noopener' href='/editor.html?p=" + encodeURIComponent(i.data.productSlug || "") + "'>افتح كعميل</a></li>").join("") + "</ul>" : "لا توجد قوالب منشورة بعد.";
+    }).catch(() => { list.textContent = "تعذّر قراءة القوالب المنشورة."; });
+})();

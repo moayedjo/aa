@@ -31,6 +31,18 @@ async function loadCustom(){if(!TPLID)return;try{const t=JSON.parse(localStorage
     if(t.kind==="video"){vid.src=u;await new Promise(r=>{vid.onloadeddata=r;vid.onerror=r;setTimeout(r,4000)})}
     else{bgImg=new Image();await new Promise(r=>{bgImg.onload=r;bgImg.onerror=()=>{bgImg=null;r()};bgImg.src=u})}}
   const wr=document.querySelector(".stage .wrap");wr.style.aspectRatio=W+"/"+H;wr.style.height="auto";wr.style.minHeight="0";wr.style.width="min(100%,"+(44*W/H).toFixed(1)+"vh)";$("seg").hidden=true}catch(e){}}
+/* قالب منشور من مجموعة «قوالب نمق» في Wix CMS: يُقرأ حسب المنتج */
+const wixMedia=u=>{if(!u)return"";if(typeof u==="object")u=u.url||u.src||"";if(/^https?:/.test(u))return u;
+  const m=/^wix:(image|video):\/\/v1\/([^/#]+)/.exec(u);if(!m)return"";return m[1]==="image"?"https://static.wixstatic.com/media/"+m[2]:"https://video.wixstatic.com/video/"+m[2]+"/file"};
+async function loadRemote(){if(TPLID||!SLUG||CUSTOM)return;try{const{wixRequest}=await import("/js/wix/client.js");
+  const r=await wixRequest("/wix-data/v2/items/query",{method:"POST",body:{dataCollectionId:"NamqTemplates",query:{filter:{productSlug:SLUG,published:true},paging:{limit:1}}}});
+  const it=(r.dataItems||[])[0];if(!it)return;const d=it.data||{},t=JSON.parse(d.definition||"{}");if(!t.elements)return;
+  CUSTOM=t;CUSTOM.id="cms-"+it.id+"@"+(d._updatedDate&&d._updatedDate.$date||d._updatedDate||"");W=t.w||1080;H=t.h||1920;
+  if(t.fonts&&t.fonts.length){FONTS.length=0;FONTS.push(...t.fonts)}
+  const src=wixMedia(t.kind==="video"?d.backgroundVideo:d.background)||t.bgUrl||"";
+  if(src){if(t.kind==="video"){vid.crossOrigin="anonymous";vid.src=src;await new Promise(r=>{vid.onloadeddata=r;vid.onerror=r;setTimeout(r,6000)})}
+    else{bgImg=new Image();bgImg.crossOrigin="anonymous";await new Promise(r=>{bgImg.onload=r;bgImg.onerror=()=>{bgImg=null;r()};bgImg.src=src})}}
+  const wr=document.querySelector(".stage .wrap");wr.style.aspectRatio=W+"/"+H;wr.style.height="auto";wr.style.minHeight="0";wr.style.width="min(100%,"+(44*W/H).toFixed(1)+"vh)";$("seg").hidden=true}catch(e){CUSTOM=null}}
 const VARIANTS=[
  {k:"خطوبة",texts:{},mono:true},
  {k:"مولود",texts:{kicker:"رزقنا الله بمولودنا",title:"أهلًا يوسف",names:"عائلة النعيمي",details:"وُلد يوم الجمعة ٢٥ يناير\nشاكرين دعواتكم"}},
@@ -100,7 +112,7 @@ function drawScene(c,opt){opt=opt||{};const t=opt.t;
     if(guides.v){c.beginPath();c.moveTo(W/2,0);c.lineTo(W/2,H);c.stroke()}
     if(guides.h){c.beginPath();c.moveTo(0,H/2);c.lineTo(W,H/2);c.stroke()}c.restore()}
 }
-function paint(){const r=pv.getBoundingClientRect(),d=Math.min(2.5,window.devicePixelRatio||1),w=Math.max(2,Math.round(r.width*d)),h=Math.round(w*H/W);
+function paint(){if(!S)return;const r=pv.getBoundingClientRect(),d=Math.min(2.5,window.devicePixelRatio||1),w=Math.max(2,Math.round(r.width*d)),h=Math.round(w*H/W);
   if(pv.width!==w||pv.height!==h){pv.width=w;pv.height=h}ctx.setTransform(w/W,0,0,w/W,0,0);ctx.clearRect(0,0,W,H);
   drawScene(ctx,{t:mode==="video"?(playing?vid.currentTime:tpl().refT):null});syncWarn()}
 function loop(){if(playing){paint();requestAnimationFrame(loop)}}
@@ -239,7 +251,7 @@ addEventListener("resize",paint);
 vid.addEventListener("loadedmetadata",()=>{if(T&&T.kind==="video")T.duration=vid.duration});
 /* واجهة للاختبار الآلي وخادم التصدير */
 const b64=async b=>{const u=new Uint8Array(await b.arrayBuffer());let s="";for(let i=0;i<u.length;i+=32768)s+=String.fromCharCode.apply(null,u.subarray(i,i+32768));return btoa(s)};
-window.NAMQ={ready:loadCustom().then(()=>setMode(CUSTOM?CUSTOM.kind:P.get("mode")==="video"?"video":"static")),setMode,get state(){return S},setState(s){S=s;build();paint()},validate,
+window.NAMQ={ready:loadCustom().then(loadRemote).then(()=>setMode(CUSTOM?CUSTOM.kind:P.get("mode")==="video"?"video":"static")),setMode,get state(){return S},setState(s){S=s;build();paint()},validate,
   png:async()=>b64(await exportPNG()),pdf:async()=>b64(await exportPDF()),
   setImage(id,src){return new Promise(r=>{const im=new Image();im.onload=()=>{imgs[id]=im;build();paint();r()};im.src=src})},
   textFrame(t){const c=document.createElement("canvas");c.width=W;c.height=H;drawScene(c.getContext("2d"),{textOnly:true,exp:true,t});return c.toDataURL("image/png").split(",")[1]}};

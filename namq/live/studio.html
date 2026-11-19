@@ -49,7 +49,7 @@ iframe{width:100%;height:78vh;min-height:520px;border:1px solid var(--line);bord
       <button class="btn" id="exp">تصدير ملف القالب</button>
       <label class="btn">استيراد<input type="file" id="imp" accept="application/json,.json" hidden></label>
     </div>
-    <p class="note">القوالب والخلفيات والخطوط هنا محفوظة في هذا المتصفح فقط. النشر إلى المتجر غير مربوط بعد، ولا يرى العملاء هذه القوالب.</p>
+    <p class="note">القوالب والخلفيات والخطوط هنا محفوظة في هذا المتصفح فقط. لا يرى العملاء القالب حتى تنشره إلى المتجر من بطاقة «النشر إلى المتجر».</p>
   </div>
   <div id="work" hidden>
     <div class="card">
@@ -76,6 +76,26 @@ iframe{width:100%;height:78vh;min-height:520px;border:1px solid var(--line);bord
       </div>
       <p class="note">اسحب العنصر في المعاينة لتحديد مكانه، أو اكتب الإحداثيات. نقطة X/Y هي مركز العنصر.</p>
       <div id="els"></div>
+    </div>
+    <div class="card" id="pub">
+      <h2>النشر إلى المتجر</h2>
+      <div class="grid">
+        <label class="f w">المنتج الذي يفتح هذا القالب<select id="pubProd"><option value="">جارٍ تحميل المنتجات…</option></select></label>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn pri" id="pubCopy">نسخ تعريف القالب</button>
+        <a class="btn" id="pubCms" target="_blank" rel="noopener" href="https://manage.wix.com/dashboard/c560303d-b98b-4a16-a742-aface2bf5c20/wix-cms/data/NamqTemplates">فتح «قوالب نمق» في لوحة Wix</a>
+      </div>
+      <ol class="note" style="padding-inline-start:18px;margin:8px 0">
+        <li>اختر المنتج، ثم اضغط «نسخ تعريف القالب».</li>
+        <li>افتح «قوالب نمق» في لوحة Wix وأضف عنصرًا جديدًا.</li>
+        <li>اكتب العنوان، والصق في <b>productSlug</b> الرابط المختصر: <code id="pubSlug">—</code></li>
+        <li>الصق التعريف في <b>definition</b>، وارفع الخلفية في <b>background</b> (أو <b>backgroundVideo</b> للمتحرك).</li>
+        <li>فعّل <b>published</b> واحفظ. يظهر القالب للعملاء عند فتح المنتج.</li>
+      </ol>
+      <p class="note" id="pubMsg"></p>
+      <h2 style="margin-top:10px">المنشور حاليًا</h2>
+      <div id="pubList" class="note">جارٍ التحميل…</div>
     </div>
   </div>
 </div>
