@@ -1,4 +1,4 @@
-:root{--bg:#FAF9F7;--card:#FFFFFF;--ink:#222222;--pri:#D94F70;--pri-soft:#FBE9EE;--line:#EAE7E4;--mute:#77726d;--gold:#C9A86A;--soft:#F3F1EE}
+:root{--bg:#FAF9F7;--card:#FFFFFF;--ink:#222222;--pri:#C23A5F;--pri-ink:#B8345A;--pri-soft:#FBE9EE;--line:#EAE7E4;--mute:#6B6661;--gold:#C9A86A;--soft:#F3F1EE}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:16px;line-height:1.6}
 button,input{font-family:inherit;font-size:16px;color:inherit}
@@ -35,11 +35,11 @@ h2{font-size:18px;margin:0}
 
 /* ---------- الصفحة ---------- */
 .page{max-width:1180px;margin:0 auto;padding:12px 16px 110px}
-.hero{position:relative;display:block;overflow:hidden;text-decoration:none;border-radius:20px;padding:22px 20px;min-height:132px;background:linear-gradient(135deg,#FFFFFF 0%,#FBF4EE 55%,#F6E8EE 100%);border:1px solid var(--line)}
-.hero b{position:relative;display:block;font-size:21px;line-height:1.35;max-width:62%}
-.hero>span[data-i]{position:relative;display:block;color:var(--mute);font-size:14px;margin-top:4px;max-width:62%}
-.hero-art{position:absolute;inset-inline-end:18px;bottom:6px;font-family:"Aref Ruqaa",serif;font-size:84px;line-height:1;color:var(--pri);opacity:.16;pointer-events:none}
-.hero-quote{position:absolute;inset-inline-end:18px;top:16px;font-family:"Aref Ruqaa",serif;font-size:15px;color:#8A6A3B;background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 12px}
+.hero{position:relative;display:block;overflow:hidden;text-decoration:none;border-radius:18px;padding:14px 16px;min-height:0;background:linear-gradient(135deg,#FFFFFF 0%,#FBF4EE 55%,#F6E8EE 100%);border:1px solid var(--line)}
+.hero b{position:relative;display:block;font-size:18px;line-height:1.35;max-width:70%}
+.hero>span[data-i]{position:relative;display:block;color:var(--mute);font-size:13.5px;margin-top:2px;max-width:70%}
+.hero-art{position:absolute;inset-inline-end:14px;bottom:2px;font-family:"Aref Ruqaa",serif;font-size:64px;line-height:1;color:var(--pri);opacity:.16;pointer-events:none}
+.hero-quote{display:none;position:absolute;inset-inline-end:18px;top:16px;font-family:"Aref Ruqaa",serif;font-size:15px;color:#8A6A3B;background:#fff;border:1px solid var(--line);border-radius:999px;padding:2px 12px}
 .filters{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:14px}
 .seg{display:inline-flex;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px}
 .seg button{border:0;background:transparent;border-radius:999px;padding:6px 16px;cursor:pointer;min-height:36px;font-size:14px}
@@ -62,7 +62,7 @@ h2{font-size:18px;margin:0}
 .tile .media{position:relative}
 .tile a.pic{position:relative;display:block;aspect-ratio:9/16;border-radius:16px;overflow:hidden;background:var(--soft);text-decoration:none;box-shadow:0 1px 2px rgba(34,34,34,.06)}
 .tile a.pic img,.tile a.pic canvas{width:100%;height:100%;object-fit:cover;display:block}
-.tile .badge{position:absolute;top:8px;inset-inline-start:8px;z-index:1;font-size:11px;font-weight:700;background:rgba(255,255,255,.92);color:var(--ink);border-radius:999px;padding:2px 9px}
+.tile .badge{position:absolute;top:8px;inset-inline-start:8px;z-index:1;font-size:12px;font-weight:700;background:rgba(255,255,255,.92);color:var(--ink);border-radius:999px;padding:2px 9px}
 .tile .badge.mov{background:var(--ink);color:#fff}
 .tile .price{position:absolute;bottom:8px;inset-inline-end:8px;font-size:12.5px;font-weight:700;background:rgba(255,255,255,.95);color:var(--ink);border-radius:999px;padding:3px 10px;white-space:nowrap;pointer-events:none}
 .fav{position:absolute;bottom:8px;inset-inline-start:8px;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.95);cursor:pointer;font-size:16px;line-height:1;padding:0;z-index:2}
@@ -72,7 +72,7 @@ h2{font-size:18px;margin:0}
 .tile .name a{text-decoration:none}
 .tile .row{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-top:2px}
 .tile .size{font-size:12px;color:var(--mute);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;unicode-bidi:plaintext;min-width:0}
-.kind{font-size:11.5px;border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--mute);white-space:nowrap;flex:0 0 auto}
+.kind{font-size:12px;border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--mute);white-space:nowrap;flex:0 0 auto}
 .kind.mov{background:var(--ink);border-color:var(--ink);color:#fff}
 .empty{text-align:center;padding:28px 12px;color:var(--mute);background:var(--card);border:1px dashed var(--line);border-radius:16px}
 .empty b{display:block;color:var(--ink);margin-bottom:4px}
@@ -93,7 +93,13 @@ h2{font-size:18px;margin:0}
 .kitbanner span{font-size:14px;color:#5b4a46;line-height:1.7}
 .kitocc{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .kitocc a{text-decoration:none;color:var(--ink);background:#fff;border:1px solid #EBCFD6;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700}
-.chip.kitchip{background:var(--pri-soft);border-color:#F1C7D2;color:var(--pri);font-weight:700}
+.chip.kitchip{background:var(--pri-soft);border-color:#F1C7D2;color:var(--pri-ink);font-weight:700}
+/* حجز مكان القوالب أثناء التحميل (يمنع قفز الصفحة) */
+.tile.sk .sk-pic{aspect-ratio:9/16;border-radius:16px;background:linear-gradient(100deg,#F1EEEB 30%,#F8F6F4 50%,#F1EEEB 70%);background-size:200% 100%;animation:sk 1.2s linear infinite}
+.tile.sk i{display:block;height:12px;border-radius:6px;background:#F1EEEB;margin-top:10px;width:70%}.tile.sk i+i{width:40%;margin-top:6px}
+@keyframes sk{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.tile.sk .sk-pic{animation:none}}
+.nothome #hero,.nothome #kitbanner,.nothome #steps,.nothome #subbanner{display:none}
 .subbanner{display:block;text-decoration:none;margin-top:14px;border-radius:18px;padding:18px;background:var(--ink);color:#fff}
 .subbanner b{display:block;font-size:18px}
 .subbanner span{font-size:14px;opacity:.82}
@@ -102,10 +108,10 @@ h2{font-size:18px;margin:0}
 
 /* ---------- الشريط السفلي ---------- */
 .tabs{position:fixed;bottom:0;inset-inline:0;display:flex;align-items:center;background:rgba(255,255,255,.98);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom));z-index:30}
-.tabs button,.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;border:0;background:transparent;padding:6px 2px;text-decoration:none;cursor:pointer;font-size:11.5px;min-height:52px;color:var(--mute)}
+.tabs button,.tabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:0;border:0;background:transparent;padding:6px 2px;text-decoration:none;cursor:pointer;font-size:12px;min-height:52px;color:var(--mute)}
 .tabs .ic{font-size:19px;line-height:1.3}
 .tabs button[aria-pressed=true]{color:var(--pri);font-weight:700}
-.tabs .plus{flex:0 0 auto;width:52px;height:52px;min-height:0;border-radius:50%;background:var(--pri);color:#fff;font-size:28px;line-height:1;justify-content:center;margin:0 6px;box-shadow:0 4px 12px rgba(217,79,112,.32)}
+.tabs .plus{flex:0 0 auto;width:52px;height:52px;min-height:0;border-radius:50%;background:var(--pri);color:#fff;font-size:28px;line-height:1;justify-content:center;margin:0 6px;box-shadow:0 4px 12px rgba(194,58,95,.3)}
 
 /* ---------- نافذة «ابدأ تصميمك» ---------- */
 .sheet{position:fixed;inset:0;z-index:50}
@@ -140,7 +146,7 @@ body:not(.store) .top{position:static}
   .rail>*{flex-basis:190px}
   .catrail{display:grid;grid-template-columns:repeat(5,1fr);overflow:visible;margin:0;padding:0}
   .catrail>*{max-width:none}
-  .hero{padding:30px 28px;min-height:150px}.hero b{font-size:26px}
+  .hero{padding:30px 28px;min-height:150px}.hero b{font-size:26px;max-width:62%}.hero>span[data-i]{font-size:14px;max-width:62%}.hero-art{font-size:84px}.hero-quote{display:block}
   .plans{grid-template-columns:1fr 1fr}
   .sheet-box{inset-inline:auto;left:50%;bottom:auto;top:50%;transform:translate(-50%,-50%);width:min(560px,92vw);border-radius:22px}
   .sheet-cats{grid-template-columns:1fr 1fr 1fr}

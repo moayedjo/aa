@@ -15,7 +15,7 @@
     "١": "1", "٢": "2", "٣": "3", "٤": "4", "٥": "5", "٦": "6",
     /* المحرّر */
     "محرّر نمق — نموذج تجريبي": "Namq editor — demo",
-    "MP4 — عبر خادم التصدير (غير مربوط هنا)": "MP4 — via export server (not connected here)",
+    "MP4 — عبر خادم التصدير (غير مربوط هنا)": "MP4 — via export server (not connected here)", "MP4 — قريبًا": "MP4 — coming soon", "تكبير الصورة داخل الإطار": "Zoom the photo inside the frame", "محرّر نمق": "Namq editor",
     "أصول هذا النموذج (الخلفية والفيديو) تجريبية مولّدة بالكود، والخطوط مفتوحة المصدر (OFL) من Google Fonts. ليست منتجات نهائية.": "This demo's assets (background and video) are code-generated samples; fonts are open source (OFL) from Google Fonts. Not final products.",
     "إظهار": "Show", "إخفاء": "Hide", "حذف": "Delete", "(اختياري)": "(optional)", "تنسيق النص": "Text style",
     "اسحب النص في المعاينة لتحريكه": "Drag the text in the preview to move it", "اسحب الرمز في المعاينة لتحريكه": "Drag the monogram in the preview to move it",
@@ -97,6 +97,8 @@
     [/^النص في «(.+)» أطول من مساحته\. عدّله قبل التصدير\.$/, "The text in “$1” is longer than its space. Edit it before exporting."],
     [/^نسخة تجريبية: التصدير مفتوح مؤقتًا إلى حين تفعيل الدفع\. المقاس النهائي (\d+)×(\d+) بكسل.*$/, "Demo: export is open until payment is enabled. Final size $1×$2 px, independent of the preview. The PDF here is an RGB raster image on a page of the same size — not a professional print file."],
     [/^نسخة تجريبية: التصدير مفتوح مؤقتًا إلى حين تفعيل الدفع\. PNG وPDF يُصدَّران من المشهد المرجعي للقالب \(الثانية ([\d.]+)\)\..*$/, "Demo: export is open until payment is enabled. PNG and PDF are exported from the template's reference frame (second $1). MP4 is rendered on an export server with the same engine — not connected on this page."],
+    [/^التنزيل مجاني مؤقتًا في النسخة التجريبية\. المقاس النهائي \u2066?(\d+)×(\d+)\u2069? بكسل.*$/, "Downloads are free for now in this demo. Final size $1×$2 px: PNG for phones and social, PDF for sharing and home printing."],
+    [/^التنزيل مجاني مؤقتًا في النسخة التجريبية\. صورة PNG.*$/, "Downloads are free for now in this demo. PNG and PDF come from the design's main frame; MP4 video is coming soon."],
     [/^نص مضاف (\d+)$/, "Added text $1"],
     [/^(.*) · ثابت( · .*)?$/, "$1 · Static$2"], [/^(.*) · متحرك( · .*)?$/, "$1 · Animated$2"],
     [/^([\d.,]+) د\.إ$/, "AED $1"],

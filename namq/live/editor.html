@@ -7,10 +7,18 @@
 <meta name="description" content="محرّر قوالب نمق التجريبي: عدّل النص والصورة وصدّر PNG وPDF.">
 <meta name="robots" content="noindex,nofollow">
 <script src="/i18n.js"></script>
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="https://static.wixstatic.com/media/114573_e0b6c4a902bd4467921267a386bd0618~mv2.png">
+<meta property="og:title" content="نمق — صمّم تصميمك">
+<meta property="og:image" content="https://static.wixstatic.com/media/114573_397d917536534192a30fc9157d1353e0~mv2.png">
+<meta property="og:image:width" content="600">
+<meta property="og:image:height" content="315">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Amiri&family=Aref+Ruqaa&family=Reem+Kufi&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#FAF9F7;--card:#FFFFFF;--ink:#222222;--pri:#D94F70;--line:#EAE7E4;--mute:#77726d}
+:root{--bg:#FAF9F7;--card:#FFFFFF;--ink:#222222;--pri:#C23A5F;--line:#EAE7E4;--mute:#6B6661}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tajawal",system-ui,sans-serif;font-size:16px}
 button,input,textarea,select{font-family:inherit;font-size:16px;color:inherit}
@@ -52,6 +60,8 @@ input[type=range]{width:100%;accent-color:var(--pri)}
 .result img{max-width:160px;border:1px solid var(--line);border-radius:8px;display:block;margin:8px auto}
 .prod{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;font-size:14px;border-bottom:1px solid var(--line);background:var(--card)}
 .prod span{color:var(--mute);white-space:nowrap}
+.prod{min-height:62px}
+#fields:empty{min-height:70vh}
 .langb{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;cursor:pointer;font-size:13px;white-space:nowrap}
 .sizes{display:flex;gap:6px;align-items:center;flex-wrap:wrap;padding:8px 14px;background:var(--card);border-bottom:1px solid var(--line);font-size:13px;color:var(--mute)}
 .sizes a,.sizes b{border:1px solid var(--line);border-radius:999px;padding:5px 12px;text-decoration:none;color:var(--ink);background:#fff;font-weight:400}
@@ -74,9 +84,18 @@ select{font-family:inherit;font-size:16px;border:1px solid var(--line);border-ra
   </div>
 </header>
 <div class="prod" id="prod" hidden></div>
+<script>(function(){var p=new URLSearchParams(location.search).get("p");if(!p)return;var b=document.getElementById("prod");b.hidden=false;var n=document.createElement("b");n.textContent=p.replace(/-/g," ").replace(/(\d+) (\d+)/,"\u2066$1×$2\u2069");var s=document.createElement("span");s.innerHTML="&nbsp;";b.append(n,s);document.getElementById("seg").hidden=true})()</script>
+<script>(function(){try{var p=new URLSearchParams(location.search).get("p");if(!p)return;var c=JSON.parse(localStorage.getItem("namq-catalog-v1")||"null");if(!c||!c.all)return;
+var base=function(s){return String(s).split(" — ")[0].trim()},sz=function(s){return(String(s).split(" — ")[1]||s).replace(/\s*\(تجريبي\)\s*/,"").trim().replace(/(\d+×\d+)/g,"\u2066$1\u2069")};
+var me=c.all.filter(function(x){return x.slug===p})[0];if(!me)return;var sib=c.all.filter(function(x){return x.slug!==p&&base(x.name)===base(me.name)});if(!sib.length)return;
+var nav=document.createElement("nav");nav.className="sizes";nav.id="sizesPh";nav.setAttribute("aria-label","متوفر بمقاسات أخرى");var lb=document.createElement("span");lb.textContent="متوفر بمقاسات أخرى:";nav.appendChild(lb);
+var cur=document.createElement("b");cur.textContent=sz(me.name);nav.appendChild(cur);sib.forEach(function(x){var a=document.createElement("a");a.href="/editor.html?mode=static&p="+encodeURIComponent(x.slug);a.textContent=sz(x.name);nav.appendChild(a)});
+document.getElementById("prod").after(nav)}catch(e){}})()</script>
 <main>
+<h1 class="sr" id="pageTitle">محرّر نمق</h1>
   <section class="stage">
     <div class="wrap"><canvas id="pv" aria-label="معاينة التصميم"></canvas></div>
+    <script>(function(){var m=/(\d{3,4})-(\d{3,4})/.exec(new URLSearchParams(location.search).get("p")||"");if(!m)return;var w=+m[1],h=+m[2],r=document.currentScript.previousElementSibling;r.style.aspectRatio=w+"/"+h;r.style.height="auto";r.style.minHeight="0";r.style.width="min(100%,"+(44*w/h).toFixed(1)+"vh)"})()</script>
     <div class="bar">
       <button class="btn" id="undo" disabled>تراجع</button>
       <button class="btn" id="play" hidden>تشغيل</button>
@@ -92,11 +111,10 @@ select{font-family:inherit;font-size:16px;border:1px solid var(--line);border-ra
       <div class="bar" style="justify-content:flex-start">
         <button class="btn pri" id="xPng">PNG</button>
         <button class="btn pri" id="xPdf">PDF</button>
-        <button class="btn" id="xMp4" hidden disabled>MP4 — عبر خادم التصدير (غير مربوط هنا)</button>
+        <button class="btn" id="xMp4" hidden disabled>MP4 — قريبًا</button>
       </div>
       <div class="result" id="res"><p class="note" id="resMsg"></p><img id="resImg" alt="الملف المصدَّر"></div>
     </div>
-    <p class="note">أصول هذا النموذج (الخلفية والفيديو) تجريبية مولّدة بالكود، والخطوط مفتوحة المصدر (OFL) من Google Fonts. ليست منتجات نهائية.</p>
   </section>
 </main>
 <video id="vid" muted playsinline loop preload="auto" style="display:none" src="/demo-bg.mp4"></video>

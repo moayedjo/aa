@@ -1,0 +1,408 @@
+{
+ "pages": {
+  "home": {
+   "path": "/index.html",
+   "tLoad": 763,
+   "perf": {
+    "ttfb": 7,
+    "dcl": 372,
+    "load": 759,
+    "fcp": 448,
+    "lcp": 448,
+    "cls": 0
+   },
+   "requests": 33,
+   "kb": 296,
+   "byTypeKB": {
+    "document": 8,
+    "stylesheet": 15,
+    "script": 98,
+    "fetch": 35,
+    "font": 139,
+    "xhr": 1
+   },
+   "bad": [],
+   "failed": [],
+   "errs": [],
+   "cons": [],
+   "seo": {
+    "title": "نمق — تصاميم جاهزة، بلمستك",
+    "desc": "نمق: قوالب تصميم عربية جاهزة للدعوات والتهاني والسوشيال ميديا. اكتب بياناتك، شاهد النتيجة، ونزّل تصميمك.",
+    "robots": "noindex,nofollow",
+    "canonical": false,
+    "ogImage": true,
+    "icon": true,
+    "lang": "ar",
+    "h1": [
+     "نمق — قوالب تصميم عربية جاهزة"
+    ],
+    "viewport": true
+   },
+   "axe": [],
+   "small": [
+    "A 70×14",
+    "A 70×14",
+    "A 68×14",
+    "A 73×14",
+    "A 60×14",
+    "A 76×14"
+   ],
+   "tiny": {
+    "n": 0,
+    "ex": []
+   },
+   "ownCache": [
+    "none"
+   ]
+  },
+  "category": {
+   "path": "/index.html?cat=%D8%A7%D9%84%D8%A3%D9%81%D8%B1%D8%A7%D8%AD-%D9%88%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%B3%D8%A8%D8%A7%D8%AA",
+   "tLoad": 550,
+   "perf": {
+    "ttfb": 3,
+    "dcl": 129,
+    "load": 546,
+    "fcp": 164,
+    "lcp": 1048,
+    "cls": 0.046
+   },
+   "requests": 24,
+   "kb": 287,
+   "byTypeKB": {
+    "document": 8,
+    "stylesheet": 15,
+    "script": 98,
+    "font": 154,
+    "fetch": 11,
+    "xhr": 1
+   },
+   "bad": [],
+   "failed": [],
+   "errs": [],
+   "cons": [],
+   "seo": {
+    "title": "نمق — تصاميم جاهزة، بلمستك",
+    "desc": "نمق: قوالب تصميم عربية جاهزة للدعوات والتهاني والسوشيال ميديا. اكتب بياناتك، شاهد النتيجة، ونزّل تصميمك.",
+    "robots": "noindex,nofollow",
+    "canonical": false,
+    "ogImage": true,
+    "icon": true,
+    "lang": "ar",
+    "h1": [
+     "الأفراح والمناسبات"
+    ],
+    "viewport": true
+   },
+   "axe": [],
+   "small": [
+    "A 76×14"
+   ],
+   "tiny": {
+    "n": 0,
+    "ex": []
+   },
+   "ownCache": [
+    "none"
+   ]
+  },
+  "editor": {
+   "path": "/editor.html?mode=static&p=%D8%AF%D8%B9%D9%88%D8%A9-%D8%AE%D8%B7%D9%88%D8%A8%D8%A9-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A",
+   "tLoad": 449,
+   "perf": {
+    "ttfb": 3,
+    "dcl": 139,
+    "load": 445,
+    "fcp": 144,
+    "lcp": 1508,
+    "cls": 0.191
+   },
+   "requests": 28,
+   "kb": 400,
+   "byTypeKB": {
+    "document": 8,
+    "script": 128,
+    "stylesheet": 2,
+    "media": 8,
+    "font": 242,
+    "fetch": 11,
+    "xhr": 2
+   },
+   "bad": [],
+   "failed": [
+    "https://static.parastorage.com/services/headless-assets/dist/site-script-1.js net::ERR_TUNNEL_CONNECTION_FAILED"
+   ],
+   "errs": [],
+   "cons": [
+    "error: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+   ],
+   "seo": {
+    "title": "محرّر نمق — نموذج تجريبي",
+    "desc": "محرّر قوالب نمق التجريبي: عدّل النص والصورة وصدّر PNG وPDF.",
+    "robots": "noindex,nofollow",
+    "canonical": false,
+    "ogImage": true,
+    "icon": true,
+    "lang": "ar",
+    "h1": [
+     "دعوة خطوبة — ستوري 1080×1920 (تجريبي)"
+    ],
+    "viewport": true
+   },
+   "axe": [],
+   "small": [
+    "brand 48×24",
+    "langb 65×30",
+    "INPUT 336×16",
+    "INPUT 336×16",
+    "INPUT 336×16"
+   ],
+   "tiny": {
+    "n": 0,
+    "ex": []
+   },
+   "ownCache": [
+    "none"
+   ]
+  },
+  "kit": {
+   "path": "/kit.html",
+   "tLoad": 604,
+   "perf": {
+    "ttfb": 3,
+    "dcl": 221,
+    "load": 601,
+    "fcp": 180,
+    "lcp": 180,
+    "cls": 0
+   },
+   "requests": 23,
+   "kb": 551,
+   "byTypeKB": {
+    "document": 10,
+    "stylesheet": 15,
+    "script": 72,
+    "font": 453,
+    "xhr": 2
+   },
+   "bad": [],
+   "failed": [],
+   "errs": [],
+   "cons": [],
+   "seo": {
+    "title": "تنسيق حفلات — نمق",
+    "desc": "أدخل بيانات حفلتك مرة واحدة، ونمق يجهّز لك كل التصاميم: دعوات بأسماء المعازيم، ستوري، بطاقات للطباعة، لوحة ترحيب وأكثر.",
+    "robots": "noindex,nofollow",
+    "canonical": false,
+    "ogImage": true,
+    "icon": true,
+    "lang": "ar",
+    "h1": [
+     "تنسيق حفلات"
+    ],
+    "viewport": true
+   },
+   "axe": [
+    {
+     "id": "color-contrast",
+     "impact": "serious",
+     "n": 7,
+     "help": "Elements must meet minimum color contrast ratio thresholds",
+     "ex": [
+      "label[data-piece=\"gwa\"] > div > span:nth-child(2)",
+      "label[data-piece=\"gwa\"] > div > .need[data-need=\"\"]"
+     ]
+    }
+   ],
+   "small": [
+    "brand 53×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22",
+    "INPUT 22×22"
+   ],
+   "tiny": {
+    "n": 0,
+    "ex": []
+   },
+   "ownCache": [
+    "none"
+   ]
+  },
+  "plans": {
+   "path": "/plans.html",
+   "tLoad": 495,
+   "perf": {
+    "ttfb": 3,
+    "dcl": 132,
+    "load": 492,
+    "fcp": 164,
+    "lcp": 164,
+    "cls": 0
+   },
+   "requests": 22,
+   "kb": 121,
+   "byTypeKB": {
+    "document": 2,
+    "stylesheet": 15,
+    "script": 58,
+    "font": 40,
+    "fetch": 5,
+    "xhr": 1
+   },
+   "bad": [],
+   "failed": [
+    "https://static.parastorage.com/services/headless-assets/dist/site-script-1.js net::ERR_TUNNEL_CONNECTION_FAILED"
+   ],
+   "errs": [],
+   "cons": [
+    "error: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+   ],
+   "seo": {
+    "title": "اشتراك نمق — كل القوالب بلا حدود",
+    "desc": "اشتراك نمق الشهري أو السنوي: كل القوالب الثابتة والمتحركة مع تخصيص وتصدير غير محدود.",
+    "robots": "noindex,nofollow",
+    "canonical": false,
+    "ogImage": true,
+    "icon": true,
+    "lang": "ar",
+    "h1": [
+     "الاشتراك"
+    ],
+    "viewport": true
+   },
+   "axe": [],
+   "small": [
+    "brand 53×22"
+   ],
+   "tiny": {
+    "n": 0,
+    "ex": []
+   },
+   "ownCache": [
+    "none"
+   ]
+  },
+  "studio": {
+   "path": "/studio.html",
+   "tLoad": 830,
+   "perf": {
+    "ttfb": 2,
+    "dcl": 141,
+    "load": 827,
+    "fcp": 144,
+    "lcp": 144,
+    "cls": 0
+   },
+   "requests": 19,
+   "kb": 152,
+   "byTypeKB": {
+    "document": 8,
+    "script": 92,
+    "stylesheet": 1,
+    "font": 40,
+    "fetch": 10,
+    "xhr": 1
+   },
+   "bad": [],
+   "failed": [
+    "https://static.parastorage.com/services/headless-assets/dist/site-script-1.js net::ERR_TUNNEL_CONNECTION_FAILED"
+   ],
+   "errs": [],
+   "cons": [
+    "error: Failed to load resource: net::ERR_TUNNEL_CONNECTION_FAILED"
+   ],
+   "seo": {
+    "title": "نمق — إعداد القوالب",
+    "desc": "",
+    "robots": "noindex,nofollow",
+    "canonical": false,
+    "ogImage": false,
+    "icon": true,
+    "lang": "ar",
+    "h1": [
+     "إعداد القوالب"
+    ],
+    "viewport": true
+   },
+   "axe": [],
+   "small": [],
+   "tiny": {
+    "n": 0,
+    "ex": []
+   },
+   "ownCache": [
+    "none"
+   ]
+  }
+ },
+ "links": {
+  "http://localhost:8795/index.html": 200,
+  "http://localhost:8795/kit.html": 200,
+  "http://localhost:8795/plans.html": 200,
+  "http://localhost:8795/index.html?cat=%D8%A7%D9%84%D8%A3%D9%81%D8%B1%D8%A7%D8%AD-%D9%88%D8%A7%D9%84%D9%85%D9%86%D8%A7%D8%B3%D8%A8%D8%A7%D8%AA": 200,
+  "http://localhost:8795/index.html?cat=%D8%A7%D9%84%D9%85%D9%88%D8%A7%D9%84%D9%8A%D8%AF": 200,
+  "http://localhost:8795/index.html?cat=%D8%A7%D9%84%D8%A3%D8%B9%D9%8A%D8%A7%D8%AF-%D9%88%D8%A7%D9%84%D9%85%D8%B9%D8%A7%D9%8A%D8%AF%D8%A7%D8%AA": 200,
+  "http://localhost:8795/index.html?cat=%D9%85%D9%86%D8%A7%D8%B3%D8%A8%D8%A7%D8%AA-%D8%B4%D8%AE%D8%B5%D9%8A%D8%A9": 200,
+  "http://localhost:8795/index.html?cat=%D8%A7%D9%84%D8%B3%D9%88%D8%B4%D9%8A%D8%A7%D9%84-%D9%85%D9%8A%D8%AF%D9%8A%D8%A7-%D9%88%D8%A7%D9%84%D8%A3%D8%B9%D9%85%D8%A7%D9%84": 200,
+  "http://localhost:8795/editor.html?mode=static&p=%D8%AF%D8%B9%D9%88%D8%A9-%D8%AE%D8%B7%D9%88%D8%A8%D8%A9-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/editor.html?mode=static&p=%D8%B9%D8%B1%D8%B6-%D8%AE%D8%A7%D8%B5-%D8%A8%D9%88%D8%B3%D8%AA-1080-1350-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/editor.html?mode=static&p=%D8%B9%D8%B1%D8%B6-%D8%AE%D8%A7%D8%B5-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/editor.html?mode=static&p=%D8%AA%D9%87%D9%86%D8%A6%D8%A9-%D8%AA%D8%AE%D8%B1%D8%AC-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/editor.html?mode=static&p=%D8%A5%D8%B9%D9%84%D8%A7%D9%86-%D9%85%D9%88%D9%84%D9%88%D8%AF-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/editor.html?mode=video&p=%D8%AA%D9%87%D9%86%D8%A6%D8%A9-%D8%B9%D9%8A%D8%AF-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/kit.html?o=wedding": 200,
+  "http://localhost:8795/kit.html?o=engagement": 200,
+  "http://localhost:8795/kit.html?o=birthday": 200,
+  "http://localhost:8795/kit.html?o=newborn": 200,
+  "http://localhost:8795/editor.html?p=%D8%B9%D8%B1%D8%B6-%D8%AE%D8%A7%D8%B5-%D8%A8%D9%88%D8%B3%D8%AA-1080-1350-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200,
+  "http://localhost:8795/editor.html?p=%D8%B9%D8%B1%D8%B6-%D8%AE%D8%A7%D8%B5-%D8%B3%D8%AA%D9%88%D8%B1%D9%8A-1080-1920-%D8%AA%D8%AC%D8%B1%D9%8A%D8%A8%D9%8A": 200
+ },
+ "overflow": {
+  "320": {
+   "home": 0,
+   "category": 0,
+   "editor": 0,
+   "kit": 0,
+   "plans": 0,
+   "studio": 0
+  },
+  "375": {
+   "home": 0,
+   "category": 0,
+   "editor": 0,
+   "kit": 0,
+   "plans": 0,
+   "studio": 0
+  },
+  "768": {
+   "home": 0,
+   "category": 0,
+   "editor": 0,
+   "kit": 0,
+   "plans": 0,
+   "studio": 0
+  },
+  "1280": {
+   "home": 0,
+   "category": 0,
+   "editor": 0,
+   "kit": 0,
+   "plans": 0,
+   "studio": 0
+  }
+ },
+ "misc": {
+  "/robots.txt": "404 ",
+  "/sitemap.xml": "404 ",
+  "/favicon.ico": "404 ",
+  "/doesnotexist.html": "404 ",
+  "/": "200 text/html; charset=utf-8"
+ }
+}

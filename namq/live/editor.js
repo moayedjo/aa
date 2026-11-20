@@ -120,7 +120,7 @@ function loop(){if(playing){paint();requestAnimationFrame(loop)}}
 /* ---------- الحقول ---------- */
 function syncWarn(){for(const e of S.elements){const w=document.querySelector(`[data-warn="${e.id}"]`);if(w)w.classList.toggle("on",!!e._overflow&&!e.hidden)}}
 function monoUI(e){const sel=(k,n)=>`<label class="lbl">${n} <select data-act="mset" data-k="${k}" data-id="${e.id}" ${e.hidden?"disabled":""}>${LETTERS.map(l=>`<option ${e[k]===l?"selected":""}>${l}</option>`).join("")}</select></label>`;
-  const rng=(k,n,a,b)=>`<div class="lbl" style="margin-top:8px">${n}</div><input type="range" data-act="mnum" data-k="${k}" data-id="${e.id}" min="${a}" max="${b}" value="${e[k]}">`;
+  const rng=(k,n,a,b)=>`<div class="lbl" style="margin-top:8px">${n}</div><input type="range" data-act="mnum" data-k="${k}" data-id="${e.id}" min="${a}" max="${b}" value="${e[k]}" aria-label="${n}">`;
   return `<div class="row" style="margin-top:8px;justify-content:flex-start;gap:16px">${sel("a","حرف العريس")}${sel("b","حرف العروس")}</div>
   <div class="lbl" style="margin-top:8px">الخط</div><div class="chips">${MONO_FONTS.map(f=>`<button class="chip" style="font-family:'${f}'" data-act="font" data-id="${e.id}" data-v="${f}" aria-pressed="${e.font===f}">${e.a} ${e.b}</button>`).join("")}</div>
   <div class="lbl">اللون</div><div class="chips">${COLORS.concat("#C9A86A").map(k=>`<button class="sw" style="background:${k}" data-act="color" data-id="${e.id}" data-v="${k}" aria-pressed="${e.color===k}" aria-label="لون ${k}"></button>`).join("")}</div>
@@ -129,7 +129,7 @@ function monoUI(e){const sel=(k,n)=>`<label class="lbl">${n} <select data-act="m
   <p class="note">الحرفان يُرسمان بالخط المختار كما هو. اضبط التقارب والارتفاع حتى يعجبك التداخل.</p>`}
 function frameUI(e,has){let h="";if(e.hidden)return h;
   if(e.movable&&has&&e.kind!=="logo")h+=`<div class="lbl" style="margin-top:8px">السحب في المعاينة يحرّك</div><div class="chips">${[["0","الصورة داخل الإطار"],["1","الإطار نفسه"]].map(([v,n])=>`<button class="chip" style="font-size:14px" data-act="fmode" data-id="${e.id}" data-v="${v}" aria-pressed="${(!!e.dragFrame)===(v==="1")}">${n}</button>`).join("")}</div>`;
-  if(e.resizable)h+=`<div class="lbl" style="margin-top:8px">حجم ${e.kind==="logo"?"الشعار":"الإطار"}</div><input type="range" data-act="fsize" data-id="${e.id}" min="50" max="160" value="${Math.round((e.fs||1)*100)}">`;
+  if(e.resizable)h+=`<div class="lbl" style="margin-top:8px">حجم ${e.kind==="logo"?"الشعار":"الإطار"}</div><input type="range" data-act="fsize" data-id="${e.id}" min="50" max="160" value="${Math.round((e.fs||1)*100)}" aria-label="حجم ${e.kind==="logo"?"الشعار":"الإطار"}">`;
   if(e.movable||e.resizable)h+=`<div style="margin-top:8px"><button class="btn" data-act="reset" data-id="${e.id}">إرجاع المكان والحجم</button></div>`;
   return h}
 function build(){const F=$("fields");F.innerHTML="";
@@ -146,7 +146,7 @@ function build(){const F=$("fields");F.innerHTML="";
       <div class="fmt ${sel===e.id&&S.fmtOpen===e.id?"on":""}" id="fmt-${e.id}">
         <div class="lbl">الخط</div><div class="chips">${FONTS.map(f=>`<button class="chip" style="font-family:'${f}'" data-act="font" data-id="${e.id}" data-v="${f}" aria-pressed="${e.font===f}">نمق</button>`).join("")}</div>
         <div class="lbl">اللون</div><div class="chips">${COLORS.map(k=>`<button class="sw" style="background:${k}" data-act="color" data-id="${e.id}" data-v="${k}" aria-pressed="${e.color===k}" aria-label="لون ${k}"></button>`).join("")}<input type="color" data-act="colorIn" data-id="${e.id}" value="${e.color}" aria-label="لون مخصص" style="width:40px;height:32px;border:0;background:none;padding:0"></div>
-        <div class="lbl">الحجم</div><input type="range" data-act="size" data-id="${e.id}" min="${Math.round(e.base.size*.5)}" max="${Math.round(e.base.size*1.5)}" value="${e.size}">
+        <div class="lbl">الحجم</div><input type="range" data-act="size" data-id="${e.id}" min="${Math.round(e.base.size*.5)}" max="${Math.round(e.base.size*1.5)}" value="${e.size}" aria-label="الحجم">
         <div class="lbl" style="margin-top:8px">المحاذاة</div><div class="chips">${[["right","يمين"],["center","وسط"],["left","يسار"]].map(([v,n])=>`<button class="chip" style="font-size:14px" data-act="align" data-id="${e.id}" data-v="${v}" aria-pressed="${e.align===v}">${n}</button>`).join("")}</div>
         <button class="btn" data-act="reset" data-id="${e.id}">إرجاع التنسيق الأصلي</button>
       </div>`;
@@ -154,13 +154,13 @@ function build(){const F=$("fields");F.innerHTML="";
       const has=!!imgs[e.id];
       h+=`<div class="bar" style="justify-content:flex-start"><label class="btn pri" style="display:inline-flex;align-items:center">${has?"استبدال الصورة":"رفع صورة من الجهاز"}<input type="file" accept="image/*" data-act="file" data-id="${e.id}" hidden></label>
       ${has?`<button class="btn" data-act="rmimg" data-id="${e.id}">حذف الصورة</button>`:""}</div>
-      ${has&&e.kind!=="logo"?`<div class="lbl" style="margin-top:8px">تكبير داخل الإطار — واسحب الصورة في المعاينة لضبط القص</div><input type="range" data-act="zoom" data-id="${e.id}" min="100" max="300" value="${Math.round((e.zoom||1)*100)}">`:""}`;
+      ${has&&e.kind!=="logo"?`<div class="lbl" style="margin-top:8px">تكبير داخل الإطار — واسحب الصورة في المعاينة لضبط القص</div><input type="range" data-act="zoom" data-id="${e.id}" min="100" max="300" value="${Math.round((e.zoom||1)*100)}" aria-label="تكبير الصورة داخل الإطار">`:""}`;
       h+=frameUI(e,has);
     }
     d.innerHTML=h;F.appendChild(d);const ta=d.querySelector("textarea");if(ta)ta.value=e.text}
   const pb=$("prod");if(pb&&S.pname){pb.hidden=false}
   $("xMp4").hidden=mode!=="video";$("play").hidden=mode!=="video";$("addText").hidden=false;
-  $("expNote").textContent="نسخة تجريبية: التصدير مفتوح مؤقتًا إلى حين تفعيل الدفع. "+(mode==="video"?"PNG وPDF يُصدَّران من المشهد المرجعي للقالب (الثانية "+tpl().refT+"). MP4 يُنتَج على خادم تصدير بنفس محرّك الرسم — غير مربوط داخل هذه الصفحة.":"المقاس النهائي "+W+"×"+H+" بكسل، مستقل عن حجم المعاينة. PDF هنا صورة نقطية RGB داخل صفحة بنفس المقاس — ليس ملف طباعة احترافيًا.");
+  $("expNote").textContent="التنزيل مجاني مؤقتًا في النسخة التجريبية. "+(mode==="video"?"صورة PNG وملف PDF من اللقطة الأساسية للتصميم، وفيديو MP4 قريبًا.":"المقاس النهائي \u2066"+W+"×"+H+"\u2069 بكسل: PNG للجوال والسوشيال، وPDF للمشاركة والطباعة المنزلية.");
 }
 function select(id,keep){sel=id;if(!keep)S.fmtOpen=S.fmtOpen===id?id:null;document.querySelectorAll("[data-card]").forEach(c=>c.classList.toggle("sel",c.dataset.card===id));paint()}
 $("fields").addEventListener("input",ev=>{const t=ev.target,id=t.dataset.id;if(!id)return;const e=el(id),a=t.dataset.act;
@@ -235,7 +235,7 @@ async function deliver(blob,name){const msg=$("resMsg"),img=$("resImg");$("res")
   catch(e){msg.textContent="تعذّر التنزيل في هذا المتصفح."}}
 async function doExport(kind){const v=validate(),msg=$("resMsg");if(v){$("res").classList.add("on");$("resImg").hidden=true;msg.textContent=v;return}
   msg.textContent="جارٍ التجهيز…";$("res").classList.add("on");
-  try{const b=kind==="png"?await exportPNG():await exportPDF();await deliver(b,`namq-${tpl().id}.${kind}`)}catch(e){msg.textContent="فشل التصدير: "+e.message+" — أعد المحاولة."}paint()}
+  try{const b=kind==="png"?await exportPNG():await exportPDF();const d=new Date(),z=n=>String(n).padStart(2,"0");await deliver(b,`namq-${W}x${H}-${d.getFullYear()}${z(d.getMonth()+1)}${z(d.getDate())}-${z(d.getHours())}${z(d.getMinutes())}.${kind}`)}catch(e){msg.textContent="فشل التصدير: "+e.message+" — أعد المحاولة."}paint()}
 $("xPng").onclick=()=>doExport("png");$("xPdf").onclick=()=>doExport("pdf");
 
 /* ---------- التشغيل والوضع ---------- */
@@ -258,12 +258,12 @@ window.NAMQ={ready:loadCustom().then(loadRemote).then(()=>setMode(CUSTOM?CUSTOM.
 /* ---------- ربط المنتج: الاسم والسعر من المتجر ---------- */
 (async()=>{const bar=$("prod");await window.NAMQ.ready;if(!bar||!SLUG)return;$("seg").hidden=true;
   const show=(n,p)=>{bar.textContent="";const a=document.createElement("b");a.textContent=String(n).replace(/(\d+×\d+)/g,"\u2066$1\u2069");const s=document.createElement("span");
-    s.textContent=[p,mode==="video"?"متحرك":"ثابت","\u2066"+W+"×"+H+"\u2069"].filter(Boolean).join(" · ");bar.append(a,s);bar.hidden=false;S.pname=n;save()};
+    s.textContent=[p,mode==="video"?"متحرك":"ثابت","\u2066"+W+"×"+H+"\u2069"].filter(Boolean).join(" · ");bar.append(a,s);bar.hidden=false;S.pname=n;save();const h1=$("pageTitle");if(h1)h1.textContent=n};
   show(S.pname||SLUG.replace(/-/g," "),"");
   try{const m=await import("/js/wix/catalog.js"),p=await m.fetchProductBySlug(SLUG);if(p&&p.name){show(p.name,p.price||"");sizes(m,p)}}catch(e){}})();
 /* متوفر بمقاسات أخرى: منتجات بنفس اسم التصميم (قبل « — ») ومقاس مختلف */
 async function sizes(m,p){const base=s=>String(s).split(" — ")[0].trim(),sz=s=>(String(s).split(" — ")[1]||s).replace(/\s*\(تجريبي\)\s*/,"").trim().replace(/(\d+×\d+)/g,"\u2066$1\u2069");
-  const r=await m.searchCatalog({limit:50,search:base(p.name)}).catch(()=>null);const sib=((r&&r.products)||[]).filter(x=>x.slug!==p.slug&&base(x.name)===base(p.name));if(!sib.length)return;
+  const r=await m.searchCatalog({limit:50,search:base(p.name)}).catch(()=>null);const sib=((r&&r.products)||[]).filter(x=>x.slug!==p.slug&&base(x.name)===base(p.name));const ph=$("sizesPh");if(!sib.length){if(ph)ph.remove();return}
   const box=document.createElement("nav");box.className="sizes";box.setAttribute("aria-label","متوفر بمقاسات أخرى");const lb=document.createElement("span");lb.textContent="متوفر بمقاسات أخرى:";box.append(lb);
   const cur=document.createElement("b");cur.textContent=sz(p.name);cur.setAttribute("aria-current","true");cur.title="المقاس الحالي";box.append(cur);
-  for(const x of sib){const a=document.createElement("a");a.href="/editor.html?mode=static&p="+encodeURIComponent(x.slug);a.textContent=sz(x.name);box.append(a)}$("prod").after(box)}
+  for(const x of sib){const a=document.createElement("a");a.href="/editor.html?mode=static&p="+encodeURIComponent(x.slug);a.textContent=sz(x.name);box.append(a)}if(ph)ph.replaceWith(box);else $("prod").after(box)}

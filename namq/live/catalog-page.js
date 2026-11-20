@@ -16,7 +16,7 @@ const T = {
     favNote: "محفوظة على هذا الجهاز فقط.", favEmptyT: "لا توجد قوالب في المفضلة", favEmpty: "اضغط ♡ على أي قالب ليظهر هنا.", noRes: "لا توجد نتائج", tryOther: "جرّب كلمة أخرى.", noSub: (s) => `لا توجد قوالب «${s}» بعد.`,
     emptyCatT: "لا توجد قوالب هنا بعد", emptyCat: "ستُضاف قريبًا.", noKindT: (k) => `لا توجد قوالب ${k} بعد`, noKind: "جرّب «الكل».", noCatT: "هذا القسم غير موجود", backAll: "عرض كل القوالب",
     loading: "جارٍ تحميل القوالب…", error: "تعذّر تحميل القوالب. تحقق من الاتصال ثم", retry: "أعد المحاولة", favAdd: "إضافة إلى المفضلة", favDel: "إزالة من المفضلة", preview: "معاينة",
-    sheetTitle: "ابدأ تصميمك — اختر المناسبة", aed: "د.إ", video: "متحرك", static: "ثابت",
+    sheetTitle: "ابدأ تصميمك — اختر المناسبة", aed: "د.إ", video: "متحرك", static: "ثابت", h1: "نمق — قوالب تصميم عربية جاهزة",
     kit: "تنسيق حفلات", kitTitle: "تنسيق حفلات — كل تصاميم حفلتك مرة وحدة", kitText: "أدخل بيانات الحفل مرة واحدة ونزّل مجموعة كاملة: دعوات بأسماء المعازيم من ملف Excel، ستوري، بطاقة A5 للطباعة، لوحة ترحيب، أرقام طاولات وملصقات توزيعات.", oWed: "عرس", oEng: "خطوبة", oBday: "عيد ميلاد", oBaby: "مولود جديد" },
   en: { brand: "Namq", start: "+ Start a design", tabAll: "Templates", tabFav: "Favorites", tabSearch: "Search", tabMine: "My designs", mine: "My designs", plans: "Subscription", close: "Close",
     search: "Search templates…", heroTitle: "Design your invitation in Arabic calligraphy", heroText: "Pick a template, type your details and download your design from your phone.",
@@ -26,7 +26,7 @@ const T = {
     favNote: "Saved on this device only.", favEmptyT: "No favorites yet", favEmpty: "Tap ♡ on any template to keep it here.", noRes: "No results", tryOther: "Try another word.", noSub: (s) => `No “${s}” templates yet.`,
     emptyCatT: "No templates here yet", emptyCat: "Coming soon.", noKindT: (k) => `No ${k.toLowerCase()} templates yet`, noKind: "Try “All”.", noCatT: "This category doesn't exist", backAll: "See all templates",
     loading: "Loading templates…", error: "Couldn't load templates. Check your connection, then", retry: "try again", favAdd: "Add to favorites", favDel: "Remove from favorites", preview: "Preview",
-    sheetTitle: "Start your design — pick an occasion", aed: "AED", video: "Animated", static: "Static",
+    sheetTitle: "Start your design — pick an occasion", aed: "AED", video: "Animated", static: "Static", h1: "Namq — ready Arabic design templates",
     kit: "Event kits", kitTitle: "Event kits — every design for your event, at once", kitText: "Enter your event details once and download a full set: invitations named from your Excel guest list, stories, an A5 print card, a welcome sign, table numbers and favor stickers.", oWed: "Wedding", oEng: "Engagement", oBday: "Birthday", oBaby: "New baby" },
 };
 let lang = store.get("namq-lang", "ar") === "en" ? "en" : "ar";
@@ -53,7 +53,7 @@ function info(p) {
   const kinds = (p.ribbons || []).map((r) => (typeof r === "string" ? r : (r && r.name) || "")).filter(Boolean);
   const video = kinds.includes("متحرك");
   const parts = String(p.name || "").split(" — ");
-  const size = (parts[1] || "").replace(/\(تجريبي\)/, "").trim();
+  const size = (parts[1] || "").replace(/\(تجريبي\)/, "").trim().replace(/(\d+×\d+)/g, "\u2066$1\u2069");
   const num = String(p.price || "").match(/[0-9.,]+/);
   const amount = num ? Number(num[0].replace(/,/g, "")).toLocaleString("en", { maximumFractionDigits: 2 }) : "";
   const price = amount ? (lang === "en" ? "AED " + amount : amount + " د.إ") : p.price || "";
@@ -139,15 +139,16 @@ function render() {
   $("sheetCats").innerHTML = state.cats.map(catCard).join("");
   if (state.view === "mine") { drafts(); return; }
   if (state.error) { v.innerHTML = `<p class="alert">${t("error")} <button class="btn" type="button" id="retry">${t("retry")}</button></p>`; return; }
-  if (state.all === null) { v.innerHTML = `<p class="note">${t("loading")}</p>`; return; }
+  $("pageTitle").textContent = state.cat ? catName(state.cat) : state.q ? t("results") : t("h1");
+  if (state.all === null) { const sk = '<div class="tile sk" aria-hidden="true"><div class="sk-pic"></div><i></i><i></i></div>'; v.innerHTML = `<div class="sec"><p class="sr">${t("loading")}</p><div class="grid">${sk.repeat(4)}</div></div>`; return; }
   if (catSlug && !state.cat) { v.innerHTML = empty(t("noCatT"), ` <a href="/index.html">${t("backAll")}</a>`); return; }
 
   if (state.view === "fav") {
     const f = favs(), list = state.all.filter((p) => f.includes(p.id));
     v.innerHTML = `<div class="sec"><div class="sechead"><h2>${t("tabFav")}</h2></div><p class="note">${t("favNote")}</p><div class="grid">${list.map(tile).join("") || empty(t("favEmptyT"), t("favEmpty"))}</div></div>`;
   } else if (home) {
-    let h = `<div class="sec"><div class="sechead"><h2>${t("browse")}</h2></div><div class="rail catrail">${state.cats.map(catCard).join("")}</div></div>`;
-    let shown = 0;
+    const rail = `<div class="sec"><div class="sechead"><h2>${t("browse")}</h2></div><div class="rail catrail">${state.cats.map(catCard).join("")}</div></div>`;
+    let h = "", shown = 0;
     const few = state.all.length <= 8, flat = byKind(state.all);
     if (few && flat.length) { shown = 1; h += `<section class="sec"><div class="sechead"><h2>${t("allT")}</h2><span class="note">${t("count", flat.length)}</span></div><div class="grid">${flat.map(tile).join("")}</div></section>`; }
     for (const c of few ? [] : state.cats) {
@@ -155,7 +156,8 @@ function render() {
       h += `<section class="sec"><div class="sechead"><h2>${esc(catName(c))}</h2><a href="/index.html?cat=${encodeURIComponent(c.slug)}">${t("seeAll")}</a></div><div class="rail">${list.map(tile).join("")}</div></section>`;
     }
     if (!shown) h += `<div class="grid">${empty(t("noKindT", state.kind === "متحرك" ? t("kVideo") : t("kStatic")), t("noKind"))}</div>`;
-    v.innerHTML = h;
+    const cut = h.indexOf("</section>") + 10;
+    v.innerHTML = cut > 9 ? h.slice(0, cut) + rail + h.slice(cut) : rail + h;
   } else {
     const list = byKind(state.all), title = state.cat ? catName(state.cat) : t("results");
     const subLabel = state.sub && (subs.find((s) => s[0] === state.sub) || [state.sub, state.sub])[lang === "en" ? 1 : 0];
@@ -182,20 +184,32 @@ function drafts() {
 }
 
 /* ---------- التحميل ---------- */
+const CK = "namq-catalog-v1";
+function fromCache() {
+  if (catSlug || state.q || state.sub || state.all) return false;
+  const c = store.get(CK, null); if (!c || Date.now() - c.t > 864e5 || !c.all || !c.cats) return false;
+  state.cats = c.cats; state.all = c.all; state.byCat = c.byCat || {}; state.catOf = {};
+  for (const [pid, cid] of Object.entries(c.catOf || {})) { const cat = state.cats.find((x) => x.id === cid); if (cat) state.catOf[pid] = cat; }
+  state.cached = true; return true;
+}
 async function load() {
-  state.error = false; render();
+  state.error = false;
+  fromCache(); render();
   try {
-    if (!state.cats.length) {
+    const search0 = [state.sub, state.q].filter(Boolean).join(" ");
+    const early = !catSlug ? searchCatalog({ limit: 100, categoryId: null, search: search0 || undefined }) : null;
+    if (!state.cats.length || state.cached) {
       state.cats = (await fetchCategories()).filter((c) => !c.parentId).sort((a, b) => a.index - b.index);
       state.cat = catSlug ? state.cats.find((c) => c.slug === catSlug) || null : null;
     }
-    const search = [state.sub, state.q].filter(Boolean).join(" ");
-    const main = searchCatalog({ limit: 100, categoryId: state.cat ? state.cat.id : null, search: search || undefined });
-    if (!catSlug && !Object.keys(state.byCat).length) {
+    const search = search0;
+    const main = early || searchCatalog({ limit: 100, categoryId: state.cat ? state.cat.id : null, search: search || undefined });
+    if (!catSlug && (!Object.keys(state.byCat).length || state.cached)) {
       const lists = await Promise.all(state.cats.map((c) => searchCatalog({ limit: 12, categoryId: c.id }).then((r) => r.products).catch(() => [])));
       state.cats.forEach((c, i) => { state.byCat[c.id] = lists[i]; lists[i].forEach((p) => { if (!state.catOf[p.id]) state.catOf[p.id] = c; }); });
     }
     state.all = (await main).products;
+    if (!catSlug && !search) { state.cached = false; const co = {}; for (const [pid, c] of Object.entries(state.catOf)) co[pid] = c.id; store.set(CK, { t: Date.now(), cats: state.cats, all: state.all, byCat: state.byCat, catOf: co }); }
     const eng = state.all.find((p) => String(p.name).includes("خطوبة"));
     if (eng) $("hero").href = info(eng).href;
   } catch (e) { state.error = true; }
