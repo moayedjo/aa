@@ -75,7 +75,7 @@ const href = await page.$eval(".tile .name a", (a) => a.getAttribute("href"));
 await page.goto(B + href, { waitUntil: "networkidle" });
 await page.waitForFunction(() => window.NAMQ); await page.evaluate(() => window.NAMQ.ready); await page.waitForTimeout(2500);
 ok("فتح القالب من البطاقة يعرض اسمه وسعره", /AED/.test(await page.textContent("#prod")), (await page.textContent("#prod")).slice(0, 60));
-await page.fill("#f-title", "اختبار"); await page.waitForTimeout(200);
+await page.locator("#fields textarea").first().fill("اختبار"); await page.waitForTimeout(200);
 await page.goto(B + "/index.html", { waitUntil: "networkidle" }); await page.click('.tabs [data-view="mine"]');
 ok("المسودة تظهر في تصاميمي", (await page.textContent("#drafts")).includes("متابعة"), (await page.textContent("#drafts")).trim());
 await page.goto(B + "/index.html", { waitUntil: "networkidle" }); await page.waitForTimeout(2500);
