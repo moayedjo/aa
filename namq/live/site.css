@@ -153,6 +153,9 @@ body:not(.store) .top{position:static}
 }
 @media(min-width:960px){
   body.store{display:grid;grid-template-columns:240px minmax(0,1fr)}
+  body.store>.side{grid-column:1;grid-row:1}
+  body.store>.shell{grid-column:2;grid-row:1;min-width:0}
+  body.store>*:not(.side):not(.shell){grid-column:1/-1}
   .side{display:block;position:sticky;top:0;height:100vh;padding:18px 16px;background:#fff;border-inline-end:1px solid var(--line);overflow:auto}
   .top .brand{display:none}
   .tabs{display:none}
